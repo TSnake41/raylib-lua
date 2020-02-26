@@ -1,0 +1,4 @@
+*.o
+wray_standalone\.exe
+src/wray_api\.c
+libwray\.a
