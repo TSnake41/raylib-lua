@@ -38,8 +38,18 @@ than from `package` loaders.
 
 ### Building / Updating Raylib / Contribution
 
-To build raylib-lua from source, you need to take care that git submodules
-are imported, 
+To build raylib-lua from source, you need to take care that submodules are
+imported, if not or you are unsure :
+```shell
+git submodule init
+git submodule update
+```
+This make take some time depending on network bandwidth.
+Then, raylib-lua should build as expected using `make` tool with a working C compiler.
+
+If you need to update raylib binding, there are few tasks to do :
+ - update tools/api.h functions signatures, keep file clean with exactly one function per line.
+ - update struct definitions in src/raylib.lua
 
 ### Licence
 
