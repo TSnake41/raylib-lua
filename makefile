@@ -18,7 +18,7 @@ all: raylua_s raylua_e
 %.o: %.c
 	$(CC) -c -o $@ $< $(CFLAGS)
 
-all: luajit raylib raylua_s raylua_e
+all: raylua_s raylua_e luajit raylib
 
 luajit:
 	$(MAKE) -C luajit amalg BUILDMODE=static
@@ -32,7 +32,7 @@ raylua_s: src/raylua.o src/raylua_s.o
 raylua_e: src/raylua.o src/raylua_e.o src/raylua_builder.o src/lib/miniz.o
 	$(CC) -o $@ $^ $(LDFLAGS)
 
-src/raylua.o: src/autogen/boot.c src/autogen/bind.c
+src/raylua.o: luajit raylib src/autogen/boot.c src/autogen/bind.c
 
 src/raylua_builder.o: src/autogen/builder.c
 
