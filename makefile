@@ -8,7 +8,7 @@ CFLAGS += -Iluajit/src -Iraylib/src
 LDFLAGS += -Lluajit/src -lluajit -Lraylib/src -lraylib
 
 ifeq ($(OS),Windows_NT)
-	LDFLAGS += -lopengl32 -lgdi32 -lwinmm
+	LDFLAGS += -lopengl32 -lgdi32 -lwinmm -static
 endif
 
 BOOT_FILES := src/raylib.lua src/raylua.lua
@@ -46,8 +46,8 @@ src/autogen/builder.c: src/raylua_builder.lua
 	$(LUA) tools/lua2str.lua $@ raylua_builder_lua $^
 
 clean:
-	rm -rf raylua_s raylua_e src/raylua_e.o src/raylua_s.o src/raylua.o src/autogen/*.c
+	rm -rf raylua_s raylua_e src/raylua_e.o src/raylua_s.o src/raylua.o src/autogen/*.c src/lib/miniz.o
 	$(MAKE) -C luajit clean
-	$(MAKE) -C raylib clean
+	$(MAKE) -C raylib/src clean
 
 .PHONY: all src/autogen/bind.c src/autogen/boot.c raylua_s raylua_e luajit raylib clean
