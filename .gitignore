@@ -2,3 +2,13 @@
 wray_standalone\.exe
 src/wray_api\.c
 libwray\.a
+
+raylua_e.exe
+
+raylua_s.exe
+
+src/autogen/bind.c
+
+src/autogen/boot.c
+
+src/autogen/builder.c

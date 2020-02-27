@@ -14,7 +14,7 @@
   CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-/* Wray embedded executable */
+/* Raylua embedded executable */
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
@@ -23,11 +23,11 @@
 #include <lualib.h>
 #include <lauxlib.h>
 
-#include "raylua_boot.h"
+#include "raylua.h"
 
 #include "lib/miniz.h"
 
-#ifndef WRAY_NO_BUILDER
+#ifndef RAYLUA_NO_BUILDER
 int raylua_build_executable(const char *self_path, const char *input_path);
 #endif
 
@@ -97,10 +97,12 @@ int main(int argc, const char **argv)
   }
 
   lua_State *L = luaL_newstate();
+  luaL_openlibs(L);
 
   if (L == NULL)
     puts("[RAYLUA] Unable to initialize Lua.");
 
+  /* Populate arg. */
   lua_newtable(L);
 
   int i = 0;
@@ -113,10 +115,7 @@ int main(int argc, const char **argv)
 
   lua_setglobal(L, "arg");
 
-  lua_pushcfunction(L, raylua_loadfile);
-  lua_setglobal(L, "raylua_loadfile");
-
-  luaL_dostring(L, raylua_boot);
+  raylua_boot(L, raylua_loadfile);
   lua_close(L);
   return 0;
 }

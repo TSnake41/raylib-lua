@@ -25,17 +25,19 @@
 #ifdef WIN32
 #include "lib/dirent.h"
 #define stat _stat
-
-#ifndef strcasecmp
-#define strcasecmp strcmpi
-#endif
 #else
 #include <dirent.h>
 #endif
 
 #include "lib/miniz.h"
 
-#ifndef WRAY_NO_BUILDER
+#include <lua.h>
+#include <lualib.h>
+#include <lauxlib.h>
+
+#ifndef RAYLUA_NO_BUILDER
+#include "autogen/builder.c"
+
 static void append_file(FILE *dst, FILE *src)
 {
   size_t count;
@@ -46,125 +48,151 @@ static void append_file(FILE *dst, FILE *src)
   } while(count == 4096);
 }
 
-int wray_build_executable(const char *self_path, const char *input_path)
+static void append_file_offset(FILE *output, FILE *source, FILE *input)
 {
-  printf("Create new executable from %s.\n", input_path);
+  append_file(output, source);
+  fpos_t pos;
+  fgetpos(output, &pos);
+  append_file(output, input);
+  fwrite(&pos, sizeof(fpos_t), 1, output);
+}
 
-  struct stat st;
-  int result = stat(input_path, &st);
-  if (result) {
-    printf("%s: Can't get file information.\n", input_path);
-    return 1;
+typedef struct raylua_builder {
+  mz_zip_archive zip;
+  FILE *file;
+  fpos_t offset;
+} raylua_builder;
+
+raylua_builder *raylua_builder_new(const char *self_path, const char *path)
+{
+  raylua_builder *builder = malloc(sizeof(raylua_builder));
+  mz_zip_zero_struct(&builder->zip);
+
+  FILE *f = fopen(path, "wb");
+  if (!f) {
+    free(builder);
+    return NULL;
   }
 
-  size_t arg_len = strlen(input_path);
-  size_t len = arg_len + 5; // + ".exe\0"
-
-  char output_path[len];
-  strcpy(output_path, input_path);
-
-  if (output_path[arg_len - 1] == '/') {
-    /* Remove trailing '/'. */
-    output_path[arg_len - 1] = '\0';
-    arg_len--;
-  }
-
-  strncpy(output_path + arg_len, ".exe", 5);
-
-  FILE *output = fopen(output_path, "wb");
-  if (output == NULL) {
-    printf("Can't open %s for writing.\n", output_path);
-    return 1;
-  }
+  builder->file = f;
 
   FILE *self = fopen(self_path, "rb");
-  if (self == NULL) {
-    puts("Can't open itself");
+  if (!self) {
+    free(builder);
+    fclose(f);
+    return NULL;
+  }
+
+  append_file(f, self);
+  fgetpos(f, &builder->offset); /* get eof offset */
+
+  fclose(self);
+
+  if (!mz_zip_writer_init_cfile(&builder->zip, f, 0)) {
+    free(builder);
+    fclose(f);
+    fclose(self);
+    return NULL;
+  }
+
+  return builder;
+}
+
+void raylua_builder_close(raylua_builder *builder)
+{
+  mz_zip_writer_finalize_archive(&builder->zip);
+
+  /* Write offset */
+  fwrite(&builder->offset, sizeof(fpos_t), 1, builder->file);
+  fclose(builder->file);
+
+  free(builder);
+}
+
+void raylua_builder_add(raylua_builder *builder, const char *path, const char *dest)
+{
+  if (!dest)
+    dest = path;
+
+  if (!mz_zip_writer_add_file(&builder->zip, dest, path, NULL, 0,
+    MZ_BEST_COMPRESSION))
+      printf("Unable to write %s (%s)\n", dest, path);
+}
+
+static int get_type(lua_State *L)
+{
+  const char *path = luaL_checkstring(L, -1);
+
+  struct stat st;
+  if (stat(path, &st)) {
+    lua_pushboolean(L, 0);
     return 1;
   }
 
-  /* Copy self into output. */
-  append_file(output, self);
-  fclose(self);
+  if (S_ISREG(st.st_mode))
+    lua_pushstring(L, "file");
+  else if (S_ISDIR(st.st_mode))
+    lua_pushstring(L, "directory");
+  else
+    lua_pushstring(L, "other");
 
-  /* Get the offset to put it at the end of the file. */
-  fpos_t offset;
-  fgetpos(output, &offset);
+  return 1;
+}
 
-  if (S_ISREG(st.st_mode)) {
-    /* Consider input as a bare bundle, just append file to get output. */
-    FILE *input = fopen(input_path, "rb");
+static int list_dir(lua_State *L)
+{
+  const char *path = luaL_checkstring(L, -1);
+  DIR *d = opendir(path);
 
-    append_file(output, input);
-    fclose(input);
-  } else if (S_ISDIR(st.st_mode)) {
-    /* We need to explore the directory and write each file to a zip file. */
-    mz_zip_archive zip;
-    mz_zip_zero_struct(&zip);
+  if (!d)
+    return 0;
 
-    if (!mz_zip_writer_init_cfile(&zip, output, 0)) {
-      puts("Can't initialize zip writter inside output.");
-      return 0;
-    }
+  struct dirent *entry;
+  size_t count = 0;
 
-    DIR *d = opendir(input_path);
-    chdir(input_path);
+  lua_newtable(L);
 
-    struct dirent *entry;
-
-    /* NOTE: Hardcoded 512 path limit. */
-    char dest_path[512];
-
-    while ((entry = readdir(d))) {
-      char *original_path = entry->d_name;
-      memset(dest_path, 0, 512);
-
-      struct stat st;
-      if (stat(original_path, &st)) {
-        printf("Skip %s (stat() failed)\n", original_path);
-        continue;
-      }
-
-      if (!S_ISREG(st.st_mode)) {
-        printf("Skip %s (not a file)\n", original_path);
-        continue;
-      }
-
-      size_t len = strlen(original_path);
-      if (len > 512) {
-        printf("Skipping %s: path too long\n", original_path);
-        continue;
-      }
-
-      if (len > 5 && strcmp(original_path + len - 5, ".wren") == 0) {
-        len -= 5; /* Exclude .wren extension. */
-      }
-
-      strncpy(dest_path, original_path, len);
-
-      printf("Add %s (original: %s)...\n", dest_path, original_path);
-
-      if (!mz_zip_writer_add_file(&zip, dest_path, original_path, NULL, 0,
-        MZ_BEST_COMPRESSION)) {
-          printf("miniz error: %x\n", mz_zip_get_last_error(&zip));
-      }
-    }
-
-    closedir(d);
-
-    puts("Finalizing zip archive...");
-
-    if (!mz_zip_writer_finalize_archive(&zip))
-      puts("Can't finalize archive.");
-
-    mz_zip_end(&zip);
-
-    // Write offset
-    fwrite(&offset, sizeof(fpos_t), 1, output);
-    fclose(output);
+  while ((entry = readdir(d))) {
+    lua_pushstring(L, entry->d_name);
+    lua_rawseti(L, -2, count++);
   }
 
-  free(output_path);
+  closedir(d);
+  return 1;
+}
+
+int raylua_build_executable(const char *self, const char *input)
+{
+  lua_State *L = luaL_newstate();
+  luaL_openlibs(L);
+
+  lua_pushcfunction(L, get_type);
+  lua_setglobal(L, "get_type");
+
+  lua_pushcfunction(L, list_dir);
+  lua_setglobal(L, "list_dir");
+
+  lua_pushlightuserdata(L, append_file_offset);
+  lua_setglobal(L, "append_file_offset");
+
+  lua_pushlightuserdata(L, &raylua_builder_new);
+  lua_setglobal(L, "builder_new");
+
+  lua_pushlightuserdata(L, &raylua_builder_close);
+  lua_setglobal(L, "builder_close");
+
+  lua_pushlightuserdata(L, &raylua_builder_add);
+  lua_setglobal(L, "builder_add");
+
+  lua_pushstring(L, self);
+  lua_setglobal(L, "self_path");
+
+  lua_pushstring(L, input);
+  lua_setglobal(L, "input_path");
+
+  if (luaL_dostring(L, raylua_builder_lua))
+    fputs(luaL_checkstring(L, -1), stderr);
+
   return 0;
 }
 #endif

@@ -18,7 +18,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "raylua_boot.h"
+#include "raylua.h"
 
 #include <lua.h>
 #include <lualib.h>
@@ -27,6 +27,7 @@
 int main(int argc, const char **argv)
 {
   lua_State *L = luaL_newstate();
+  luaL_openlibs(L);
 
   if (L == NULL)
     puts("[RAYLUA] Unable to initialize Lua.");
@@ -43,7 +44,7 @@ int main(int argc, const char **argv)
 
   lua_setglobal(L, "arg");
 
-  luaL_dostring(L, raylua_boot);
+  raylua_boot(L, NULL);
   lua_close(L);
   return 0;
 }
