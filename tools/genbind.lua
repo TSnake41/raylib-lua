@@ -13,48 +13,80 @@ local structs = {
   "Material", "Model", "Transform", "BoneInfo", "ModelAnimation",
   "Ray", "RayHitInfo", "BoundingBox", "Wave", "Sound", "Music",
   "AudioStream", "VrDeviceInfo", "Camera3D", "RenderTexture2D",
-  "TextureCubemap", "TraceLogCallback"
+  "TextureCubemap", "TraceLogCallback", "PhysicsBody"
 }
 
 local functions = {}
 local proto = {}
 
-for line in io.lines "tools/api.h" do
-  line = line:gsub("(%W)([%l%d]%w*)", function (before, part)
-    for i,keyword in ipairs(keywords) do
-      if part == keyword then
-        return before .. part
+local counter = 0
+
+local custom_support = {
+  ["rlgl"] = function (line)
+    return line:gsub("[%s*]+(rl%w+)", function (part)
+      functions[#functions + 1] = part
+      counter = counter + 1
+
+      if counter == 2 then
+        print("WARN: Multiple matches for: " .. line)
       end
-    end
 
-    return before
-  end)
+      return "(*)"
+    end)
+  end
+}
 
-  local count = 0
+local file = io.open(arg[1], "wb")
+local modules = { "api" }
 
-  line = line:gsub("%u%w+", function (part)
-    for i,struct in ipairs(structs) do
-      if part == struct then
-        return part
-      end
-    end
-
-    functions[#functions + 1] = part
-    count = count + 1
-
-    if count == 2 then
-      print("WARN: Multiple match for: " .. line)
-    end
-
-    return "(*)"
-  end)
-
-  proto[#proto + 1] = line:gsub(";", "")
+for i=2,#arg do
+  modules[i] = arg[i]
 end
 
-assert(#proto == #functions, "Mismatching proto and function count.")
+for _,modname in ipairs(modules) do
+  for line in io.lines("tools/" .. modname .. ".h") do
+    if custom_support[modname] then
+      line = custom_support[modname](line)
+    end
 
-local file = io.open(arg[1], "w")
+    line = line:gsub("(%W)([%l%d][%w_]*)", function (before, part)
+      for i,keyword in ipairs(keywords) do
+        if part == keyword then
+          return before .. part
+        end
+      end
+
+      return before
+    end)
+
+    line = line:gsub("%u%w+", function (part)
+      for i,struct in ipairs(structs) do
+        if part == struct then
+          return part
+        end
+      end
+
+      functions[#functions + 1] = part
+      counter = counter + 1
+
+      if count == 2 then
+        print("WARN: Multiple matches for: " .. line)
+      end
+
+      return "(*)"
+    end)
+
+    -- Strip spaces
+    line = line:gsub("([(),*.]) +(%w)", function (a, b) return a .. b end)
+    line = line:gsub("(%w) +([(),*.])", function (a, b) return a .. b end)
+
+    proto[#proto + 1] = line:gsub(";", "")
+  end
+end
+
+assert(#proto == #functions, "Mismatching proto and function count : " ..
+  #proto .. " ~= " .. #functions)
+
 file:write [[
 struct raylua_bind_entry {
   const char *name;

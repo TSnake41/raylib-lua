@@ -594,6 +594,58 @@ ffi.cdef [[
   typedef void (*TraceLogCallback)(int logType, const char *text, va_list args);
 ]]
 
+-- Physac cdef
+ffi.cdef [[
+  typedef struct PhysicsBodyData *PhysicsBody;
+  typedef enum PhysicsShapeType {
+    PHYSICS_CIRCLE,
+    PHYSICS_POLYGON
+  } PhysicsShapeType;
+  
+  typedef struct Matrix2x2 {
+    float m00;
+    float m01;
+    float m10;
+    float m11;
+  } Matrix2x2;
+
+  typedef struct PolygonData {
+    unsigned int vertexCount;
+    Vector2 positions[24];
+    Vector2 normals[24];
+  } PolygonData;
+
+  typedef struct PhysicsShape {
+    PhysicsShapeType type;
+    PhysicsBody body;
+    float radius;
+    Matrix2x2 transform;
+    PolygonData vertexData;
+  } PhysicsShape;
+  
+  typedef struct PhysicsBodyData {
+    unsigned int id;
+    bool enabled;
+    Vector2 position;
+    Vector2 velocity;
+    Vector2 force;
+    float angularVelocity;
+    float torque;
+    float orient;
+    float inertia;
+    float inverseInertia;
+    float mass;
+    float inverseMass;
+    float staticFriction;
+    float dynamicFriction;
+    float restitution;
+    bool useGravity;
+    bool isGrounded;
+    bool freezeOrient;
+    PhysicsShape shape;
+  } PhysicsBodyData;
+]]
+
 -- Load bind entry
 ffi.cdef [[
   struct raylua_bind_entry {

@@ -7,6 +7,8 @@ LUA ?= luajit
 CFLAGS += -Iluajit/src -Iraylib/src
 LDFLAGS += -Lluajit/src -lluajit -Lraylib/src -lraylib
 
+MODULES := rlgl physac
+
 ifeq ($(OS),Windows_NT)
 	LDFLAGS += -lopengl32 -lgdi32 -lwinmm -static
 endif
@@ -40,7 +42,7 @@ src/autogen/boot.c: src/raylib.lua src/raylua.lua
 	$(LUA) tools/lua2str.lua $@ raylua_boot_lua $^
 
 src/autogen/bind.c:
-	$(LUA) tools/genbind.lua $@
+	$(LUA) tools/genbind.lua $@ $(MODULES)
 
 src/autogen/builder.c: src/raylua_builder.lua
 	$(LUA) tools/lua2str.lua $@ raylua_builder_lua $^
