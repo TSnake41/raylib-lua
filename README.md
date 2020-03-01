@@ -101,6 +101,21 @@ end
 rl.CloseWindow()
 ```
 
+### Compatibility
+
+raylib-lua (raylua) is currently compatible with raylib v3.0 API.
+There is currently no support for rlgl and raygui, but it may be considered
+in the future.
+
+#### Global API
+
+You can make raylib-lua (raylua) partially compatible with
+[original raylib-lua](https://github.com/raysan5/raylib-lua) or
+[raylib-lua-sol](https://github.com/RobLoach/raylib-lua-sol) with global API by
+adding `setmetatable(_G, { __index = rl })` on the first line.
+
+This will allow direct use of raylib binding through globals instead of `rl` table.
+
 ### Licence
 
 Copyright (C) 2020 Astie Teddy
