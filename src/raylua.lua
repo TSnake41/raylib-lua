@@ -16,6 +16,8 @@
 
 local load = loadstring
 
+-- TODO: Embedded ressources loading.
+
 if raylua.loadfile then
   package.path = "?.lua"
 

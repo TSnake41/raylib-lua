@@ -56,6 +56,51 @@ If you need to update raylib binding, there are few tasks to do :
  - update `tools/api.h` functions signatures, keep file clean with exactly one function per line.
  - update struct definitions in `src/raylib.lua`
 
+### Loading embedded ressources
+
+Currently, raylib-lua doesn't support loading ressources from payload using
+raylib API. However, you can still arbitrarily load files from payload using
+`raylua.loadfile` which returns a boolean indicating success and file content.
+
+### Making structs
+
+To make raylib structs, you need to use the LuaJIT FFI.
+```lua
+local ffi = require "ffi"
+```
+
+Then use ffi.new to make a struct, e.g `ffi.new("Color", r, g, b, a)`
+
+#### Note concerning pointers
+
+As LuaJIT doesn't support pointer dereferencing, you need to build a
+single-element array, e.g
+```lua
+local image = ffi.new("Image[1]")
+```
+In this case, to access the element of `image`, you need to do `image[0]`.
+The pointer you can pass is `image`.
+
+### Example
+
+```lua
+rl.SetConfigFlags(rl.FLAG_VSYNC_HINT)
+rl.SetTargetFPS(60)
+
+rl.InitWindow(800, 450, "raylib [core] example - basic window")
+
+while not rl.WindowShouldClose() do
+	rl.BeginDrawing()
+
+	rl.ClearBackground(rl.RAYWHITE)
+	rl.DrawText("Congrats! You created your first window!", 190, 200, 20, rl.LIGHTGRAY)
+
+	rl.EndDrawing()
+end
+
+rl.CloseWindow()
+```
+
 ### Licence
 
 Copyright (C) 2020 Astie Teddy
