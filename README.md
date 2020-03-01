@@ -116,6 +116,20 @@ adding `setmetatable(_G, { __index = rl })` on the first line.
 
 This will allow direct use of raylib binding through globals instead of `rl` table.
 
+### Other bindings
+
+raylib-lua (raylua) is not the only Lua binding for raylib.
+
+There are some other bindings, which may or may not be up to date.
+
+[RobLoach/raylib-lua-sol](https://github.com/RobLoach/raylib-lua-sol)
+
+[raysan5/raylib-lua](https://github.com/raysan5/raylib-lua/)
+
+[HDPLocust/raylib-luamore](https://github.com/HDPLocust/raylib-luamore)
+
+[alexander-matz ffi binding](https://gist.github.com/alexander-matz/f8ee4eb9fdf676203d70c1e5e329a6ec)
+
 ### Licence
 
 Copyright (C) 2020 Astie Teddy
