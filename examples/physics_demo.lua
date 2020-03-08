@@ -23,42 +23,42 @@ rl.SetTargetFPS(60)
 
 while not rl.WindowShouldClose() do
   rl.RunPhysicsStep()
-  
+
   if needsReset then
     floor = rl.CreatePhysicsBodyRectangle({ screenWidth/2, screenHeight }, 500, 100, 10)
     circle = rl.CreatePhysicsBodyCircle({ screenWidth/2, screenHeight/2 }, 45, 10)
-    
+
     floor.enabled = false
     circle.enabled = false
 
     needsReset = false
   end
-  
+
   if rl.IsKeyPressed(string.byte("R")) then
     rl.ResetPhysics()
     needsReset = true
   end
-  
+
   if rl.IsMouseButtonPressed(rl.MOUSE_LEFT_BUTTON) then
     rl.CreatePhysicsBodyPolygon(rl.GetMousePosition(), rl.GetRandomValue(20, 80), rl.GetRandomValue(3, 8), 10);
   elseif rl.IsMouseButtonPressed(rl.MOUSE_RIGHT_BUTTON) then
     rl.CreatePhysicsBodyCircle(rl.GetMousePosition(), rl.GetRandomValue(10, 45), 10)
   end
-  
+
   local bodiesCount = rl.GetPhysicsBodiesCount()
-  
+
   for i=0,bodiesCount do
     local body = rl.GetPhysicsBody(i)
-    
+
     if body ~= nil and (body.position.y > screenHeight*2) then
       print("Destroyed " .. tostring(body))
       rl.DestroyPhysicsBody(body)
     end
   end
-  
+
   rl.BeginDrawing()
   rl.ClearBackground(rl.BLACK)
-  
+
   bodiesCount = rl.GetPhysicsBodiesCount()
   for i=0,bodiesCount-1 do
     local body = rl.GetPhysicsBody(i)
@@ -75,13 +75,16 @@ while not rl.WindowShouldClose() do
       end
     end
   end
-  
+
   rl.DrawText("Left mouse button to create a polygon", 10, 10, 10, rl.WHITE);
   rl.DrawText("Right mouse button to create a circle", 10, 25, 10, rl.WHITE);
   rl.DrawText("Press 'R' to reset example", 10, 40, 10, rl.WHITE);
 
   rl.DrawText("Physac", logoX, logoY, 30, rl.WHITE);
   rl.DrawText("Powered by", logoX + 50, logoY - 7, 10, rl.WHITE);
-  
+
   rl.EndDrawing()
 end
+
+rl.ClosePhysics()
+rl.CloseWindow()

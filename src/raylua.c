@@ -30,24 +30,32 @@
 
 extern const char *raylua_boot_str;
 
-void raylua_boot(lua_State *L, lua_CFunction loadfile)
+void raylua_boot(lua_State *L, lua_CFunction loadfile, bool repl)
 {
   lua_newtable(L);
 
   if (loadfile) {
     lua_pushstring(L, "loadfile");
     lua_pushcfunction(L, loadfile);
-
     lua_settable(L, -3);
   }
 
   lua_pushstring(L, "bind_entries");
   lua_pushlightuserdata(L, raylua_entries);
+  lua_settable(L, -3);
 
+  lua_pushstring(L, "isrepl");
+  lua_pushboolean(L, repl);
   lua_settable(L, -3);
 
   lua_setglobal(L, "raylua");
 
   if (luaL_dostring(L, raylua_boot_lua))
     fputs(luaL_checkstring(L, -1), stderr);
+}
+
+int luaopen_raylua(lua_State *L)
+{
+  raylua_boot(L, NULL, false);
+  return 0;
 }

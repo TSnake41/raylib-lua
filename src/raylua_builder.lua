@@ -16,7 +16,7 @@
 
 --[[
   Uses miniz licence :
-  
+
   Copyright 2013-2014 RAD Game Tools and Valve Software
   Copyright 2010-2014 Rich Geldreich and Tenacious Software LLC
   All Rights Reserved.
@@ -40,16 +40,23 @@
   THE SOFTWARE.
 ]]
 
-local t = get_type(input_path)
 local ffi = require "ffi"
 
+ffi.cdef "typedef struct FILE FILE;"
+local append_file_offset = ffi.cast("void (*)(FILE *, FILE *, FILE *)", append_file_offset)
+
+local self_path = arg[0]
+local input_path = arg[1]
+
 print ">> Raylua builder <<"
+if #arg == 0 then
+  print "TODO: Improve builder usage."
 
-ffi.cdef "typedef struct raylua_builder raylua_builder;"
+  print "Usage: raylua_e <input>"
+  return
+end
 
-local builder_new = ffi.cast("raylua_builder *(*)(const char *, const char *)", builder_new)
-local builder_close = ffi.cast("void (*)(raylua_builder *)", builder_close)
-local builder_add = ffi.cast("void (*)(raylua_builder *, const char *, const char *)", builder_add)
+local t = get_type(input_path)
 
 local function path_concat(...)
   return table.concat({ ... }, "/")
@@ -73,7 +80,7 @@ if t == "directory" then
   print("Building " .. path)
 
   local builder = builder_new(self_path, path)
-  assert(builder ~= ffi.new("void *", nil), "Can't initialize builder")
+  assert(builder, "Can't initialize builder")
 
   local have_main = false
 

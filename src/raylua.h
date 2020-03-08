@@ -17,8 +17,12 @@
 #ifndef H_RAYLUA
 #define H_RAYLUA
 
+#include <stdbool.h>
 #include <lua.h>
 
-void raylua_boot(lua_State *L, lua_CFunction loadfile);
+void raylua_boot(lua_State *L, lua_CFunction loadfile, bool repl);
+
+/* raylua_boot alias to allow direct loading */
+int luaopen_raylua(lua_State *L);
 
 #endif /* H_RAYLUA */

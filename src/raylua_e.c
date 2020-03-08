@@ -24,11 +24,10 @@
 #include <lauxlib.h>
 
 #include "raylua.h"
-
 #include "lib/miniz.h"
 
 #ifndef RAYLUA_NO_BUILDER
-int raylua_build_executable(const char *self_path, const char *input_path);
+int raylua_builder_boot(lua_State *L);
 #endif
 
 static mz_zip_archive zip_file;
@@ -39,63 +38,65 @@ int raylua_loadfile(lua_State *L)
 
   int index = mz_zip_reader_locate_file(&zip_file, path, NULL, 0);
   if (index == -1) {
-    lua_pushboolean(L, false);
     lua_pushfstring(L, "%s: File not found.", path);
+    lua_pushnil(L);
     return 2;
   }
 
   mz_zip_archive_file_stat stat;
   if (!mz_zip_reader_file_stat(&zip_file, index, &stat)) {
-    lua_pushboolean(L, false);
     lua_pushfstring(L, "%s: Can't get file information.", path);
+    lua_pushnil(L);
     return 2;
   }
 
   size_t size = stat.m_uncomp_size;
   char *buffer = malloc(size + 1);
   if (buffer == NULL) {
-    lua_pushboolean(L, false);
     lua_pushfstring(L, "%s: Can't allocate file buffer.", path);
+    lua_pushnil(L);
     return 2;
   }
   buffer[size] = '\0';
 
   mz_zip_reader_extract_to_mem(&zip_file, index, buffer, size, 0);
 
-  lua_pushboolean(L, true);
   lua_pushlstring(L, buffer, size);
   free(buffer);
+  return 1;
+}
 
-  return 2;
+static bool raylua_init_payload(const char *path, bool direct)
+{
+  mz_zip_zero_struct(&zip_file);
+
+  if (direct) {
+    if (!mz_zip_reader_init_file(&zip_file, path, 0))
+      return false;
+  } else {
+    FILE *f = fopen(path, "rb");
+
+    if (f == NULL) {
+      puts("[RAYLUA] Can't load self.");
+      return false;
+    } else {
+      /* Read offset at the end of the file */
+      fpos_t offset;
+      fseek(f, -(long)sizeof(fpos_t), SEEK_END);
+      fread(&offset, sizeof(fpos_t), 1, f);
+
+      fsetpos(f, &offset);
+
+      if (!mz_zip_reader_init_cfile(&zip_file, f, 0, 0))
+        return false;
+    }
+  }
+
+  return true;
 }
 
 int main(int argc, const char **argv)
 {
-  mz_zip_zero_struct(&zip_file);
-  bool ready = false;
-
-  FILE *f = fopen(argv[0], "rb");
-
-  if (f != NULL) {
-    /* Read offset at the end of the file */
-    fpos_t offset;
-    fseek(f, -(long)sizeof(fpos_t), SEEK_END);
-    fread(&offset, sizeof(fpos_t), 1, f);
-
-    fsetpos(f, &offset);
-
-    if (mz_zip_reader_init_cfile(&zip_file, f, 0, 0))
-      ready = true;
-  }
-
-  if (!ready) {
-    if (argc < 2) {
-      puts("Usage: raylua_e <input>");
-      return 0;
-    } else
-      return raylua_build_executable(argv[0], argv[1]);
-  }
-
   lua_State *L = luaL_newstate();
   luaL_openlibs(L);
 
@@ -115,7 +116,33 @@ int main(int argc, const char **argv)
 
   lua_setglobal(L, "arg");
 
-  raylua_boot(L, raylua_loadfile);
+  const char *path = argv[0];
+  #ifdef WIN32
+  /* Executable name translation. */
+  size_t path_len = strlen(path);
+  char new_path[path_len + 5];
+
+  if (path_len > 4 && stricmp(path + path_len - 4, ".exe")) {
+    strcpy(new_path, path);
+    strcpy(new_path + path_len, ".exe");
+
+    printf("[RAYLUA] Translated self executable name from %s to %s.\n", path, new_path);
+    path = new_path;
+  }
+  #endif
+
+  if (!raylua_init_payload(path, false)) {
+    #ifdef RAYLUA_NO_BUILDER
+    puts("[RAYLUA] No payload.");
+    #else
+    puts("[RAYLUA] No payload, use internal builder.");
+    raylua_builder_boot(L);
+    #endif
+  } else {
+    /* Boot on payload. */
+    raylua_boot(L, raylua_loadfile, false);
+  }
+
   lua_close(L);
   return 0;
 }

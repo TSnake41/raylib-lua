@@ -16,37 +16,7 @@
 
 local load = loadstring
 
--- TODO: Embedded ressources loading.
-
-if raylua.loadfile then
-  package.path = "?.lua"
-
-  -- Change the second loader to load files using raylua.loadfile
-  package.loaders[2] = function (name)
-    for path in package.path:gmatch "([^;]+);?" do
-      path = path:gsub("?", name)
-
-      local status, content = raylua.loadfile(path)
-      if status then
-        local f, err = load(content)
-        assert(f, err)
-
-        return f
-      end
-    end
-
-    return nil
-  end
-
-  print "[RAYLUA] Load main.lua from payload."
-  require "main"
-  return
-end
-
-if arg[1] then
-  dofile(arg[1])
-else
-  -- Run small REPL
+function raylua.repl()
   print ">> raylua WIP repl <<"
   print ""
 
@@ -65,4 +35,43 @@ else
       print(err)
     end
   end
+end
+
+if raylua.loadfile then
+  package.path = "?.lua;?/init.lua"
+
+  -- Change the second loader to load files using raylua.loadfile
+  package.loaders[2] = function (name)
+    for path in package.path:gmatch "([^;]+);?" do
+      path = path:gsub("?", name)
+
+      local content, err = raylua.loadfile(path)
+      if content then
+        local f, err = load(content)
+        assert(f, err)
+
+        return f
+      end
+    end
+
+    return nil
+  end
+
+  print "[RAYLUA] Load main.lua from payload."
+  require "main"
+
+  if not raylua.isrepl then
+    -- Keep launching the repl even with `loadfile` defined.
+    return
+  end
+end
+
+if arg[1] then
+  dofile()
+  return
+end
+
+if raylua.isrepl then
+  print "[RAYLUA] Go to repl."
+  raylua.repl()
 end

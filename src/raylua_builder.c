@@ -63,15 +63,18 @@ typedef struct raylua_builder {
   fpos_t offset;
 } raylua_builder;
 
-raylua_builder *raylua_builder_new(const char *self_path, const char *path)
+static int raylua_builder_new(lua_State *L)
 {
+  const char *self_path = luaL_checkstring(L, -2);
+  const char *path = luaL_checkstring(L, -1);
+
   raylua_builder *builder = malloc(sizeof(raylua_builder));
   mz_zip_zero_struct(&builder->zip);
 
   FILE *f = fopen(path, "wb");
   if (!f) {
     free(builder);
-    return NULL;
+    return luaL_error(L, "Can't open %s", path);
   }
 
   builder->file = f;
@@ -80,7 +83,7 @@ raylua_builder *raylua_builder_new(const char *self_path, const char *path)
   if (!self) {
     free(builder);
     fclose(f);
-    return NULL;
+    return luaL_error(L, "Can't open self (%s)", self_path);
   }
 
   append_file(f, self);
@@ -92,14 +95,16 @@ raylua_builder *raylua_builder_new(const char *self_path, const char *path)
     free(builder);
     fclose(f);
     fclose(self);
-    return NULL;
+    return luaL_error(L, "Can't initialize miniz writer.");
   }
 
-  return builder;
+  lua_pushlightuserdata(L, builder);
+  return 1;
 }
 
-void raylua_builder_close(raylua_builder *builder)
+static int raylua_builder_close(lua_State *L)
 {
+  raylua_builder *builder = lua_touserdata(L, -1);
   mz_zip_writer_finalize_archive(&builder->zip);
 
   /* Write offset */
@@ -107,16 +112,23 @@ void raylua_builder_close(raylua_builder *builder)
   fclose(builder->file);
 
   free(builder);
+  return 0;
 }
 
-void raylua_builder_add(raylua_builder *builder, const char *path, const char *dest)
+static int raylua_builder_add(lua_State *L)
 {
+  raylua_builder *builder = lua_touserdata(L, -3);
+  const char *path = luaL_checkstring(L, -2);
+  const char *dest = luaL_checkstring(L, -1);
+
   if (!dest)
     dest = path;
 
   if (!mz_zip_writer_add_file(&builder->zip, dest, path, NULL, 0,
     MZ_BEST_COMPRESSION))
       printf("Unable to write %s (%s)\n", dest, path);
+
+  return 0;
 }
 
 static int get_type(lua_State *L)
@@ -161,11 +173,8 @@ static int list_dir(lua_State *L)
   return 1;
 }
 
-int raylua_build_executable(const char *self, const char *input)
+int raylua_builder_boot(lua_State *L)
 {
-  lua_State *L = luaL_newstate();
-  luaL_openlibs(L);
-
   lua_pushcfunction(L, get_type);
   lua_setglobal(L, "get_type");
 
@@ -175,20 +184,14 @@ int raylua_build_executable(const char *self, const char *input)
   lua_pushlightuserdata(L, append_file_offset);
   lua_setglobal(L, "append_file_offset");
 
-  lua_pushlightuserdata(L, &raylua_builder_new);
+  lua_pushcfunction(L, raylua_builder_new);
   lua_setglobal(L, "builder_new");
 
-  lua_pushlightuserdata(L, &raylua_builder_close);
+  lua_pushcfunction(L, raylua_builder_close);
   lua_setglobal(L, "builder_close");
 
-  lua_pushlightuserdata(L, &raylua_builder_add);
+  lua_pushcfunction(L, raylua_builder_add);
   lua_setglobal(L, "builder_add");
-
-  lua_pushstring(L, self);
-  lua_setglobal(L, "self_path");
-
-  lua_pushstring(L, input);
-  lua_setglobal(L, "input_path");
 
   if (luaL_dostring(L, raylua_builder_lua))
     fputs(luaL_checkstring(L, -1), stderr);

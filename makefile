@@ -34,6 +34,9 @@ raylua_s: src/raylua.o src/raylua_s.o
 raylua_e: src/raylua.o src/raylua_e.o src/raylua_builder.o src/lib/miniz.o
 	$(CC) -o $@ $^ $(LDFLAGS)
 
+raylua.dll: src/raylua.o
+	$(CC) -shared -fPIE -o $@ $^ $(LDFLAGS)
+
 src/raylua.o: luajit raylib src/autogen/boot.c src/autogen/bind.c
 
 src/raylua_builder.o: src/autogen/builder.c

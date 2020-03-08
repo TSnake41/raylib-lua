@@ -44,7 +44,7 @@ int main(int argc, const char **argv)
 
   lua_setglobal(L, "arg");
 
-  raylua_boot(L, NULL);
+  raylua_boot(L, NULL, true);
   lua_close(L);
   return 0;
 }
