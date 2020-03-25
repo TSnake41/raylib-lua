@@ -15,7 +15,7 @@
 ]]
 
 --[[
-  Uses miniz licence :
+  Uses miniz :
 
   Copyright 2013-2014 RAD Game Tools and Valve Software
   Copyright 2010-2014 Rich Geldreich and Tenacious Software LLC

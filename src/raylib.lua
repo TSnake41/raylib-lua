@@ -601,7 +601,7 @@ ffi.cdef [[
     PHYSICS_CIRCLE,
     PHYSICS_POLYGON
   } PhysicsShapeType;
-  
+
   typedef struct Matrix2x2 {
     float m00;
     float m01;
@@ -622,7 +622,7 @@ ffi.cdef [[
     Matrix2x2 transform;
     PolygonData vertexData;
   } PhysicsShape;
-  
+
   typedef struct PhysicsBodyData {
     unsigned int id;
     bool enabled;
