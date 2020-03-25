@@ -23,7 +23,6 @@ function raylua.repl()
   while true do
     io.write "> "
     local line = io.read "l"
-
     local f, err = loadstring(line)
 
     if f then
@@ -43,18 +42,19 @@ if raylua.loadfile then
   -- Change the second loader to load files using raylua.loadfile
   package.loaders[2] = function (name)
     for path in package.path:gmatch "([^;]+);?" do
+      name = name:gsub("%.", "/")
       path = path:gsub("?", name)
 
       local content, err = raylua.loadfile(path)
       if content then
-        local f, err = load(content)
+        local f, err = load(content, path)
         assert(f, err)
 
         return f
       end
     end
 
-    return nil
+    return
   end
 
   print "[RAYLUA] Load main.lua from payload."
@@ -67,7 +67,7 @@ if raylua.loadfile then
 end
 
 if arg[1] then
-  dofile()
+  dofile(arg[1])
   return
 end
 

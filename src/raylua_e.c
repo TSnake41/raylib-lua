@@ -38,23 +38,23 @@ int raylua_loadfile(lua_State *L)
 
   int index = mz_zip_reader_locate_file(&zip_file, path, NULL, 0);
   if (index == -1) {
-    lua_pushfstring(L, "%s: File not found.", path);
     lua_pushnil(L);
+    lua_pushfstring(L, "%s: File not found.", path);
     return 2;
   }
 
   mz_zip_archive_file_stat stat;
   if (!mz_zip_reader_file_stat(&zip_file, index, &stat)) {
-    lua_pushfstring(L, "%s: Can't get file information.", path);
     lua_pushnil(L);
+    lua_pushfstring(L, "%s: Can't get file information.", path);
     return 2;
   }
 
   size_t size = stat.m_uncomp_size;
   char *buffer = malloc(size + 1);
   if (buffer == NULL) {
-    lua_pushfstring(L, "%s: Can't allocate file buffer.", path);
     lua_pushnil(L);
+    lua_pushfstring(L, "%s: Can't allocate file buffer.", path);
     return 2;
   }
   buffer[size] = '\0';
