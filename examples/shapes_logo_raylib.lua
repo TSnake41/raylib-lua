@@ -1,11 +1,9 @@
 local ffi = require "ffi"
 local lua_color =	ffi.new("Color", 3, 3, 128, 255)
 
-rl.SetConfigFlags(rl.FLAG_VSYNC_HINT)
-rl.SetTargetFPS(60)
-
 local width, height = 800, 450
 
+rl.SetConfigFlags(rl.FLAG_VSYNC_HINT)
 rl.InitWindow(800, 450, "raylib [shapes] example - basic shapes drawing")
 
 while not rl.WindowShouldClose() do

@@ -5,7 +5,7 @@ local screenHeight = 450
 
 rl.SetConfigFlags(rl.FLAG_MSAA_4X_HINT)
 
-rl.InitWindow(screenWidth, screenHeight, "Physac [raylib-lua] - Physics demo")
+rl.InitWindow(screenWidth, screenHeight, "Physac [raylua] - Physics demo")
 local logoX = screenWidth - rl.MeasureText("Physac", 30) - 10
 local logoY = 15
 
