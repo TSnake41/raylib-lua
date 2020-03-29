@@ -52,7 +52,7 @@ print ">> Raylua builder <<"
 if #arg == 0 then
   print "TODO: Improve builder usage."
 
-  print "Usage: raylua_e <input>"
+  print "Usage: raylua_e <input> [output]"
   return
 end
 
@@ -69,17 +69,19 @@ end
 print("Self is " .. self_path)
 
 if t == "directory" then
-  local path = input_path
+  local output = arg[2]
 
-  if ffi.os == "Windows" then
-    path = path .. ".exe"
-  else
-    path = path .. ".elf"
+  if not output then
+    if ffi.os == "Windows" then
+      output = output .. ".exe"
+    else
+      output = output .. ".elf"
+    end
   end
 
-  print("Building " .. path)
+  print("Building " .. output)
 
-  local builder = builder_new(self_path, path)
+  local builder = builder_new(self_path, output)
   assert(builder, "Can't initialize builder")
 
   local have_main = false
