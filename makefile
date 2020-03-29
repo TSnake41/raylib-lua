@@ -11,6 +11,8 @@ MODULES := rlgl physac
 
 ifeq ($(OS),Windows_NT)
 	LDFLAGS += -lopengl32 -lgdi32 -lwinmm -static
+else
+	LDFLAGS += -ldl -lX11 -lpthread
 endif
 
 BOOT_FILES := src/raylib.lua src/raylua.lua
