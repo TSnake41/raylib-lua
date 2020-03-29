@@ -17,8 +17,10 @@
 print "[RAYLUA] Raylua boot script"
 
 local ffi = require "ffi"
-local raylib = {}
-local raylib_so = ffi.C
+local C = ffi.C
+
+rl = {}
+setmetatable(rl, rl)
 
 -- structs definition
 ffi.cdef [[
@@ -664,7 +666,7 @@ do
 
   while entries[i].name ~= NULL do
     local name, proto = ffi.string(entries[i].name), ffi.string(entries[i].proto)
-    raylib[name] = ffi.cast(proto, entries[i].ptr)
+    rl[name] = ffi.cast(proto, entries[i].ptr)
     i = i + 1
   end
 
@@ -673,53 +675,49 @@ end
 
 -- colors
 local function new_color(r, g, b, a)
-  local c = ffi.new("Color")
-  c.r = r
-  c.g = g
-  c.b = b
-  c.a = a
-  return c
+  return ffi.new("Color", r, g, b, a)
 end
 
-raylib.LIGHTGRAY = new_color(200, 200, 200, 255)
-raylib.GRAY = new_color(130, 130, 130, 255)
-raylib.DARKGRAY = new_color(80, 80, 80, 255)
-raylib.YELLOW = new_color(253, 249, 0, 255)
-raylib.GOLD = new_color(255, 203, 0, 255)
-raylib.ORANGE = new_color(255, 161, 0, 255)
-raylib.PINK = new_color(255, 109, 194, 255)
-raylib.RED = new_color(230, 41, 55, 255)
-raylib.MAROON = new_color(190, 33, 55, 255)
-raylib.GREEN = new_color(0, 228, 48, 255)
-raylib.LIME = new_color(0, 158, 47, 255)
-raylib.DARKGREEN = new_color(0, 117, 44, 255)
-raylib.SKYBLUE = new_color(102, 191, 255, 255)
-raylib.BLUE = new_color(0, 121, 241, 255)
-raylib.DARKBLUE = new_color(0, 82, 172, 255)
-raylib.PURPLE = new_color(200, 122, 255, 255)
-raylib.VIOLET = new_color(135, 60, 190, 255)
-raylib.DARKPURPLE = new_color(112, 31, 126, 255)
-raylib.BEIGE = new_color(211, 176, 131, 255)
-raylib.BROWN = new_color(127, 106, 79, 255)
-raylib.DARKBROWN = new_color(76, 63, 47, 255)
-raylib.WHITE = new_color(255, 255, 255, 255)
-raylib.BLACK = new_color(0, 0, 0, 255)
-raylib.BLANK = new_color(0, 0, 0, 0)
-raylib.MAGENTA = new_color(255, 0, 255, 255)
-raylib.RAYWHITE = new_color(245, 245, 245, 255)
+rl.LIGHTGRAY = new_color(200, 200, 200, 255)
+rl.GRAY = new_color(130, 130, 130, 255)
+rl.DARKGRAY = new_color(80, 80, 80, 255)
+rl.YELLOW = new_color(253, 249, 0, 255)
+rl.GOLD = new_color(255, 203, 0, 255)
+rl.ORANGE = new_color(255, 161, 0, 255)
+rl.PINK = new_color(255, 109, 194, 255)
+rl.RED = new_color(230, 41, 55, 255)
+rl.MAROON = new_color(190, 33, 55, 255)
+rl.GREEN = new_color(0, 228, 48, 255)
+rl.LIME = new_color(0, 158, 47, 255)
+rl.DARKGREEN = new_color(0, 117, 44, 255)
+rl.SKYBLUE = new_color(102, 191, 255, 255)
+rl.BLUE = new_color(0, 121, 241, 255)
+rl.DARKBLUE = new_color(0, 82, 172, 255)
+rl.PURPLE = new_color(200, 122, 255, 255)
+rl.VIOLET = new_color(135, 60, 190, 255)
+rl.DARKPURPLE = new_color(112, 31, 126, 255)
+rl.BEIGE = new_color(211, 176, 131, 255)
+rl.BROWN = new_color(127, 106, 79, 255)
+rl.DARKBROWN = new_color(76, 63, 47, 255)
+rl.WHITE = new_color(255, 255, 255, 255)
+rl.BLACK = new_color(0, 0, 0, 255)
+rl.BLANK = new_color(0, 0, 0, 0)
+rl.MAGENTA = new_color(255, 0, 255, 255)
+rl.RAYWHITE = new_color(245, 245, 245, 255)
 
-raylib.LOC_MAP_DIFFUSE = raylib_so.LOC_MAP_ALBEDO
-raylib.LOC_MAP_SPECULAR = raylib_so.LOC_MAP_METALNESS
-raylib.MAP_DIFFUSE = raylib_so.MAP_ALBEDO
-raylib.MAP_SPECULAR = raylib_so.MAP_METALNESS
+rl.LOC_MAP_DIFFUSE = C.LOC_MAP_ALBEDO
+rl.LOC_MAP_SPECULAR = C.LOC_MAP_METALNESS
+rl.MAP_DIFFUSE = C.MAP_ALBEDO
+rl.MAP_SPECULAR = C.MAP_METALNESS
 
-raylib.__index = function (self, key)
-  return raylib_so[key]
+function rl.ref(obj)
+  return ffi.cast(ffi.typeof("$ *", obj), obj)
 end
 
-raylib.__newindex = function ()
-  error "raylib table is readonly"
+rl.__index = function (self, key)
+  return C[key]
 end
 
-rl = setmetatable(raylib, raylib)
-raylib = rl
+rl.__newindex = function ()
+  error "rl table is readonly"
+end
