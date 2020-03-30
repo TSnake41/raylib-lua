@@ -72,10 +72,12 @@ if t == "directory" then
   local output = arg[2]
 
   if not output then
+    output = input_path
+
     if ffi.os == "Windows" then
-      output = output .. ".exe"
+      output = input_path .. ".exe"
     else
-      output = output .. ".elf"
+      output = input_path .. ".elf"
     end
   end
 
@@ -146,7 +148,7 @@ elseif t == "file" then
     local source = assert(io.open(self_path, "rb"), "Can't open self file.")
     local input = assert(io.open(input_path, "rb"), "Can't open zip file.")
 
-    append_file_offset(output, source, input)
+    append_file_offset(dest, source, input)
 
     dest:close()
     source:close()
