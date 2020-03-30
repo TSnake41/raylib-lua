@@ -36,7 +36,7 @@ Using `require` in embedded mode works as expected but `dofile` and `loadfile`
 may not work as expected as these functions load from a external file rather
 than from `package` loaders.
 
-### Building / Updating Raylib / Contribution
+### Building / Updating raylib / Contribution
 
 To build raylib-lua from source, you need to take care that submodules are
 imported, if not or you are unsure :
@@ -46,11 +46,13 @@ git submodule init
 git submodule update
 ```
 
-A Lua working interpreter is needed, by default luajit is used, to override it,
-edit LUA variable in `makefile`.
-
 This make take some time depending on network bandwidth.
 Then, raylib-lua should build as expected using `make` tool with a working C compiler.
+
+A working Lua interpreter is needed, by default the luajit interpreter built
+along with `libluajit.a` is used. In case of cross-compiling, you may want to
+change which Lua interpreter is used to a one your system supports.
+You can specify the interpreter with the `LUA` variable.
 
 If you need to update raylib binding, there are few tasks to do :
  - update `tools/api.h` functions signatures, keep file clean with exactly one function per line.
@@ -73,19 +75,21 @@ Then use ffi.new to make a struct, e.g `ffi.new("Color", r, g, b, a)`
 
 #### Note concerning pointers
 
-As LuaJIT doesn't support pointer dereferencing, you need to build a
-single-element array, e.g
+You can use `rl.ref` to build a pointer from a struct cdata.
+This functions only work struct cdata, in case of primitive cdata, you
+need to make a array and pass it directly.
+
+e.g :
 ```lua
-local image = ffi.new("Image[1]")
+local int_ptr = ffi.new "int [1]"
+local data = tostring(rl.LoadFileData("test.txt", int_ptr))
+local count = tonumber(int_ptr[0])
 ```
-In this case, to access the element of `image`, you need to do `image[0]`.
-The pointer you can pass is `image`.
 
 ### Example
 
 ```lua
 rl.SetConfigFlags(rl.FLAG_VSYNC_HINT)
-rl.SetTargetFPS(60)
 
 rl.InitWindow(800, 450, "raylib [core] example - basic window")
 
@@ -103,9 +107,9 @@ rl.CloseWindow()
 
 ### Compatibility
 
-raylib-lua (raylua) is currently compatible with raylib v3.0 API.
-There is currently no support for rlgl and raygui, but it may be considered
-in the future.
+raylib-lua (raylua) currently uses raylib 3.0 API.
+physac and rlgl modules are built-in by default.
+There is currently no support for raygui but it may be considered in the future.
 
 #### Global API
 
@@ -114,7 +118,9 @@ You can make raylib-lua (raylua) partially compatible with
 [raylib-lua-sol](https://github.com/RobLoach/raylib-lua-sol) with global API by
 adding `setmetatable(_G, { __index = rl })` on the first line.
 
-This will allow direct use of raylib binding through globals instead of `rl` table.
+This will allow direct use of the raylib binding through globals instead of `rl` table.
+
+You have an example of this in `lua_global_api.lua`.
 
 ### Other bindings
 

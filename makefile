@@ -2,7 +2,7 @@ CFLAGS := -O2 -s
 LDFLAGS := -O2 -s -lm
 
 AR ?= ar
-LUA ?= luajit
+LUA ?= luajit/src/luajit
 
 CFLAGS += -Iluajit/src -Iraylib/src
 LDFLAGS += -Lluajit/src -lluajit -Lraylib/src -lraylib
