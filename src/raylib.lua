@@ -265,12 +265,12 @@ ffi.cdef [[
 
   typedef enum {
     FLAG_RESERVED = 1,
-    FLAG_FULLSCREEN_MODE= 2,
+    FLAG_FULLSCREEN_MODE = 2,
     FLAG_WINDOW_RESIZABLE = 4,
     FLAG_WINDOW_UNDECORATED = 8,
     FLAG_WINDOW_TRANSPARENT = 16,
-    FLAG_WINDOW_HIDDEN= 128,
-    FLAG_WINDOW_ALWAYS_RUN= 256,
+    FLAG_WINDOW_HIDDEN = 128,
+    FLAG_WINDOW_ALWAYS_RUN = 256,
     FLAG_MSAA_4X_HINT = 32,
     FLAG_VSYNC_HINT = 64
   } ConfigFlag;
@@ -287,10 +287,10 @@ ffi.cdef [[
   } TraceLogType;
 
   typedef enum {
-    KEY_APOSTROPHE= 39,
+    KEY_APOSTROPHE = 39,
     KEY_COMMA = 44,
     KEY_MINUS = 45,
-    KEY_PERIOD= 46,
+    KEY_PERIOD = 46,
     KEY_SLASH = 47,
     KEY_ZERO = 48,
     KEY_ONE = 49,
@@ -331,7 +331,7 @@ ffi.cdef [[
     KEY_Y = 89,
     KEY_Z = 90,
     KEY_SPACE = 32,
-    KEY_ESCAPE= 256,
+    KEY_ESCAPE = 256,
     KEY_ENTER = 257,
     KEY_TAB = 258,
     KEY_BACKSPACE = 259,
@@ -347,8 +347,8 @@ ffi.cdef [[
     KEY_END = 269,
     KEY_CAPS_LOCK = 280,
     KEY_SCROLL_LOCK = 281,
-    KEY_NUM_LOCK= 282,
-    KEY_PRINT_SCREEN= 283,
+    KEY_NUM_LOCK = 282,
+    KEY_PRINT_SCREEN = 283,
     KEY_PAUSE = 284,
     KEY_F1 = 290,
     KEY_F2 = 291,
@@ -362,10 +362,10 @@ ffi.cdef [[
     KEY_F10 = 299,
     KEY_F11 = 300,
     KEY_F12 = 301,
-    KEY_LEFT_SHIFT= 340,
-    KEY_LEFT_CONTROL= 341,
-    KEY_LEFT_ALT= 342,
-    KEY_LEFT_SUPER= 343,
+    KEY_LEFT_SHIFT = 340,
+    KEY_LEFT_CONTROL = 341,
+    KEY_LEFT_ALT = 342,
+    KEY_LEFT_SUPER = 343,
     KEY_RIGHT_SHIFT = 344,
     KEY_RIGHT_CONTROL = 345,
     KEY_RIGHT_ALT = 346,
@@ -385,13 +385,13 @@ ffi.cdef [[
     KEY_KP_7 = 327,
     KEY_KP_8 = 328,
     KEY_KP_9 = 329,
-    KEY_KP_DECIMAL= 330,
+    KEY_KP_DECIMAL = 330,
     KEY_KP_DIVIDE = 331,
     KEY_KP_MULTIPLY = 332,
     KEY_KP_SUBTRACT = 333,
-    KEY_KP_ADD= 334,
-    KEY_KP_ENTER= 335,
-    KEY_KP_EQUAL= 336
+    KEY_KP_ADD = 334,
+    KEY_KP_ENTER = 335,
+    KEY_KP_EQUAL = 336
   } KeyboardKey;
 
   typedef enum {
@@ -403,7 +403,7 @@ ffi.cdef [[
 
   typedef enum {
     MOUSE_LEFT_BUTTON = 0,
-    MOUSE_RIGHT_BUTTON= 1,
+    MOUSE_RIGHT_BUTTON = 1,
     MOUSE_MIDDLE_BUTTON = 2
   } MouseButton;
 
@@ -486,9 +486,9 @@ ffi.cdef [[
   } ShaderUniformDataType;
 
   typedef enum {
-    MAP_ALBEDO= 0,
+    MAP_ALBEDO = 0,
     MAP_METALNESS = 1,
-    MAP_NORMAL= 2,
+    MAP_NORMAL = 2,
     MAP_ROUGHNESS = 3,
     MAP_OCCLUSION,
     MAP_EMISSION,
@@ -564,13 +564,13 @@ ffi.cdef [[
     GESTURE_NONE = 0,
     GESTURE_TAP = 1,
     GESTURE_DOUBLETAP = 2,
-    GESTURE_HOLD= 4,
-    GESTURE_DRAG= 8,
+    GESTURE_HOLD = 4,
+    GESTURE_DRAG = 8,
     GESTURE_SWIPE_RIGHT = 16,
-    GESTURE_SWIPE_LEFT= 32,
-    GESTURE_SWIPE_UP= 64,
-    GESTURE_SWIPE_DOWN= 128,
-    GESTURE_PINCH_IN= 256,
+    GESTURE_SWIPE_LEFT = 32,
+    GESTURE_SWIPE_UP = 64,
+    GESTURE_SWIPE_DOWN = 128,
+    GESTURE_PINCH_IN = 256,
     GESTURE_PINCH_OUT = 512
   } GestureType;
 
