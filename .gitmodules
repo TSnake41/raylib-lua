@@ -5,3 +5,7 @@ url = https://github.com/LuaJIT/LuaJIT
 [submodule "raylib"]
 path = raylib
 url = https://github.com/raysan5/raylib
+
+[submodule "ragui"]
+path = raygui
+url = https://github.com/raysan5/raygui
