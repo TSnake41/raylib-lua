@@ -23,7 +23,6 @@
 
 #include <raymath.h>
 #include <easings.h>
-#include <camera.h>
 #include <gestures.h>
 
 #define RAYGUI_SUPPORT_ICONS

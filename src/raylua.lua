@@ -16,8 +16,10 @@
 
 local load = loadstring
 
+raylua.version = "v3.0a"
+
 function raylua.repl()
-  print "> raylua v3.0a <"
+  print("> raylua " .. raylua.version .. " <")
   print "Type 'q' to quit."
   print ""
 

@@ -7,7 +7,7 @@ LUA ?= luajit/src/luajit
 CFLAGS += -Iluajit/src -Iraylib/src -Iraygui/src
 LDFLAGS += -Lluajit/src -lluajit -Lraylib/src -lraylib
 
-MODULES := raymath rlgl camera easings gestures physac raygui
+MODULES := raymath rlgl easings gestures physac raygui
 
 ifeq ($(OS),Windows_NT)
 	LDFLAGS += -lopengl32 -lgdi32 -lwinmm -static
