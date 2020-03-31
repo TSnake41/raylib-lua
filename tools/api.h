@@ -230,7 +230,6 @@ void ImageDrawLine(Image *dst, int startPosX, int startPosY, int endPosX, int en
 void ImageDrawLineV(Image *dst, Vector2 start, Vector2 end, Color color);
 void ImageDrawText(Image *dst, Vector2 position, const char *text, int fontSize, Color color);
 void ImageDrawTextEx(Image *dst, Vector2 position, Font font, const char *text, float fontSize, float spacing, Color color);
-void ImageDrawTextEx(Image *dst, Vector2 position, Font font, const char *text, float fontSize, float spacing, Color color);
 void ImageFlipVertical(Image *image);
 void ImageFlipHorizontal(Image *image);
 void ImageRotateCW(Image *image);
@@ -258,8 +257,6 @@ void DrawTextureEx(Texture2D texture, Vector2 position, float rotation, float sc
 void DrawTextureRec(Texture2D texture, Rectangle sourceRec, Vector2 position, Color tint);
 void DrawTextureQuad(Texture2D texture, Vector2 tiling, Vector2 offset, Rectangle quad, Color tint);
 void DrawTexturePro(Texture2D texture, Rectangle sourceRec, Rectangle destRec, Vector2 origin, float rotation, Color tint);
-void DrawTexturePro(Texture2D texture, Rectangle sourceRec, Rectangle destRec, Vector2 origin, float rotation, Color tint);
-void DrawTextureNPatch(Texture2D texture, NPatchInfo nPatchInfo, Rectangle destRec, Vector2 origin, float rotation, Color tint);
 void DrawTextureNPatch(Texture2D texture, NPatchInfo nPatchInfo, Rectangle destRec, Vector2 origin, float rotation, Color tint);
 Font GetFontDefault(void);
 Font LoadFont(const char *fileName);
@@ -352,7 +349,6 @@ void DrawBillboardRec(Camera camera, Texture2D texture, Rectangle sourceRec, Vec
 bool CheckCollisionSpheres(Vector3 centerA, float radiusA, Vector3 centerB, float radiusB);
 bool CheckCollisionBoxes(BoundingBox box1, BoundingBox box2);
 bool CheckCollisionBoxSphere(BoundingBox box, Vector3 center, float radius);
-bool CheckCollisionRaySphere(Ray ray, Vector3 center, float radius);
 bool CheckCollisionRaySphereEx(Ray ray, Vector3 center, float radius, Vector3 *collisionPoint);
 bool CheckCollisionRayBox(Ray ray, BoundingBox box);
 RayHitInfo GetCollisionRayModel(Ray ray, Model model);
