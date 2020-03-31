@@ -14,7 +14,7 @@
   CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 ]]
 
-print "[RAYLUA] Raylua boot script"
+print "RAYLUA: Raylua boot script"
 
 local ffi = require "ffi"
 local C = ffi.C
@@ -822,15 +822,20 @@ do
   local i = ffi.new("size_t", 0)
   local NULL = ffi.new("void *", nil)
 
-  print "[RAYLUA] Loading FFI binding entries."
+  print "RAYLUA: Loading FFI binding entries."
 
   while entries[i].name ~= NULL do
     local name, proto = ffi.string(entries[i].name), ffi.string(entries[i].proto)
+
+    if rl[name] then
+      print("RAYLUA: Warn: Duplicated FFI entry : " .. name)
+    end
+
     rl[name] = ffi.cast(proto, entries[i].ptr)
     i = i + 1
   end
 
-  print("[RAYLUA] Loaded " .. tonumber(i) .. " FFI entries.")
+  print("RAYLUA: Loaded " .. tonumber(i) .. " FFI entries.")
 end
 
 -- colors

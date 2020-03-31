@@ -30,7 +30,7 @@ int main(int argc, const char **argv)
   luaL_openlibs(L);
 
   if (L == NULL)
-    puts("[RAYLUA] Unable to initialize Lua.");
+    puts("RAYLUA: Unable to initialize Lua.");
 
   lua_newtable(L);
 

@@ -77,7 +77,7 @@ static bool raylua_init_payload(const char *path, bool direct)
     FILE *f = fopen(path, "rb");
 
     if (f == NULL) {
-      puts("[RAYLUA] Can't load self.");
+      puts("RAYLUA: Can't load self.");
       return false;
     } else {
       /* Read offset at the end of the file */
@@ -101,7 +101,7 @@ int main(int argc, const char **argv)
   luaL_openlibs(L);
 
   if (L == NULL)
-    puts("[RAYLUA] Unable to initialize Lua.");
+    puts("RAYLUA: Unable to initialize Lua.");
 
   /* Populate arg. */
   lua_newtable(L);
@@ -126,16 +126,16 @@ int main(int argc, const char **argv)
     strcpy(new_path, path);
     strcpy(new_path + path_len, ".exe");
 
-    printf("[RAYLUA] Translated self executable name from %s to %s.\n", path, new_path);
+    printf("RAYLUA: Translated self executable name from %s to %s.\n", path, new_path);
     path = new_path;
   }
   #endif
 
   if (!raylua_init_payload(path, false)) {
     #ifdef RAYLUA_NO_BUILDER
-    puts("[RAYLUA] No payload.");
+    puts("RAYLUA: No payload.");
     #else
-    puts("[RAYLUA] No payload, use internal builder.");
+    puts("RAYLUA: No payload, use internal builder.");
     raylua_builder_boot(L);
     #endif
   } else {

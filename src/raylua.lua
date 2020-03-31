@@ -17,12 +17,17 @@
 local load = loadstring
 
 function raylua.repl()
-  print ">> raylua WIP repl <<"
+  print "> raylua v3.0a <"
+  print "Type 'q' to quit."
   print ""
 
   while true do
     io.write "> "
     local line = io.read "l"
+    if line == "q" then
+      break
+    end
+
     local f, err = loadstring(line)
 
     if f then
@@ -57,7 +62,7 @@ if raylua.loadfile then
     return
   end
 
-  print "[RAYLUA] Load main.lua from payload."
+  print "RAYLUA: Load main.lua from payload."
   require "main"
 
   if not raylua.isrepl then
@@ -72,6 +77,6 @@ if arg[1] then
 end
 
 if raylua.isrepl then
-  print "[RAYLUA] Go to repl."
+  print "RAYLUA: Go to repl."
   raylua.repl()
 end

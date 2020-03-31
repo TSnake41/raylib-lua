@@ -48,10 +48,8 @@ local append_file_offset = ffi.cast("void (*)(FILE *, FILE *, FILE *)", append_f
 local self_path = arg[0]
 local input_path = arg[1]
 
-print ">> Raylua builder <<"
+print "BUILDER: Initialized builder"
 if #arg == 0 then
-  print "TODO: Improve builder usage."
-
   print "Usage: raylua_e <input> [output]"
   return
 end
@@ -66,7 +64,7 @@ if ffi.os == "Windows" and self_path:sub("-4") ~= ".exe" then
   self_path = self_path .. ".exe"
 end
 
-print("Self is " .. self_path)
+print("BUILDER: Self is " .. self_path)
 
 if t == "directory" then
   local output = arg[2]
@@ -81,7 +79,7 @@ if t == "directory" then
     end
   end
 
-  print("Building " .. output)
+  print("BUILDER: Building " .. output)
 
   local builder = builder_new(self_path, output)
   assert(builder, "Can't initialize builder")
@@ -108,13 +106,13 @@ if t == "directory" then
         local t = get_type(full_file_path)
 
         if t == "file" then
-          print("Adding file " .. partial_file_path)
+          print("BUILDER:  +> " .. partial_file_path)
           builder_add(builder, full_file_path, partial_file_path)
         elseif t == "directory" then
-          print("Adding directory " .. partial_file_path .. "/")
+          print("BUILDER:  /> " .. partial_file_path .. "/")
           add_dir(root, partial_file_path)
         else
-          print("Unknown file type " .. partial_file_path)
+          print("BUILDER:  ?> " .. partial_file_path)
         end
       end
     end
@@ -123,7 +121,7 @@ if t == "directory" then
   add_dir(input_path, nil)
 
   if not have_main then
-    print("WARN: main.lua is missing, your executable may not run")
+    print("BUILDER: WARN: main.lua is missing, your executable may not run")
   end
 
   builder_close(builder)
@@ -139,10 +137,10 @@ elseif t == "file" then
     path = path .. ".elf"
   end
 
-  print("Building " .. path)
+  print("BUILDER: Building " .. path)
 
   if ext == ".zip" then
-    print "Build from zip file."
+    print "BUILDER: Building from zip file."
 
     local dest = assert(io.open(path, "wb"), "Can't open destination file.")
     local source = assert(io.open(self_path, "rb"), "Can't open self file.")
@@ -154,7 +152,7 @@ elseif t == "file" then
     source:close()
     input:close()
   elseif ext == ".lua" then
-    print "Build from lua file."
+    print "BUILDER: Building from lua file."
 
     local builder = builder_new(self_path, path)
     builder_add(builder, input_path, "main.lua")
@@ -162,4 +160,4 @@ elseif t == "file" then
   end
 end
 
-print "Done"
+print "BUILDER: Done"

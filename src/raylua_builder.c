@@ -126,7 +126,7 @@ static int raylua_builder_add(lua_State *L)
 
   if (!mz_zip_writer_add_file(&builder->zip, dest, path, NULL, 0,
     MZ_BEST_COMPRESSION))
-      printf("Unable to write %s (%s)\n", dest, path);
+      printf("BUILDER:     > Unable to write %s (%s)\n", dest, path);
 
   return 0;
 }

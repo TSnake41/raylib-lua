@@ -21,6 +21,16 @@
 #include <raylib.h>
 #include <rlgl.h>
 
+#include <raymath.h>
+#include <easings.h>
+#include <camera.h>
+#include <gestures.h>
+
+#define RAYGUI_SUPPORT_ICONS
+#define RAYGUI_IMPLEMENTATION
+#define RAYGUI_STATIC
+#include <raygui.h>
+
 #define PHYSAC_IMPLEMENTATION
 #define PHYSAC_NO_THREADS
 #include <physac.h>
