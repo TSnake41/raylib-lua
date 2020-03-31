@@ -4,10 +4,10 @@ LDFLAGS := -O2 -s -lm
 AR ?= ar
 LUA ?= luajit/src/luajit
 
-CFLAGS += -Iluajit/src -Iraylib/src
+CFLAGS += -Iluajit/src -Iraylib/src -Iraygui/src
 LDFLAGS += -Lluajit/src -lluajit -Lraylib/src -lraylib
 
-MODULES := rlgl physac
+MODULES := raymath rlgl camera easings gestures physac raygui
 
 ifeq ($(OS),Windows_NT)
 	LDFLAGS += -lopengl32 -lgdi32 -lwinmm -static
@@ -53,7 +53,8 @@ src/autogen/builder.c: src/raylua_builder.lua
 	$(LUA) tools/lua2str.lua $@ raylua_builder_lua $^
 
 clean:
-	rm -rf raylua_s raylua_e src/raylua_e.o src/raylua_s.o src/raylua.o src/autogen/*.c src/lib/miniz.o
+	rm -rf raylua_s raylua_e src/raylua_e.o src/raylua_s.o src/raylua.o \
+		src/raylua_builder.o src/autogen/*.c src/lib/miniz.o
 	$(MAKE) -C luajit clean
 	$(MAKE) -C raylib/src clean
 

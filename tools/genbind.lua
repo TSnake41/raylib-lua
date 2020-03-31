@@ -13,7 +13,8 @@ local structs = {
   "Material", "Model", "Transform", "BoneInfo", "ModelAnimation",
   "Ray", "RayHitInfo", "BoundingBox", "Wave", "Sound", "Music",
   "AudioStream", "VrDeviceInfo", "Camera3D", "RenderTexture2D",
-  "TextureCubemap", "TraceLogCallback", "PhysicsBody"
+  "TextureCubemap", "TraceLogCallback", "PhysicsBody",
+  "GestureEvent", "GuiStyle", "GuiTextBoxState"
 }
 
 local functions = {}

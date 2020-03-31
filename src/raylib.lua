@@ -596,6 +596,12 @@ ffi.cdef [[
   typedef void (*TraceLogCallback)(int logType, const char *text, va_list args);
 ]]
 
+-- raymath cdef
+ffi.cdef [[
+  typedef struct float3 { float v[3]; } float3;
+  typedef struct float16 { float v[16]; } float16;
+]]
+
 -- Physac cdef
 ffi.cdef [[
   typedef struct PhysicsBodyData *PhysicsBody;
@@ -646,6 +652,160 @@ ffi.cdef [[
     bool freezeOrient;
     PhysicsShape shape;
   } PhysicsBodyData;
+]]
+
+-- gestures cdef
+ffi.cdef [[
+  typedef enum { TOUCH_UP, TOUCH_DOWN, TOUCH_MOVE } TouchAction;
+
+  typedef struct {
+    int touchAction;
+    int pointCount;
+    int pointerId[4];
+    Vector2 position[4];
+  } GestureEvent;
+]]
+
+-- raygui cdef
+ffi.cdef [[
+  typedef struct GuiStyleProp {
+    unsigned short controlId;
+    unsigned short propertyId;
+    int propertyValue;
+  } GuiStyleProp;
+
+  typedef enum {
+    GUI_STATE_NORMAL = 0,
+    GUI_STATE_FOCUSED,
+    GUI_STATE_PRESSED,
+    GUI_STATE_DISABLED,
+  } GuiControlState;
+
+  typedef enum {
+    GUI_TEXT_ALIGN_LEFT = 0,
+    GUI_TEXT_ALIGN_CENTER,
+    GUI_TEXT_ALIGN_RIGHT,
+  } GuiTextAlignment;
+
+  typedef enum {
+    DEFAULT = 0,
+    LABEL,
+    BUTTON,
+    TOGGLE,
+    SLIDER,
+    PROGRESSBAR,
+    CHECKBOX,
+    COMBOBOX,
+    DROPDOWNBOX,
+    TEXTBOX,
+    VALUEBOX,
+    SPINNER,
+    LISTVIEW,
+    COLORPICKER,
+    SCROLLBAR,
+    STATUSBAR
+  } GuiControl;
+
+  typedef enum {
+    BORDER_COLOR_NORMAL = 0,
+    BASE_COLOR_NORMAL,
+    TEXT_COLOR_NORMAL,
+    BORDER_COLOR_FOCUSED,
+    BASE_COLOR_FOCUSED,
+    TEXT_COLOR_FOCUSED,
+    BORDER_COLOR_PRESSED,
+    BASE_COLOR_PRESSED,
+    TEXT_COLOR_PRESSED,
+    BORDER_COLOR_DISABLED,
+    BASE_COLOR_DISABLED,
+    TEXT_COLOR_DISABLED,
+    BORDER_WIDTH,
+    TEXT_PADDING,
+    TEXT_ALIGNMENT,
+    RESERVED
+  } GuiControlProperty;
+
+  typedef enum {
+    TEXT_SIZE = 16,
+    TEXT_SPACING,
+    LINE_COLOR,
+    BACKGROUND_COLOR,
+  } GuiDefaultProperty;
+
+  typedef enum {
+    GROUP_PADDING = 16,
+  } GuiToggleProperty;
+
+  typedef enum {
+    SLIDER_WIDTH = 16,
+    SLIDER_PADDING
+  } GuiSliderProperty;
+
+  typedef enum {
+    PROGRESS_PADDING = 16,
+  } GuiProgressBarProperty;
+
+  typedef enum {
+    CHECK_PADDING = 16
+  } GuiCheckBoxProperty;
+
+  typedef enum {
+    COMBO_BUTTON_WIDTH = 16,
+    COMBO_BUTTON_PADDING
+  } GuiComboBoxProperty;
+
+  typedef enum {
+    ARROW_PADDING = 16,
+    DROPDOWN_ITEMS_PADDING
+  } GuiDropdownBoxProperty;
+
+  typedef enum {
+    TEXT_INNER_PADDING = 16,
+    TEXT_LINES_PADDING,
+    COLOR_SELECTED_FG,
+    COLOR_SELECTED_BG
+  } GuiTextBoxProperty;
+
+  typedef enum {
+    SPIN_BUTTON_WIDTH = 16,
+    SPIN_BUTTON_PADDING,
+  } GuiSpinnerProperty;
+
+  typedef enum {
+    ARROWS_SIZE = 16,
+    ARROWS_VISIBLE,
+    SCROLL_SLIDER_PADDING,
+    SCROLL_SLIDER_SIZE,
+    SCROLL_PADDING,
+    SCROLL_SPEED,
+  } GuiScrollBarProperty;
+
+  typedef enum {
+    SCROLLBAR_LEFT_SIDE = 0,
+    SCROLLBAR_RIGHT_SIDE
+  } GuiScrollBarSide;
+
+  typedef enum {
+    LIST_ITEMS_HEIGHT = 16,
+    LIST_ITEMS_PADDING,
+    SCROLLBAR_WIDTH,
+    SCROLLBAR_SIDE,
+  } GuiListViewProperty;
+
+  typedef enum {
+    COLOR_SELECTOR_SIZE = 16,
+    HUEBAR_WIDTH,
+    HUEBAR_PADDING,
+    HUEBAR_SELECTOR_HEIGHT,
+    HUEBAR_SELECTOR_OVERFLOW
+  } GuiColorPickerProperty;
+
+  typedef struct GuiTextBoxState {
+    int cursor;
+    int start;
+    int index;
+    int select;
+  } GuiTextBoxState;
 ]]
 
 -- Load bind entry
