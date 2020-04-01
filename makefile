@@ -5,12 +5,14 @@ AR ?= ar
 LUA ?= luajit/src/luajit
 
 CFLAGS += -Iluajit/src -Iraylib/src -Iraygui/src
-LDFLAGS += -Lluajit/src -lluajit -Lraylib/src -lraylib
+LDFLAGS += -Lluajit/src -Lraylib/src -lraylib
 
 MODULES := raymath rlgl easings gestures physac raygui
 
 ifeq ($(OS),Windows_NT)
 	LDFLAGS += -lopengl32 -lgdi32 -lwinmm -static
+else ifeq ($(shell uname),Darwin)
+	LDFLAGS += -framework CoreVideo -framework IOKit -framework Cocoa -framework GLUT -framework OpenGL
 else
 	LDFLAGS += -ldl -lX11 -lpthread
 endif
@@ -25,16 +27,16 @@ all: raylua_s raylua_e
 all: raylua_s raylua_e luajit raylib
 
 luajit:
-	$(MAKE) -C luajit amalg BUILDMODE=static
+	$(MAKE) -C luajit amalg BUILDMODE=static MACOSX_DEPLOYMENT_TARGET=10.13
 
 raylib:
 	$(MAKE) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" -C raylib/src
 
 raylua_s: src/raylua.o src/raylua_s.o
-	$(CC) -o $@ $^ $(LDFLAGS)
+	$(CC) -o $@ $^ $(LDFLAGS) luajit/src/libluajit.a
 
 raylua_e: src/raylua.o src/raylua_e.o src/raylua_builder.o src/lib/miniz.o
-	$(CC) -o $@ $^ $(LDFLAGS)
+	$(CC) -o $@ $^ $(LDFLAGS) luajit/src/libluajit.a
 
 raylua.dll: src/raylua.o
 	$(CC) -shared -fPIE -o $@ $^ $(LDFLAGS)
