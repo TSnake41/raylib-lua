@@ -102,6 +102,19 @@ static int raylua_builder_new(lua_State *L)
   return 1;
 }
 
+static int raylua_builder_set_executable(lua_State *L)
+{
+  const char *path = luaL_checkstring(L, -1);
+  printf("BUILDER: Sets '%s' executable.\n", path);
+
+  #ifndef WIN32
+  /* On Windows, there is no need to set a executable flag. */
+  chmod(path, 0777); /* rwx */
+  #endif
+
+  return 0;
+}
+
 static int raylua_builder_close(lua_State *L)
 {
   raylua_builder *builder = lua_touserdata(L, -1);
@@ -192,6 +205,9 @@ int raylua_builder_boot(lua_State *L)
 
   lua_pushcfunction(L, raylua_builder_add);
   lua_setglobal(L, "builder_add");
+
+  lua_pushcfunction(L, raylua_builder_set_executable);
+  lua_setglobal(L, "set_executable");
 
   if (luaL_dostring(L, raylua_builder_lua))
     fputs(luaL_checkstring(L, -1), stderr);

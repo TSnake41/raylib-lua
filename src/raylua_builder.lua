@@ -67,6 +67,8 @@ end
 print("BUILDER: Self is " .. self_path)
 
 if t == "directory" then
+  print "BUILDER: Building from folder."
+
   local output = arg[2]
 
   if not output then
@@ -75,7 +77,7 @@ if t == "directory" then
     if ffi.os == "Windows" then
       output = input_path .. ".exe"
     else
-      output = input_path .. ".elf"
+      output = input_path .. "_out"
     end
   end
 
@@ -125,6 +127,7 @@ if t == "directory" then
   end
 
   builder_close(builder)
+  set_executable(output)
 elseif t == "file" then
   local ext = input_path:sub(-4)
 
@@ -134,7 +137,7 @@ elseif t == "file" then
   if ffi.os == "Windows" then
     path = path .. ".exe"
   else
-    path = path .. ".elf"
+    path = path .. "_out"
   end
 
   print("BUILDER: Building " .. path)
@@ -157,7 +160,11 @@ elseif t == "file" then
     local builder = builder_new(self_path, path)
     builder_add(builder, input_path, "main.lua")
     builder_close(builder)
+  else
+    error "Unknown file type."
   end
+
+  set_executable(path)
 end
 
 print "BUILDER: Done"
