@@ -149,7 +149,8 @@ elseif t == "file" then
     local source = assert(io.open(self_path, "rb"), "Can't open self file.")
     local input = assert(io.open(input_path, "rb"), "Can't open zip file.")
 
-    append_file_offset(dest, source, input)
+    append_file(dest, source)
+    append_file(dest, input)
 
     dest:close()
     source:close()

@@ -43,9 +43,9 @@ function raylua.repl()
   end
 end
 
-if raylua.loadfile then
-  package.path = "?.lua;?/init.lua"
+package.path = "?.lua;?/init.lua"
 
+if raylua.loadfile then
   -- Change the second loader to load files using raylua.loadfile
   package.loaders[2] = function (name)
     for path in package.path:gmatch "([^;]+);?" do

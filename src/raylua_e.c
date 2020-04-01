@@ -66,33 +66,11 @@ int raylua_loadfile(lua_State *L)
   return 1;
 }
 
-static bool raylua_init_payload(const char *path, bool direct)
+static bool raylua_init_payload(const char *path)
 {
   mz_zip_zero_struct(&zip_file);
 
-  if (direct) {
-    if (!mz_zip_reader_init_file(&zip_file, path, 0))
-      return false;
-  } else {
-    FILE *f = fopen(path, "rb");
-
-    if (f == NULL) {
-      puts("RAYLUA: Can't load self.");
-      return false;
-    } else {
-      /* Read offset at the end of the file */
-      fpos_t offset;
-      fseek(f, -(long)sizeof(fpos_t), SEEK_END);
-      fread(&offset, sizeof(fpos_t), 1, f);
-
-      fsetpos(f, &offset);
-
-      if (!mz_zip_reader_init_cfile(&zip_file, f, 0, 0))
-        return false;
-    }
-  }
-
-  return true;
+  return mz_zip_reader_init_file(&zip_file, path, 0);
 }
 
 int main(int argc, const char **argv)
@@ -131,7 +109,7 @@ int main(int argc, const char **argv)
   }
   #endif
 
-  if (!raylua_init_payload(path, false)) {
+  if (!raylua_init_payload(path)) {
     #ifdef RAYLUA_NO_BUILDER
     puts("RAYLUA: No payload.");
     #else

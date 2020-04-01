@@ -48,19 +48,9 @@ static void append_file(FILE *dst, FILE *src)
   } while(count == 4096);
 }
 
-static void append_file_offset(FILE *output, FILE *source, FILE *input)
-{
-  append_file(output, source);
-  fpos_t pos;
-  fgetpos(output, &pos);
-  append_file(output, input);
-  fwrite(&pos, sizeof(fpos_t), 1, output);
-}
-
 typedef struct raylua_builder {
   mz_zip_archive zip;
   FILE *file;
-  fpos_t offset;
 } raylua_builder;
 
 static int raylua_builder_new(lua_State *L)
@@ -193,9 +183,6 @@ int raylua_builder_boot(lua_State *L)
 
   lua_pushcfunction(L, list_dir);
   lua_setglobal(L, "list_dir");
-
-  lua_pushlightuserdata(L, append_file_offset);
-  lua_setglobal(L, "append_file_offset");
 
   lua_pushcfunction(L, raylua_builder_new);
   lua_setglobal(L, "builder_new");
