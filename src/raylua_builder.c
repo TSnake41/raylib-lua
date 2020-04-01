@@ -77,8 +77,6 @@ static int raylua_builder_new(lua_State *L)
   }
 
   append_file(f, self);
-  fgetpos(f, &builder->offset); /* get eof offset */
-
   fclose(self);
 
   if (!mz_zip_writer_init_cfile(&builder->zip, f, 0)) {
@@ -109,10 +107,6 @@ static int raylua_builder_close(lua_State *L)
 {
   raylua_builder *builder = lua_touserdata(L, -1);
   mz_zip_writer_finalize_archive(&builder->zip);
-
-  /* Write offset */
-  fwrite(&builder->offset, sizeof(fpos_t), 1, builder->file);
-  fclose(builder->file);
 
   free(builder);
   return 0;
