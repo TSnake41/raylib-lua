@@ -1,5 +1,8 @@
 ![raylib-lua logo](assets/logo.png)
 
+![release](https://img.shields.io/github/v/release/TSnake41/raylib-lua?style=flat-square)
+![downloads](https://img.shields.io/github/downloads/tsnake41/raylib-lua/total?style=flat-square)
+
 ## raylib-lua
 
 [LuaJIT](https://luajit.org/)-based binding for [raylib](https://www.raylib.com/), a simple and easy-to-use
