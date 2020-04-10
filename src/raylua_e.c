@@ -23,6 +23,8 @@
 #include <lualib.h>
 #include <lauxlib.h>
 
+#include <raylib.h>
+
 #include "raylua.h"
 #include "lib/miniz.h"
 
@@ -51,19 +53,72 @@ int raylua_loadfile(lua_State *L)
   }
 
   size_t size = stat.m_uncomp_size;
-  char *buffer = malloc(size + 1);
+  char *buffer = malloc(size);
   if (buffer == NULL) {
     lua_pushnil(L);
     lua_pushfstring(L, "%s: Can't allocate file buffer.", path);
     return 2;
   }
-  buffer[size] = '\0';
 
   mz_zip_reader_extract_to_mem(&zip_file, index, buffer, size, 0);
 
   lua_pushlstring(L, buffer, size);
   free(buffer);
   return 1;
+}
+
+unsigned char *raylua_loadFileData(const char *path, unsigned int *out_size)
+{
+  int index = mz_zip_reader_locate_file(&zip_file, path, NULL, 0);
+  if (index == -1) {
+    printf("RAYLUA: WARN: File not found in payload : '%s'", path);
+    return NULL;
+  }
+
+  mz_zip_archive_file_stat stat;
+  if (!mz_zip_reader_file_stat(&zip_file, index, &stat)) {
+    printf("RAYLUA: WARN: Can't get file information of '%s' in payload.", path);
+    return NULL;
+  }
+
+  size_t size = stat.m_uncomp_size;
+  unsigned char *buffer = RL_MALLOC(size);
+  if (buffer == NULL) {
+    printf("RAYLUA: WARN: Can't allocate file buffer for '%s'.", path);
+    return NULL;
+  }
+
+  mz_zip_reader_extract_to_mem(&zip_file, index, buffer, size, 0);
+
+  *out_size = size;
+  return buffer;
+}
+
+char *raylua_loadFileText(const char *path)
+{
+  int index = mz_zip_reader_locate_file(&zip_file, path, NULL, 0);
+  if (index == -1) {
+    printf("RAYLUA: WARN: File not found in payload : '%s'", path);
+    return NULL;
+  }
+
+  mz_zip_archive_file_stat stat;
+  if (!mz_zip_reader_file_stat(&zip_file, index, &stat)) {
+    printf("RAYLUA: WARN: Can't get file information of '%s' in payload.", path);
+    return NULL;
+  }
+
+  size_t size = stat.m_uncomp_size;
+  char *buffer = RL_MALLOC(size + 1);
+  if (buffer == NULL) {
+    printf("RAYLUA: WARN: Can't allocate file buffer for '%s'.", path);
+    return NULL;
+  }
+
+  buffer[size] = '\0';
+
+  mz_zip_reader_extract_to_mem(&zip_file, index, buffer, size, 0);
+  return buffer;
 }
 
 static bool raylua_init_payload(const char *path)
@@ -108,6 +163,11 @@ int main(int argc, const char **argv)
     path = new_path;
   }
   #endif
+
+  SetFilesystemOverride((FilesystemOverride){
+    .loadFileData = &raylua_loadFileData,
+    .loadFileText = &raylua_loadFileText,
+  });
 
   if (!raylua_init_payload(path)) {
     #ifdef RAYLUA_NO_BUILDER

@@ -181,7 +181,6 @@ bool CheckCollisionPointCircle(Vector2 point, Vector2 center, float radius);
 bool CheckCollisionPointTriangle(Vector2 point, Vector2 p1, Vector2 p2, Vector2 p3);
 Image LoadImage(const char *fileName);
 Image LoadImageEx(Color *pixels, int width, int height);
-Image LoadImagePro(void *data, int width, int height, int format);
 Image LoadImageRaw(const char *fileName, int width, int height, int format, int headerSize);
 void ExportImage(Image image, const char *fileName);
 void ExportImageAsCode(Image image, const char *fileName);
@@ -228,8 +227,8 @@ void ImageDrawCircle(Image *dst, int centerX, int centerY, int radius, Color col
 void ImageDrawCircleV(Image *dst, Vector2 center, int radius, Color color);
 void ImageDrawLine(Image *dst, int startPosX, int startPosY, int endPosX, int endPosY, Color color);
 void ImageDrawLineV(Image *dst, Vector2 start, Vector2 end, Color color);
-void ImageDrawText(Image *dst, Vector2 position, const char *text, int fontSize, Color color);
-void ImageDrawTextEx(Image *dst, Vector2 position, Font font, const char *text, float fontSize, float spacing, Color color);
+void ImageDrawText(Image *dst, const char *text, int posX, int posY, int fontSize, Color color);
+void ImageDrawTextEx(Image *dst, Font font, const char *text, Vector2 position, float fontSize, float spacing, Color tint);
 void ImageFlipVertical(Image *image);
 void ImageFlipHorizontal(Image *image);
 void ImageRotateCW(Image *image);
