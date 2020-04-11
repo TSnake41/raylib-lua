@@ -67,6 +67,25 @@ int raylua_loadfile(lua_State *L)
   return 1;
 }
 
+int raylua_listfiles(lua_State *L)
+{
+  size_t count = mz_zip_reader_get_num_files(&zip_file);
+  char filename[1024];
+
+  lua_createtable(L, count, 0);
+
+  size_t i = 0;
+  while (i < count) {
+    mz_zip_reader_get_filename(&zip_file, i, filename, sizeof(filename));
+    lua_pushstring(L, filename);
+
+    lua_rawseti(L, -2, i + 1);
+    i++;
+  }
+
+  return 1;
+}
+
 unsigned char *raylua_loadFileData(const char *path, unsigned int *out_size)
 {
   int index = mz_zip_reader_locate_file(&zip_file, path, NULL, 0);
@@ -178,7 +197,7 @@ int main(int argc, const char **argv)
     #endif
   } else {
     /* Boot on payload. */
-    raylua_boot(L, raylua_loadfile, false);
+    raylua_boot(L, raylua_loadfile, raylua_listfiles, false);
   }
 
   lua_close(L);

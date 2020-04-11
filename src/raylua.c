@@ -39,13 +39,19 @@
 
 extern const char *raylua_boot_str;
 
-void raylua_boot(lua_State *L, lua_CFunction loadfile, bool repl)
+void raylua_boot(lua_State *L, lua_CFunction loadfile, lua_CFunction listfiles, bool repl)
 {
   lua_newtable(L);
 
   if (loadfile) {
     lua_pushstring(L, "loadfile");
     lua_pushcfunction(L, loadfile);
+    lua_settable(L, -3);
+  }
+
+  if (listfiles) {
+    lua_pushstring(L, "listfiles");
+    lua_pushcfunction(L, listfiles);
     lua_settable(L, -3);
   }
 
@@ -65,6 +71,6 @@ void raylua_boot(lua_State *L, lua_CFunction loadfile, bool repl)
 
 int luaopen_raylua(lua_State *L)
 {
-  raylua_boot(L, NULL, false);
+  raylua_boot(L, NULL, NULL, false);
   return 0;
 }
