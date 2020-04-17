@@ -1,6 +1,6 @@
 [submodule "LuaJIT"]
 path = luajit
-url = https://github.com/LuaJIT/LuaJIT
+url = https://github.com/moonjit/moonjit
 
 [submodule "raylib"]
 path = raylib
