@@ -38,6 +38,9 @@ raylua_s: src/raylua.o src/raylua_s.o
 raylua_e: src/raylua.o src/raylua_e.o src/raylua_builder.o src/lib/miniz.o
 	$(CC) -o $@ $^ $(LDFLAGS) luajit/src/libluajit.a
 
+libraylua.a: src/raylua.o
+	$(AR) rcu $@ $^
+
 raylua.dll: src/raylua.o
 	$(CC) -shared -fPIE -o $@ $^ $(LDFLAGS)
 
