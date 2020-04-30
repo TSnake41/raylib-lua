@@ -1,20 +1,20 @@
-void InitPhysics(void);
-void RunPhysicsStep(void);
-void SetPhysicsTimeStep(double delta);
-bool IsPhysicsEnabled(void);
-void SetPhysicsGravity(float x, float y);
-PhysicsBody CreatePhysicsBodyCircle(Vector2 pos, float radius, float density);
-PhysicsBody CreatePhysicsBodyRectangle(Vector2 pos, float width, float height, float density);
-PhysicsBody CreatePhysicsBodyPolygon(Vector2 pos, float radius, int sides, float density);
-void PhysicsAddForce(PhysicsBody body, Vector2 force);
-void PhysicsAddTorque(PhysicsBody body, float amount);
-void PhysicsShatter(PhysicsBody body, Vector2 position, float force);
-int GetPhysicsBodiesCount(void);
-PhysicsBody GetPhysicsBody(int index);
-int GetPhysicsShapeType(int index);
-int GetPhysicsShapeVerticesCount(int index);
-Vector2 GetPhysicsShapeVertex(PhysicsBody body, int vertex);
-void SetPhysicsBodyRotation(PhysicsBody body, float radians);
-void DestroyPhysicsBody(PhysicsBody body);
-void ResetPhysics(void);
-void ClosePhysics(void);
+void InitPhysics(void)
+void RunPhysicsStep(void)
+void SetPhysicsTimeStep(double delta)
+bool IsPhysicsEnabled(void)
+void SetPhysicsGravity(float x, float y)
+PhysicsBody CreatePhysicsBodyCircle(Vector2 pos, float radius, float density)
+PhysicsBody CreatePhysicsBodyRectangle(Vector2 pos, float width, float height, float density)
+PhysicsBody CreatePhysicsBodyPolygon(Vector2 pos, float radius, int sides, float density)
+void PhysicsAddForce(PhysicsBody body, Vector2 force)
+void PhysicsAddTorque(PhysicsBody body, float amount)
+void PhysicsShatter(PhysicsBody body, Vector2 position, float force)
+int GetPhysicsBodiesCount(void)
+PhysicsBody GetPhysicsBody(int index)
+int GetPhysicsShapeType(int index)
+int GetPhysicsShapeVerticesCount(int index)
+Vector2 GetPhysicsShapeVertex(PhysicsBody body, int vertex)
+void SetPhysicsBodyRotation(PhysicsBody body, float radians)
+void DestroyPhysicsBody(PhysicsBody body)
+void ResetPhysics(void)
+void ClosePhysics(void)

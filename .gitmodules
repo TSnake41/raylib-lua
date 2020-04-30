@@ -4,7 +4,7 @@ url = https://github.com/moonjit/moonjit
 
 [submodule "raylib"]
 path = raylib
-url = https://github.com/raysan5/raylib
+url = https://github.com/TSnake41/raylib
 
 [submodule "ragui"]
 path = raygui

@@ -81,7 +81,7 @@ for _,modname in ipairs(modules) do
     line = line:gsub("([(),*.])%s+(%w)", function (a, b) return a .. b end)
     line = line:gsub("(%w)%s+([(),*.])", function (a, b) return a .. b end)
 
-    proto[#proto + 1] = line:gsub(";", "")
+    proto[#proto + 1] = line
   end
 end
 

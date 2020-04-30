@@ -50,7 +50,7 @@ float GuiColorBarHue(Rectangle bounds, float value)
 void GuiLoadStyle(const char *fileName)
 void GuiLoadStyleDefault(void)
 const char *GuiIconText(int iconId, const char *text)
-void GuiDrawIcon(int iconId, Vector2 position, int pixelSize, Color color);
+void GuiDrawIcon(int iconId, Vector2 position, int pixelSize, Color color)
 unsigned int *GuiGetIcons(void)
 unsigned int *GuiGetIconData(int iconId)
 void GuiSetIconData(int iconId, unsigned int *data)
