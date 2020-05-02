@@ -6,6 +6,10 @@ url = https://github.com/moonjit/moonjit
 path = raylib
 url = https://github.com/TSnake41/raylib
 
-[submodule "ragui"]
+[submodule "raygui"]
 path = raygui
 url = https://github.com/raysan5/raygui
+
+[submodule "examples/lynx"]
+path = lynx
+url = https://gitlab.com/TSnake41/lynx.git
