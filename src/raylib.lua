@@ -15,7 +15,11 @@
 ]]
 
 print "RAYLUA: Raylua boot script"
-print("RAYLUA: " .. jit.version)
+print("RAYLUA: Lua Version: " .. _VERSION)
+
+if jit then
+  print("RAYLUA: Lua JIT: " .. jit.version)
+end
 
 local ffi = require "ffi"
 local C = ffi.C
