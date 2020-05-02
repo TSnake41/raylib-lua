@@ -11,5 +11,5 @@ path = raygui
 url = https://github.com/raysan5/raygui
 
 [submodule "examples/lynx"]
-path = lynx
+path = examples/lynx
 url = https://gitlab.com/TSnake41/lynx.git
