@@ -1,5 +1,3 @@
-local ffi = require "ffi"
-
 local screenWidth = 800
 local screenHeight = 450
 
@@ -21,10 +19,10 @@ local rightSideRecHeight = 16
 local state = 0
 local alpha = 1.0
 
-local lua_color =	ffi.new("Color", 3, 3, 128, 255)
+local lua_color =	rl.new("Color", 3, 3, 128, 255)
 
 local function Fade(color, alpha)
-  return ffi.new("Color",
+  return rl.new("Color",
     color.r * alpha,
     color.g * alpha,
     color.b * alpha,

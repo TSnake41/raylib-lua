@@ -8,9 +8,6 @@
 --   Copyright (c) 2014-2019 Ramon Santamaria (@raysan5)
 --
 --------------------------------------------------------------------------------------------
-local ffi = require "ffi"
-local bit = require "bit"
-
 local MAX_BUNNIES = 100000    -- 100K bunnies limit
 
 -- This is the maximum amount of elements (quads) per batch
@@ -65,9 +62,8 @@ while not rl.WindowShouldClose() do    -- Detect window close button or ESC key
     -- Create more bunnies
     for i = 1, 100 do
       if #bunnies < MAX_BUNNIES then
-        local speed = ffi.new("Vector2", rl.GetRandomValue(-250, 250) / 60, rl.GetRandomValue(-250, 250) / 60)
-        local color = ffi.new("Color", rl.GetRandomValue(50, 240), rl.GetRandomValue(80, 240), rl.GetRandomValue(100, 240), 255)
-        --bunnies[#bunnies] = Bunny:new(nil, GetMousePosition(), speed, color)
+        local speed = rl.new("Vector2", rl.GetRandomValue(-250, 250) / 60, rl.GetRandomValue(-250, 250) / 60)
+        local color = rl.new("Color", rl.GetRandomValue(50, 240), rl.GetRandomValue(80, 240), rl.GetRandomValue(100, 240), 255)
         table.insert(bunnies, Bunny:new(rl.GetMousePosition(), speed, color))
       end
     end

@@ -36,8 +36,6 @@ applications, and to alter it and redistribute it freely, subject to the followi
  3. This notice may not be removed or altered from any source distribution.
 ]]
 
-local ffi = require "ffi"
-
 local windowWidth = 512
 local windowHeight = 512
 local gameScreenWidth = 32
@@ -59,20 +57,20 @@ while not rl.WindowShouldClose() do
 
     rl.BeginTextureMode(target)
       rl.ClearBackground(rl.WHITE)
-      rl.DrawTextEx(rl.GetFontDefault(), "Hello", ffi.new("Vector2", 4, 0), rl.GetFontDefault().baseSize, 1, ffi.new("Color", 0, 64, 255, 255))
-      rl.DrawTextEx(rl.GetFontDefault(), "it's", ffi.new("Vector2", 8, 10), rl.GetFontDefault().baseSize, 1, ffi.new("Color", 0, 64, 255, 255))
-      rl.DrawTextEx(rl.GetFontDefault(), "raylua", ffi.new("Vector2", 0, 20), rl.GetFontDefault().baseSize, 1, ffi.new("Color", 0, 64, 255, 255))
+      rl.DrawTextEx(rl.GetFontDefault(), "Hello", rl.new("Vector2", 4, 0), rl.GetFontDefault().baseSize, 1, rl.new("Color", 0, 64, 255, 255))
+      rl.DrawTextEx(rl.GetFontDefault(), "it's", rl.new("Vector2", 8, 10), rl.GetFontDefault().baseSize, 1, rl.new("Color", 0, 64, 255, 255))
+      rl.DrawTextEx(rl.GetFontDefault(), "raylua", rl.new("Vector2", 0, 20), rl.GetFontDefault().baseSize, 1, rl.new("Color", 0, 64, 255, 255))
 
     rl.EndTextureMode()
 
     rl.DrawTexturePro(
       target.texture,
-      ffi.new("Rectangle", 0, 0, target.texture.width, -target.texture.height),
-      ffi.new("Rectangle",
+      rl.new("Rectangle", 0, 0, target.texture.width, -target.texture.height),
+      rl.new("Rectangle",
         (rl.GetScreenWidth() - gameScreenWidth * scale) * 0.5,
         (rl.GetScreenHeight() - gameScreenHeight * scale) * 0.5,
         gameScreenWidth * scale, gameScreenHeight * scale
-      ), ffi.new("Vector2", 0, 0), 0, rl.WHITE
+      ), rl.new("Vector2", 0, 0), 0, rl.WHITE
     )
 
     for x=0,rl.GetScreenWidth(),16 do

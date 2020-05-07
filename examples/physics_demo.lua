@@ -1,5 +1,3 @@
-local ffi = require "ffi"
-
 local screenWidth = 800
 local screenHeight = 450
 

@@ -1,5 +1,4 @@
-local ffi = require "ffi"
-local lua_color =	ffi.new("Color", 3, 3, 128, 255)
+local lua_color =	rl.new("Color", 3, 3, 128, 255)
 
 local width, height = 800, 450
 
