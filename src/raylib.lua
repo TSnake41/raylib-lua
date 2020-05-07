@@ -884,6 +884,8 @@ function rl.ref(obj)
   return ffi.cast(ffi.typeof("$ *", obj), obj)
 end
 
+rl.new = ffi.new
+
 rl.__index = function (self, key)
   return C[key]
 end
