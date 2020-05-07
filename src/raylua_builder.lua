@@ -43,7 +43,6 @@
 local ffi = require "ffi"
 
 ffi.cdef "typedef struct FILE FILE;"
-local append_file_offset = ffi.cast("void (*)(FILE *, FILE *, FILE *)", append_file_offset)
 
 local self_path = arg[0]
 local input_path = arg[1]
