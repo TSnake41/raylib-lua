@@ -27,11 +27,13 @@
 int main(int argc, const char **argv)
 {
   lua_State *L = luaL_newstate();
-  luaL_openlibs(L);
 
-  if (L == NULL)
+  if (L == NULL) {
     puts("RAYLUA: Unable to initialize Lua.");
+    return 0;
+  }
 
+  luaL_openlibs(L);
   lua_newtable(L);
 
   int i = 0;
