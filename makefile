@@ -17,8 +17,6 @@ else
 	LDFLAGS += -ldl -lX11 -lpthread
 endif
 
-BOOT_FILES := src/raylib.lua src/raylua.lua
-
 all: raylua_s raylua_e
 
 %.o: %.c
@@ -51,7 +49,7 @@ src/raylua.o: luajit raylib src/autogen/boot.c src/autogen/bind.c
 
 src/raylua_builder.o: src/autogen/builder.c
 
-src/autogen/boot.c: src/raylib.lua src/raylua.lua
+src/autogen/boot.c: src/raylib.lua src/compat.lua src/raylua.lua
 	$(LUA) tools/lua2str.lua $@ raylua_boot_lua $^
 
 src/autogen/bind.c:
