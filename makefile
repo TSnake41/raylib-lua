@@ -12,7 +12,7 @@ MODULES := raymath rlgl easings gestures physac raygui
 ifeq ($(OS),Windows_NT)
 	LDFLAGS += -lopengl32 -lgdi32 -lwinmm -static
 else ifeq ($(shell uname),Darwin)
-	LDFLAGS += -framework CoreVideo -framework IOKit -framework Cocoa -framework GLUT -framework OpenGL -Wl,"-pagezero_size 10000 -image_base 100000000"
+	LDFLAGS += -framework CoreVideo -framework IOKit -framework Cocoa -framework GLUT -framework OpenGL -Wl,-pagezero_size,10000,-image_base,100000000
 else
 	LDFLAGS += -ldl -lX11 -lpthread
 endif
