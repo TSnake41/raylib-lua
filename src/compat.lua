@@ -74,13 +74,13 @@ ffi.metatype("Vector3", {
   end,
   __sub = function (a, b)
     if ffi.istype("Vector3", b) then
-      return new("Vector2", a.x - b.x, a.y - b.y, a.z - b.z)
+      return new("Vector3", a.x - b.x, a.y - b.y, a.z - b.z)
     else
       error "Invalid operation."
     end
   end,
   __unm = function (a)
-    return new("Vector2", -a.x, -a.y, -a.z)
+    return new("Vector3", -a.x, -a.y, -a.z)
   end,
   __len = function (a)
     return math.sqrt(a.x * a.x + a.y * a.y + a.z * a.z)
@@ -91,10 +91,10 @@ ffi.metatype("Vector3", {
       a, b = b, a
     end
 
-    if ffi.istype("Vector2", b) then -- dot product
+    if ffi.istype("Vector3", b) then -- dot product
       return a.x * b.x + a.y * b.y + a.z * b.z
     elseif type(b) == "number" then
-      return new("Vector2", a.x * b, a.y * b, a.z * b)
+      return new("Vector3", a.x * b, a.y * b, a.z * b)
     else
       error "Invalid operation."
     end
