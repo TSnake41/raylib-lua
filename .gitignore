@@ -9,3 +9,6 @@ raylua_s.exe
 src/autogen/bind.c
 src/autogen/boot.c
 src/autogen/builder.c
+
+libraylua.a
+src/res/icon.res

@@ -4,6 +4,8 @@ LDFLAGS := -O2 -s -lm
 AR ?= ar
 LUA ?= luajit/src/luajit
 
+WINDRES ?= windres
+
 CFLAGS += -Iluajit/src -Iraylib/src -Iraygui/src
 LDFLAGS += -Lluajit/src -Lraylib/src -lraylib
 
@@ -11,18 +13,21 @@ MODULES := raymath rlgl easings gestures physac raygui
 
 ifeq ($(OS),Windows_NT)
 	LDFLAGS += -lopengl32 -lgdi32 -lwinmm -static
+	EXTERNAL_FILES := src/res/icon.res
 else ifeq ($(shell uname),Darwin)
-	LDFLAGS += -framework CoreVideo -framework IOKit -framework Cocoa -framework GLUT -framework OpenGL -Wl,-pagezero_size,10000,-image_base,100000000
+	LDFLAGS += -framework CoreVideo -framework IOKit -framework Cocoa \
+		-framework GLUT -framework OpenGL \
+		-Wl,-pagezero_size,10000,-image_base,100000000
+	EXTERNAL_FILES :=
 else
 	LDFLAGS += -ldl -lX11 -lpthread
+	EXTERNAL_FILES :=
 endif
 
-all: raylua_s raylua_e
+all: raylua_s raylua_e luajit raylib
 
 %.o: %.c
 	$(CC) -c -o $@ $< $(CFLAGS)
-
-all: raylua_s raylua_e luajit raylib
 
 luajit:
 	$(MAKE) -C luajit amalg BUILDMODE=static MACOSX_DEPLOYMENT_TARGET=10.13
@@ -30,11 +35,15 @@ luajit:
 raylib:
 	$(MAKE) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" -C raylib/src
 
-raylua_s: src/raylua.o src/raylua_s.o
+raylua_s: src/raylua_s.o $(EXTERNAL_FILES) libraylua.a
 	$(CC) -o $@ $^ $(LDFLAGS) luajit/src/libluajit.a
 
-raylua_e: src/raylua.o src/raylua_e.o src/raylua_builder.o src/lib/miniz.o
+raylua_e: src/raylua_e.o src/raylua_self.o src/raylua_builder.o src/lib/miniz.o \
+		$(EXTERNAL_FILES) libraylua.a
 	$(CC) -o $@ $^ $(LDFLAGS) luajit/src/libluajit.a
+
+src/res/icon.res: src/res/icon.rc
+	$(WINDRES) $^ -O coff $@
 
 libraylua.a: src/raylua.o
 	$(AR) rcu $@ $^
@@ -59,9 +68,11 @@ src/autogen/builder.c: src/raylua_builder.lua
 	$(LUA) tools/lua2str.lua $@ raylua_builder_lua $^
 
 clean:
-	rm -rf raylua_s raylua_e src/raylua_e.o src/raylua_s.o src/raylua.o \
-		src/raylua_builder.o src/autogen/*.c src/lib/miniz.o
+	rm -rf raylua_s raylua_e libraylua.a src/raylua_e.o src/raylua_s.o \
+		src/raylua.o src/raylua_self.o src/raylua_builder.o src/autogen/*.c \
+		src/lib/miniz.o
 	$(MAKE) -C luajit clean
 	$(MAKE) -C raylib/src clean
 
-.PHONY: all src/autogen/bind.c src/autogen/boot.c raylua_s raylua_e luajit raylib clean
+.PHONY: all src/autogen/bind.c src/autogen/boot.c raylua_s raylua_e luajit \
+	raylib clean
