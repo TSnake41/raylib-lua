@@ -28,8 +28,10 @@
 #include "raylua.h"
 #include "lib/miniz.h"
 
+FILE *raylua_open_self(const char *argv0);
+
 #ifndef RAYLUA_NO_BUILDER
-int raylua_builder_boot(lua_State *L);
+int raylua_builder_boot(lua_State *L, FILE *self);
 #endif
 
 static mz_zip_archive zip_file;
@@ -140,11 +142,11 @@ char *raylua_loadFileText(const char *path)
   return buffer;
 }
 
-static bool raylua_init_payload(const char *path)
+static bool raylua_init_payload(FILE *self)
 {
   mz_zip_zero_struct(&zip_file);
 
-  return mz_zip_reader_init_file(&zip_file, path, 0);
+  return mz_zip_reader_init_cfile(&zip_file, self, 0, 0);
 }
 
 int main(int argc, const char **argv)
@@ -154,7 +156,7 @@ int main(int argc, const char **argv)
 
   if (L == NULL) {
     puts("RAYLUA: Unable to initialize Lua.");
-    return 0;
+    return 1;
   }
 
   luaL_openlibs(L);
@@ -172,32 +174,24 @@ int main(int argc, const char **argv)
 
   lua_setglobal(L, "arg");
 
-  const char *path = argv[0];
-  #ifdef WIN32
-  /* Executable name translation. */
-  size_t path_len = strlen(path);
-  char new_path[path_len + 5];
-
-  if (path_len > 4 && stricmp(path + path_len - 4, ".exe")) {
-    strcpy(new_path, path);
-    strcpy(new_path + path_len, ".exe");
-
-    printf("RAYLUA: Translated self executable name from %s to %s.\n", path, new_path);
-    path = new_path;
-  }
-  #endif
-
   SetFilesystemOverride((FilesystemOverride){
     .loadFileData = &raylua_loadFileData,
     .loadFileText = &raylua_loadFileText,
   });
 
-  if (!raylua_init_payload(path)) {
+  FILE *self = raylua_open_self(argv[0]);
+
+  if (self == NULL) {
+    puts("RAYLUA: Can't open self, cannot continue.");
+    return 1;
+  }
+
+  if (!raylua_init_payload(self)) {
     #ifdef RAYLUA_NO_BUILDER
     puts("RAYLUA: No payload.");
     #else
     puts("RAYLUA: No payload, use internal builder.");
-    raylua_builder_boot(L);
+    raylua_builder_boot(L, self);
     #endif
   } else {
     /* Boot on payload. */

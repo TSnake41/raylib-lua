@@ -40,6 +40,8 @@
 
 static void append_file(FILE *dst, FILE *src)
 {
+  rewind(src);
+
   size_t count;
   do {
     uint8_t buffer[4096];
@@ -55,7 +57,7 @@ typedef struct raylua_builder {
 
 static int raylua_builder_new(lua_State *L)
 {
-  const char *self_path = luaL_checkstring(L, -2);
+  FILE *self = lua_touserdata(L, -2);
   const char *path = luaL_checkstring(L, -1);
 
   raylua_builder *builder = malloc(sizeof(raylua_builder));
@@ -69,20 +71,11 @@ static int raylua_builder_new(lua_State *L)
 
   builder->file = f;
 
-  FILE *self = fopen(self_path, "rb");
-  if (!self) {
-    free(builder);
-    fclose(f);
-    return luaL_error(L, "Can't open self (%s)", self_path);
-  }
-
   append_file(f, self);
-  fclose(self);
 
   if (!mz_zip_writer_init_cfile(&builder->zip, f, 0)) {
     free(builder);
     fclose(f);
-    fclose(self);
     return luaL_error(L, "Can't initialize miniz writer.");
   }
 
@@ -170,10 +163,16 @@ static int list_dir(lua_State *L)
   return 1;
 }
 
-int raylua_builder_boot(lua_State *L)
+int raylua_builder_boot(lua_State *L, FILE *self)
 {
   lua_pushcfunction(L, get_type);
   lua_setglobal(L, "get_type");
+
+  lua_pushlightuserdata(L, append_file);
+  lua_setglobal(L, "append_file");
+
+  lua_pushlightuserdata(L, self);
+  lua_setglobal(L, "self");
 
   lua_pushcfunction(L, list_dir);
   lua_setglobal(L, "list_dir");

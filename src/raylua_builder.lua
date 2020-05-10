@@ -43,8 +43,8 @@
 local ffi = require "ffi"
 
 ffi.cdef "typedef struct FILE FILE;"
+local append_file = ffi.cast("void (*)(FILE *, FILE *)", append_file)
 
-local self_path = arg[0]
 local input_path = arg[1]
 
 print "BUILDER: Initialized builder"
@@ -58,12 +58,6 @@ local t = get_type(input_path)
 local function path_concat(...)
   return table.concat({ ... }, "/")
 end
-
-if ffi.os == "Windows" and self_path:sub("-4") ~= ".exe" then
-  self_path = self_path .. ".exe"
-end
-
-print("BUILDER: Self is " .. self_path)
 
 if t == "directory" then
   print "BUILDER: Building from folder."
@@ -82,7 +76,7 @@ if t == "directory" then
 
   print("BUILDER: Building " .. output)
 
-  local builder = builder_new(self_path, output)
+  local builder = builder_new(self, output)
   assert(builder, "Can't initialize builder")
 
   local have_main = false
@@ -145,19 +139,17 @@ elseif t == "file" then
     print "BUILDER: Building from zip file."
 
     local dest = assert(io.open(path, "wb"), "Can't open destination file.")
-    local source = assert(io.open(self_path, "rb"), "Can't open self file.")
     local input = assert(io.open(input_path, "rb"), "Can't open zip file.")
 
-    append_file(dest, source)
+    append_file(dest, self)
     append_file(dest, input)
 
     dest:close()
-    source:close()
     input:close()
   elseif ext == ".lua" then
     print "BUILDER: Building from lua file."
 
-    local builder = builder_new(self_path, path)
+    local builder = builder_new(self, path)
     builder_add(builder, input_path, "main.lua")
     builder_close(builder)
   else
