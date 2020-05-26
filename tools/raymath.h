@@ -1,5 +1,7 @@
 float Clamp(float value, float min, float max)
 float Lerp(float start, float end, float amount)
+float Normalize(float value, float start, float end)
+float Remap(float value, float inputStart, float inputEnd, float outputStart, float outputEnd)
 Vector2 Vector2Zero(void)
 Vector2 Vector2One(void)
 Vector2 Vector2Add(Vector2 v1, Vector2 v2)

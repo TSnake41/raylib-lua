@@ -249,8 +249,8 @@ ffi.cdef [[
     int ctxType;
     void *ctxData;
 
+    bool looping;
     unsigned int sampleCount;
-    unsigned int loopCount;
 
     AudioStream stream;
   } Music;
@@ -562,7 +562,8 @@ ffi.cdef [[
   typedef enum {
     BLEND_ALPHA = 0,
     BLEND_ADDITIVE,
-    BLEND_MULTIPLIED
+    BLEND_MULTIPLIED,
+    BLEND_ADD_COLORS
   } BlendMode;
 
   typedef enum {
