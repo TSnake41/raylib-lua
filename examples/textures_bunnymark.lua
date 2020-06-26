@@ -1,14 +1,4 @@
---------------------------------------------------------------------------------------------
---
---   raylib [textures] example - Bunnymark
---
---   This example has been created using raylib 1.6 (www.raylib.com)
---   raylib is licensed under an unmodified zlib/libpng license (View raylib.h for details)
---
---   Copyright (c) 2014-2019 Ramon Santamaria (@raysan5)
---
---------------------------------------------------------------------------------------------
-local MAX_BUNNIES = 100000    -- 100K bunnies limit
+local MAX_BUNNIES = 100000
 
 -- This is the maximum amount of elements (quads) per batch
 -- NOTE: This value is defined in [rlgl] module and can be changed there
@@ -41,7 +31,6 @@ function Bunny:update(texture)
 end
 
 -- Initialization
-----------------------------------------------------------------------------------------
 local screenWidth = 800
 local screenHeight = 450
 
@@ -52,12 +41,10 @@ rl.InitWindow(screenWidth, screenHeight, "raylib [textures] example - bunnymark"
 local texBunny = rl.LoadTexture("resources/wabbit_alpha.png")
 
 local bunnies = {}
-----------------------------------------------------------------------------------------
 
 -- Main game loop
 while not rl.WindowShouldClose() do    -- Detect window close button or ESC key
   -- Update
-  ------------------------------------------------------------------------------------
   if rl.IsMouseButtonDown(rl.MOUSE_LEFT_BUTTON) then
     -- Create more bunnies
     for i = 1, 100 do
@@ -70,13 +57,11 @@ while not rl.WindowShouldClose() do    -- Detect window close button or ESC key
   end
 
   -- Update bunnies
-  for i = 1, #bunnies do
+  for i=1,#bunnies do
     bunnies[i]:update(texBunny)
   end
-  ------------------------------------------------------------------------------------
 
   -- Draw
-  ------------------------------------------------------------------------------------
   rl.BeginDrawing()
 
   rl.ClearBackground(rl.RAYWHITE)
@@ -98,13 +83,8 @@ while not rl.WindowShouldClose() do    -- Detect window close button or ESC key
   rl.DrawFPS(10, 10)
 
   rl.EndDrawing()
-    ------------------------------------------------------------------------------------
 end
 
 -- De-Initialization
-----------------------------------------------------------------------------------------
-
-rl.UnloadTexture(texBunny)    -- Unload bunny texture
-
-rl.CloseWindow()              -- Close window and OpenGL context
-----------------------------------------------------------------------------------------
+rl.UnloadTexture(texBunny)
+rl.CloseWindow()
