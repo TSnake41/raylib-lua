@@ -45,6 +45,7 @@ unsigned int rlLoadAttribBuffer(unsigned int vaoId, int shaderLoc, void *buffer,
 void rlglInit(int width, int height)
 void rlglClose(void)
 void rlglDraw(void)
+void rlCheckErrors(void)
 int rlGetVersion(void)
 bool rlCheckBufferLimit(int vCount)
 void rlSetDebugMarker(const char *text)
