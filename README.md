@@ -125,6 +125,12 @@ This will allow direct use of the raylib binding through globals instead of `rl`
 
 You have an example of this in `lua_global_api.lua`.
 
+### Editor support
+
+Currently, there is no editor autocompletion/integration support for most editors, but there is a
+[third-party autocompletion support](https://github.com/Rabios/raylua/tree/master/zerobrane)
+for [ZeroBrane Studio](https://studio.zerobrane.com/) by [Rabios](https://github.com/Rabios).
+
 ### Other bindings
 
 raylib-lua (raylua) is not the only Lua binding for raylib.
@@ -138,6 +144,10 @@ There are some other bindings, which may or may not be up to date.
 [HDPLocust/raylib-luamore](https://github.com/HDPLocust/raylib-luamore)
 
 [alexander-matz ffi binding](https://gist.github.com/alexander-matz/f8ee4eb9fdf676203d70c1e5e329a6ec)
+
+[darltrash/raylib-luajit](https://github.com/darltrash/raylib-luajit)
+
+[Rabios/raylua](https://github.com/Rabios/raylua)
 
 ### Licence
 
