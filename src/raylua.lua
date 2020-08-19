@@ -73,7 +73,7 @@ if raylua.loadfile then
   end
 end
 
-if arg[1] then
+if arg and arg[1] then
   dofile(arg[1])
   return
 end

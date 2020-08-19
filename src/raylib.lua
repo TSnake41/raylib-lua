@@ -24,7 +24,7 @@ end
 local ffi = require "ffi"
 local C = ffi.C
 
-rl = {}
+local rl = {}
 setmetatable(rl, rl)
 
 -- structs definition
@@ -894,3 +894,5 @@ end
 rl.__newindex = function ()
   error "rl table is readonly"
 end
+
+_G.rl = rl

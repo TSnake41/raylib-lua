@@ -20,7 +20,8 @@
 #include <stdbool.h>
 #include <lua.h>
 
-void raylua_boot(lua_State *L, lua_CFunction loadfile, lua_CFunction listfiles, bool repl);
+void raylua_boot(lua_State *L, lua_CFunction loadfile, lua_CFunction listfiles,
+  bool repl);
 
 /* raylua_boot alias to allow direct loading */
 int luaopen_raylua(lua_State *L);

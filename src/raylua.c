@@ -39,7 +39,8 @@
 
 extern const char *raylua_boot_str;
 
-void raylua_boot(lua_State *L, lua_CFunction loadfile, lua_CFunction listfiles, bool repl)
+void raylua_boot(lua_State *L, lua_CFunction loadfile, lua_CFunction listfiles,
+  bool repl)
 {
   lua_newtable(L);
 
@@ -72,5 +73,8 @@ void raylua_boot(lua_State *L, lua_CFunction loadfile, lua_CFunction listfiles, 
 int luaopen_raylua(lua_State *L)
 {
   raylua_boot(L, NULL, NULL, false);
-  return 0;
+
+  lua_getglobal(L, "rl");
+  lua_getglobal(L, "raylua");
+  return 2;
 }

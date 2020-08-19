@@ -49,7 +49,7 @@ libraylua.a: src/raylua.o
 	$(AR) rcu $@ $^
 
 raylua.dll: src/raylua.o
-	$(CC) -shared -fPIE -o $@ $^ $(LDFLAGS)
+	$(CC) -shared -fPIE -o $@ $^ $(LDFLAGS) -llua5.1
 
 raylua.so: src/raylua.o
 	$(CC) -shared -fPIE -o $@ $^ $(LDFLAGS)
