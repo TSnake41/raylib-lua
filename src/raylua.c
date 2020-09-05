@@ -14,6 +14,8 @@
   CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
+#include <stdbool.h>
+
 #include <lua.h>
 #include <lauxlib.h>
 #include <lualib.h>
