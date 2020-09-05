@@ -14,19 +14,6 @@
   CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 ]]
 
--- LoadImageEx removed function
-rawset(rl, "LoadImageEx", function (pixels, width, height)
-  local image = rl.new "Image"
-  image.width = width
-  image.height = height
-  image.data = pixels
-  image.format = rl.UNCOMPRESSED_R8G8B8A8
-  return image
-end)
-
--- rlUnproject moved to Vector3Unproject
-rawset(rl, "rlUnproject", rl.Vector3Unproject)
-
 -- math metamethods
 local new = ffi.new
 
