@@ -133,6 +133,31 @@ Currently, there is no editor autocompletion/integration support for most editor
 [third-party autocompletion support](https://github.com/Rabios/raylua/tree/master/zerobrane)
 for [ZeroBrane Studio](https://studio.zerobrane.com/) by [Rabios](https://github.com/Rabios).
 
+#### Debugging
+
+You can use [Local Lua Debugger for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=tomblind.local-lua-debugger-vscode)
+to provide debugging support with Visual Studio Code.
+You need to add this at the beginning of your code to use it : 
+```lua
+do local f = getmetatable(rl).__index;rawset(rl, "__index", function (_, k) return select(2, pcall(f, _, k)) end) end
+package.path = package.path .. os.getenv "LUA_PATH"
+local lldebugger = require "lldebugger"; lldebugger.start()
+```
+You also need to setup a launch configuration in Visual Studio Code to run raylua_s with debugger attached, e.g
+```json
+{
+    "type": "lua-local",
+    "request": "launch",
+    "name": "(Lua) Launch",
+    "cwd": "${workspaceFolder}",
+    "program": { "command": "PATH TO raylua_s" },
+    "args": [ "main.lua OR ${file} OR WHATEVER" ]
+}
+```
+This debugger doesn't support pausing, you need to place a breakpoint before executing
+to get a actual debug, otherwise, a error needs to be thrown in the application to get the debugging.
+This debugger has a significant overhead, expect a performance loss in intensive projects.
+
 ### Other bindings
 
 raylib-lua (raylua) is not the only Lua binding for raylib.
