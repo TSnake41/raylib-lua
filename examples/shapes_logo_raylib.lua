@@ -17,7 +17,7 @@ while not rl.WindowShouldClose() do
 
   rl.DrawText("this is NOT a texture!", 350, 370, 10, rl.GRAY)
 
-	rl.EndDrawing()
+  rl.EndDrawing()
 end
 
 rl.CloseWindow()
