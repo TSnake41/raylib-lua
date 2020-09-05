@@ -7,7 +7,7 @@ LUA ?= luajit/src/luajit
 WINDRES ?= windres
 
 CFLAGS += -Iluajit/src -Iraylib/src -Iraygui/src
-LDFLAGS += -Lluajit/src -Lraylib/src -lraylib
+LDFLAGS += -Lluajit/src -Lraylib -lraylib
 
 MODULES := raymath rlgl easings gestures physac raygui
 

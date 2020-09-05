@@ -24,6 +24,9 @@ rawset(rl, "LoadImageEx", function (pixels, width, height)
   return image
 end)
 
+-- rlUnproject moved to Vector3Unproject
+rawset(rl, "rlUnproject", rl.Vector3Unproject)
+
 -- math metamethods
 local new = ffi.new
 

@@ -563,7 +563,9 @@ ffi.cdef [[
     BLEND_ALPHA = 0,
     BLEND_ADDITIVE,
     BLEND_MULTIPLIED,
-    BLEND_ADD_COLORS
+    BLEND_ADD_COLORS,
+    BLEND_SUBTRACT_COLORS,
+    BLEND_CUSTOM
   } BlendMode;
 
   typedef enum {
