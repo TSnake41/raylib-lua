@@ -30,10 +30,10 @@ all: raylua_s raylua_e luajit raylib
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 luajit:
-	$(MAKE) -C luajit amalg BUILDMODE=static MACOSX_DEPLOYMENT_TARGET=10.13
+	$(MAKE) -C luajit amalg CC=$(CC) BUILDMODE=static MACOSX_DEPLOYMENT_TARGET=10.13
 
 raylib:
-	$(MAKE) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" -C raylib/src
+	$(MAKE) CC=$(CC) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" -C raylib/src
 
 raylua_s: src/raylua_s.o $(EXTERNAL_FILES) libraylua.a
 	$(CC) -o $@ $^ $(LDFLAGS) luajit/src/libluajit.a
@@ -52,7 +52,7 @@ raylua.dll: src/raylua.o
 	$(CC) -shared -fPIE -o $@ $^ $(LDFLAGS) -llua5.1
 
 raylua.so: src/raylua.o
-	$(CC) -shared -fPIE -o $@ $^ $(LDFLAGS)
+	$(CC) -shared -fPIE -o $@ $^ $(LDFLAGS) -llua5.1
 
 src/raylua.o: luajit raylib src/autogen/boot.c src/autogen/bind.c
 
