@@ -20,21 +20,7 @@
 #include <lauxlib.h>
 #include <lualib.h>
 
-#include <raylib.h>
-#include <rlgl.h>
-
-#include <raymath.h>
-#include <easings.h>
-#include <gestures.h>
-
-#define RAYGUI_SUPPORT_ICONS
-#define RAYGUI_IMPLEMENTATION
-#define RAYGUI_STATIC
-#include <raygui.h>
-
-#define PHYSAC_IMPLEMENTATION
-#define PHYSAC_NO_THREADS
-#include <physac.h>
+#include "lib/rayfork.h"
 
 #include "autogen/bind.c"
 #include "autogen/boot.c"
@@ -59,7 +45,7 @@ void raylua_boot(lua_State *L, lua_CFunction loadfile, lua_CFunction listfiles,
   }
 
   lua_pushstring(L, "bind_entries");
-  lua_pushlightuserdata(L, raylua_entries);
+  lua_pushlightuserdata(L, rayfork_entries);
   lua_settable(L, -3);
 
   lua_pushstring(L, "isrepl");

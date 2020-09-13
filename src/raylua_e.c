@@ -23,7 +23,7 @@
 #include <lualib.h>
 #include <lauxlib.h>
 
-#include <raylib.h>
+#include "lib/rayfork.h"
 
 #include "raylua.h"
 #include "lib/miniz.h"
@@ -103,7 +103,7 @@ unsigned char *raylua_loadFileData(const char *path, unsigned int *out_size)
   }
 
   size_t size = stat.m_uncomp_size;
-  unsigned char *buffer = RL_MALLOC(size);
+  unsigned char *buffer = malloc(size);
   if (buffer == NULL) {
     printf("RAYLUA: WARN: Can't allocate file buffer for '%s'.", path);
     return NULL;
@@ -130,7 +130,7 @@ char *raylua_loadFileText(const char *path)
   }
 
   size_t size = stat.m_uncomp_size;
-  char *buffer = RL_MALLOC(size + 1);
+  char *buffer = malloc(size + 1);
   if (buffer == NULL) {
     printf("RAYLUA: WARN: Can't allocate file buffer for '%s'.", path);
     return NULL;
@@ -173,11 +173,6 @@ int main(int argc, const char **argv)
   }
 
   lua_setglobal(L, "arg");
-
-  SetFilesystemOverride((FilesystemOverride){
-    .loadFileData = &raylua_loadFileData,
-    .loadFileText = &raylua_loadFileText,
-  });
 
   FILE *self = raylua_open_self(argv[0]);
 

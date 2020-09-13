@@ -6,10 +6,10 @@ LUA ?= luajit/src/luajit
 
 WINDRES ?= windres
 
-CFLAGS += -Iluajit/src -Iraylib/src -Iraygui/src
-LDFLAGS += -Lluajit/src -Lraylib -lraylib
+CFLAGS += -Iluajit/src
+LDFLAGS += -Lluajit/src
 
-MODULES := raymath rlgl easings gestures physac raygui
+MODULES := rayfork
 
 ifeq ($(OS),Windows_NT)
 	LDFLAGS += -lopengl32 -lgdi32 -lwinmm -static
@@ -32,9 +32,6 @@ all: raylua_s raylua_e luajit raylib
 luajit:
 	$(MAKE) -C luajit amalg CC=$(CC) BUILDMODE=static MACOSX_DEPLOYMENT_TARGET=10.13
 
-raylib:
-	$(MAKE) CC=$(CC) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" -C raylib/src
-
 raylua_s: src/raylua_s.o $(EXTERNAL_FILES) libraylua.a
 	$(CC) -o $@ $^ $(LDFLAGS) luajit/src/libluajit.a
 
@@ -45,7 +42,7 @@ raylua_e: src/raylua_e.o src/raylua_self.o src/raylua_builder.o src/lib/miniz.o 
 src/res/icon.res: src/res/icon.rc
 	$(WINDRES) $^ -O coff $@
 
-libraylua.a: src/raylua.o
+libraylua.a: src/lib/rayfork.o src/raylua.o
 	$(AR) rcu $@ $^
 
 raylua.dll: src/raylua.o
@@ -72,7 +69,6 @@ clean:
 		src/raylua.o src/raylua_self.o src/raylua_builder.o src/autogen/*.c \
 		src/lib/miniz.o
 	$(MAKE) -C luajit clean
-	$(MAKE) -C raylib/src clean
 
 .PHONY: all src/autogen/bind.c src/autogen/boot.c raylua_s raylua_e luajit \
 	raylib clean

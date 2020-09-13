@@ -1,20 +1,8 @@
 local keywords = {
   "int", "long", "short", "char", "float", "double",
   "uint8_t", "uint16_t", "uint32_t", "uint64_t",
-  "const", "unsigned", "register",
+  "const", "unsigned", "register", "va_list";
   "void", "intptr_t", "bool"
-}
-
-local structs = {
-  "Vector2", "Vector3", "Vector4", "Quaternion",
-  "Matrix", "Color", "Rectangle", "Image", "Texture", "Texture2D",
-  "RenderTexture", "NPatchInfo", "CharInfo", "Font",
-  "Camera", "Camera2D", "Mesh", "Shader", "MaterialMap",
-  "Material", "Model", "Transform", "BoneInfo", "ModelAnimation",
-  "Ray", "RayHitInfo", "BoundingBox", "Wave", "Sound", "Music",
-  "AudioStream", "VrDeviceInfo", "Camera3D", "RenderTexture2D",
-  "TextureCubemap", "TraceLogCallback", "PhysicsBody",
-  "GestureEvent", "GuiStyle", "GuiTextBoxState"
 }
 
 local functions = {}
@@ -23,8 +11,8 @@ local proto = {}
 local counter = 0
 
 local custom_support = {
-  ["rlgl"] = function (line)
-    return line:gsub("[%s*]+(rl%w+)", function (part)
+  ["rayfork"] = function (line)
+    return line:gsub("(rf_[^( ]+)(%()", function (part)
       functions[#functions + 1] = part
       counter = counter + 1
 
@@ -32,16 +20,16 @@ local custom_support = {
         print("WARN: Multiple matches for: " .. line)
       end
 
-      return "(*)"
+      return "(*)("
     end)
   end
 }
 
 local file = io.open(arg[1], "wb")
-local modules = { "api" }
+local modules = { }
 
-for i=2,#arg do
-  modules[i] = arg[i]
+for i=1,#arg do
+  modules[i] = arg[i + 1]
 end
 
 for _,modname in ipairs(modules) do
@@ -50,31 +38,16 @@ for _,modname in ipairs(modules) do
       line = custom_support[modname](line)
     end
 
-    line = line:gsub("(%W)([%l%d][%w_]*)", function (before, part)
-      for i,keyword in ipairs(keywords) do
+    counter = 0
+
+    line = line:gsub("[^ *(),]+", function (part)
+      for _,keyword in pairs(keywords) do
         if part == keyword then
-          return before .. part
-        end
-      end
-
-      return before
-    end)
-
-    line = line:gsub("%u%w+", function (part)
-      for i,struct in ipairs(structs) do
-        if part == struct then
           return part
         end
       end
 
-      functions[#functions + 1] = part
-      counter = counter + 1
-
-      if count == 2 then
-        print("WARN: Multiple matches for: " .. line)
-      end
-
-      return "(*)"
+      return part:sub(0, 3) == "rf_" and part or ""
     end)
 
     -- Strip spaces
@@ -89,13 +62,13 @@ assert(#proto == #functions, "Mismatching proto and function count : " ..
   #proto .. " ~= " .. #functions)
 
 file:write [[
-struct raylua_bind_entry {
+struct rf_lua_bind_entry {
   const char *name;
   const char *proto;
   void *ptr;
 };
 
-struct raylua_bind_entry raylua_entries[] = {
+struct rf_lua_bind_entry rayfork_entries[] = {
 ]]
 
 for i=1,#proto do
