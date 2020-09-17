@@ -83,7 +83,7 @@ if t == "directory" then
 
   local function add_dir(root, dir)
     for i,file in ipairs(list_dir(path_concat(root, dir))) do
-      if file ~= ".." then
+      if file ~= ".." and file ~= "." then
         local partial_file_path, full_file_path
 
         if dir then

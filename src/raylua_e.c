@@ -88,60 +88,6 @@ int raylua_listfiles(lua_State *L)
   return 1;
 }
 
-unsigned char *raylua_loadFileData(const char *path, unsigned int *out_size)
-{
-  int index = mz_zip_reader_locate_file(&zip_file, path, NULL, 0);
-  if (index == -1) {
-    printf("RAYLUA: WARN: File not found in payload : '%s'", path);
-    return NULL;
-  }
-
-  mz_zip_archive_file_stat stat;
-  if (!mz_zip_reader_file_stat(&zip_file, index, &stat)) {
-    printf("RAYLUA: WARN: Can't get file information of '%s' in payload.", path);
-    return NULL;
-  }
-
-  size_t size = stat.m_uncomp_size;
-  unsigned char *buffer = RL_MALLOC(size);
-  if (buffer == NULL) {
-    printf("RAYLUA: WARN: Can't allocate file buffer for '%s'.", path);
-    return NULL;
-  }
-
-  mz_zip_reader_extract_to_mem(&zip_file, index, buffer, size, 0);
-
-  *out_size = size;
-  return buffer;
-}
-
-char *raylua_loadFileText(const char *path)
-{
-  int index = mz_zip_reader_locate_file(&zip_file, path, NULL, 0);
-  if (index == -1) {
-    printf("RAYLUA: WARN: File not found in payload : '%s'", path);
-    return NULL;
-  }
-
-  mz_zip_archive_file_stat stat;
-  if (!mz_zip_reader_file_stat(&zip_file, index, &stat)) {
-    printf("RAYLUA: WARN: Can't get file information of '%s' in payload.", path);
-    return NULL;
-  }
-
-  size_t size = stat.m_uncomp_size;
-  char *buffer = RL_MALLOC(size + 1);
-  if (buffer == NULL) {
-    printf("RAYLUA: WARN: Can't allocate file buffer for '%s'.", path);
-    return NULL;
-  }
-
-  buffer[size] = '\0';
-
-  mz_zip_reader_extract_to_mem(&zip_file, index, buffer, size, 0);
-  return buffer;
-}
-
 static bool raylua_init_payload(FILE *self)
 {
   mz_zip_zero_struct(&zip_file);
@@ -173,11 +119,6 @@ int main(int argc, const char **argv)
   }
 
   lua_setglobal(L, "arg");
-
-  SetFilesystemOverride((FilesystemOverride){
-    .loadFileData = &raylua_loadFileData,
-    .loadFileText = &raylua_loadFileText,
-  });
 
   FILE *self = raylua_open_self(argv[0]);
 

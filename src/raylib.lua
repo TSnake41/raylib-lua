@@ -92,7 +92,6 @@ ffi.cdef [[
     unsigned int id;
     Texture2D texture;
     Texture2D depth;
-    bool depthTexture;
   } RenderTexture2D;
 
   typedef RenderTexture2D RenderTexture;
@@ -188,9 +187,9 @@ ffi.cdef [[
     Matrix transform;
 
     int meshCount;
-    Mesh *meshes;
 
     int materialCount;
+    Mesh *meshes;
     Material *materials;
     int *meshMaterial;
     int boneCount;
@@ -200,9 +199,9 @@ ffi.cdef [[
 
   typedef struct ModelAnimation {
     int boneCount;
-    BoneInfo *bones;
 
     int frameCount;
+    BoneInfo *bones;
     Transform **framePoses;
   } ModelAnimation;
 
@@ -233,26 +232,25 @@ ffi.cdef [[
 
   typedef struct rAudioBuffer rAudioBuffer;
   typedef struct AudioStream {
+    rAudioBuffer *buffer;
+
     unsigned int sampleRate;
     unsigned int sampleSize;
     unsigned int channels;
-
-    rAudioBuffer *buffer;
   } AudioStream;
 
   typedef struct Sound {
-    unsigned int sampleCount;
     AudioStream stream;
+    unsigned int sampleCount;
   } Sound;
 
   typedef struct Music {
+    AudioStream stream;
+    unsigned int sampleCount;
+    bool looping;
+
     int ctxType;
     void *ctxData;
-
-    bool looping;
-    unsigned int sampleCount;
-
-    AudioStream stream;
   } Music;
 
   typedef struct VrDeviceInfo {
