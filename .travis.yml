@@ -1,0 +1,29 @@
+language: c
+dist: trusty
+
+git:
+  depth: 3
+
+matrix:
+  include:
+    - os: linux
+    - os: osx
+    - os: windows
+
+before_script:
+
+before_install:
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then
+      sudo apt-get install -y gcc-multilib
+                              libasound2-dev:$ARCH
+                              libxcursor-dev:$ARCH libxinerama-dev:$ARCH mesa-common-dev:$ARCH
+                              libx11-dev:$ARCH libxrandr-dev:$ARCH libxrandr2:$ARCH libxi-dev:$ARCH
+                              libgl1-mesa-dev:$ARCH libglu1-mesa-dev:$ARCH;
+    fi
+  - mkdir build
+  - $RUNNER $CC --version
+
+script:
+  - cd build
+  - $RUNNER make
+  mv raylua_s* raylua_e* build/
