@@ -31,8 +31,7 @@ addons:
       - libglu1-mesa-dev
 
 before_cache:
- - |-
-   case $TRAVIS_OS_NAME in
+ - case $TRAVIS_OS_NAME in
      windows)
        # https://unix.stackexchange.com/a/137322/107554
        $msys2 pacman --sync --clean --noconfirm
@@ -46,8 +45,7 @@ cache:
 
 before_install:
   - export MAKE=make
-  - |-
-    case $TRAVIS_OS_NAME in
+  - case $TRAVIS_OS_NAME in
       windows)
         [[ ! -f C:/tools/msys64/msys2_shell.cmd ]] && rm -rf C:/tools/msys64
         choco uninstall -y mingw
