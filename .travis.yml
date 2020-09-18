@@ -24,6 +24,5 @@ before_install:
   - $RUNNER $CC --version
 
 script:
-  - cd build
   - $RUNNER make
   - mv raylua_s* raylua_e* build/
