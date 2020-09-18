@@ -10,8 +10,6 @@ matrix:
     - os: osx
     - os: windows
 
-    addons:
-
 addons:
   artifacts:
     paths:
@@ -39,7 +37,7 @@ before_cache:
    esac
 
 cache:
-    directories:
+  directories:
     - $HOME/AppData/Local/Temp/chocolatey
     - /C/tools/msys64
 
