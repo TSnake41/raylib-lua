@@ -90,11 +90,38 @@ ffi.cdef [[
 
   typedef struct RenderTexture2D {
     unsigned int id;
-    Texture2D texture;
-    Texture2D depth;
+    Texture texture;
+    Texture depth;
   } RenderTexture2D;
 
   typedef RenderTexture2D RenderTexture;
+
+  typedef enum { OPENGL_11 = 1, OPENGL_21, OPENGL_33, OPENGL_ES_20 } GlVersion;
+
+  typedef enum {
+    RL_ATTACHMENT_COLOR_CHANNEL0 = 0,
+    RL_ATTACHMENT_COLOR_CHANNEL1,
+    RL_ATTACHMENT_COLOR_CHANNEL2,
+    RL_ATTACHMENT_COLOR_CHANNEL3,
+    RL_ATTACHMENT_COLOR_CHANNEL4,
+    RL_ATTACHMENT_COLOR_CHANNEL5,
+    RL_ATTACHMENT_COLOR_CHANNEL6,
+    RL_ATTACHMENT_COLOR_CHANNEL7,
+    RL_ATTACHMENT_DEPTH = 100,
+    RL_ATTACHMENT_STENCIL = 200,
+  } FramebufferAttachType;
+
+  typedef enum {
+    RL_ATTACHMENT_CUBEMAP_POSITIVE_X = 0,
+    RL_ATTACHMENT_CUBEMAP_NEGATIVE_X,
+    RL_ATTACHMENT_CUBEMAP_POSITIVE_Y,
+    RL_ATTACHMENT_CUBEMAP_NEGATIVE_Y,
+    RL_ATTACHMENT_CUBEMAP_POSITIVE_Z,
+    RL_ATTACHMENT_CUBEMAP_NEGATIVE_Z,
+    RL_ATTACHMENT_TEXTURE2D = 100,
+    RL_ATTACHMENT_RENDERBUFFER = 200,
+  } FramebufferTexType;
+
   typedef struct NPatchInfo {
     Rectangle sourceRec;
     int left;
