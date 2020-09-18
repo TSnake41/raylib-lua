@@ -26,4 +26,4 @@ before_install:
 script:
   - cd build
   - $RUNNER make
-  mv raylua_s* raylua_e* build/
+  - mv raylua_s* raylua_e* build/
