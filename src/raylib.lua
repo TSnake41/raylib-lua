@@ -78,23 +78,23 @@ ffi.cdef [[
     int format;
   } Image;
 
-  typedef struct Texture2D {
+  typedef struct Texture {
     unsigned int id;
     int width;
     int height;
     int mipmaps;
     int format;
-  } Texture2D;
-  typedef Texture2D Texture;
-  typedef Texture2D TextureCubemap;
+  } Texture;
+  typedef Texture Texture2D;
+  typedef Texture TextureCubemap;
 
-  typedef struct RenderTexture2D {
+  typedef struct RenderTexture {
     unsigned int id;
     Texture texture;
     Texture depth;
-  } RenderTexture2D;
+  } RenderTexture;
 
-  typedef RenderTexture2D RenderTexture;
+  typedef RenderTexture RenderTexture2D;
 
   typedef enum { OPENGL_11 = 1, OPENGL_21, OPENGL_33, OPENGL_ES_20 } GlVersion;
 
