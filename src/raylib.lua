@@ -302,7 +302,8 @@ ffi.cdef [[
     FLAG_WINDOW_HIDDEN = 128,
     FLAG_WINDOW_ALWAYS_RUN = 256,
     FLAG_MSAA_4X_HINT = 32,
-    FLAG_VSYNC_HINT = 64
+    FLAG_VSYNC_HINT = 64,
+    FLAG_INTERLACED_HINT = 512
   } ConfigFlag;
 
   typedef enum {

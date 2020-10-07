@@ -7,9 +7,16 @@ LUA ?= luajit/src/luajit
 WINDRES ?= windres
 
 CFLAGS += -Iluajit/src -Iraylib/src -Iraygui/src
-LDFLAGS += -Lluajit/src -Lraylib -lraylib
+LDFLAGS += luajit/src/libluajit.a raylib/libraylib.a
 
 MODULES := raymath rlgl easings gestures physac raygui
+
+# raylib settings
+PLATFORM ?= PLATFORM_DESKTOP
+GRAPHICS ?= GRAPHICS_API_OPENGL_33
+
+USE_WAYLAND_DISPLAY ?= FALSE
+USE_EXTERNAL_GLFW ?= FALSE
 
 ifeq ($(OS),Windows_NT)
 	LDFLAGS += -lopengl32 -lgdi32 -lwinmm -static
@@ -20,7 +27,12 @@ else ifeq ($(shell uname),Darwin)
 		-Wl,-pagezero_size,10000,-image_base,100000000
 	EXTERNAL_FILES :=
 else
-	LDFLAGS += -ldl -lX11 -lpthread
+	LDFLAGS += -ldl -lpthread
+	ifeq ($(PLATFORM),PLATFORM_DRM)
+		LDFLAGS += -ldrm -lGLESv2 -lEGL -lgbm
+	else
+		LDFLAGS += -lX11
+	endif
 	EXTERNAL_FILES :=
 endif
 
@@ -30,10 +42,17 @@ all: raylua_s raylua_e luajit raylib
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 luajit:
-	$(MAKE) -C luajit amalg CC=$(CC) BUILDMODE=static MACOSX_DEPLOYMENT_TARGET=10.13
+	$(MAKE) -C luajit amalg \
+		CC=$(CC) BUILDMODE=static \
+		MACOSX_DEPLOYMENT_TARGET=10.13
 
 raylib:
-	$(MAKE) CC=$(CC) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" -C raylib/src
+	$(MAKE) -C raylib/src \
+		CC=$(CC) AR=$(AR) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" \
+		USE_WAYLAND_DISPLAY="$(USE_WAYLAND_DISPLAY)" \
+		USE_EXTERNAL_GLFW="$(USE_EXTERNAL_GLFW)" \
+		PLATFORM="$(PLATFORM)" GRAPHICS="$(GRAPHICS)"
+
 
 raylua_s: src/raylua_s.o $(EXTERNAL_FILES) libraylua.a
 	$(CC) -o $@ $^ $(LDFLAGS) luajit/src/libluajit.a
@@ -73,6 +92,7 @@ clean:
 		src/lib/miniz.o
 	$(MAKE) -C luajit clean
 	$(MAKE) -C raylib/src clean
+	rm -f raylib/libraylib.a
 
 .PHONY: all src/autogen/bind.c src/autogen/boot.c raylua_s raylua_e luajit \
 	raylib clean
