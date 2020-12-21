@@ -78,24 +78,26 @@ ffi.cdef [[
     int format;
   } Image;
 
-  typedef struct Texture2D {
+  typedef struct Texture {
     unsigned int id;
     int width;
     int height;
     int mipmaps;
     int format;
-  } Texture2D;
-  typedef Texture2D Texture;
-  typedef Texture2D TextureCubemap;
+  } Texture;
+  typedef Texture Texture2D;
+  typedef Texture TextureCubemap;
 
-  typedef struct RenderTexture2D {
+  typedef struct RenderTexture {
     unsigned int id;
-    Texture2D texture;
-    Texture2D depth;
-    bool depthTexture;
-  } RenderTexture2D;
+    Texture texture;
+    Texture depth;
+  } RenderTexture;
 
-  typedef RenderTexture2D RenderTexture;
+  typedef RenderTexture RenderTexture2D;
+
+  typedef enum { OPENGL_11 = 1, OPENGL_21, OPENGL_33, OPENGL_ES_20 } GlVersion;
+
   typedef struct NPatchInfo {
     Rectangle sourceRec;
     int left;
@@ -116,6 +118,7 @@ ffi.cdef [[
   typedef struct Font {
     int baseSize;
     int charsCount;
+    int charsPadding;
     Texture2D texture;
     Rectangle *recs;
     CharInfo *chars;
@@ -188,9 +191,9 @@ ffi.cdef [[
     Matrix transform;
 
     int meshCount;
-    Mesh *meshes;
 
     int materialCount;
+    Mesh *meshes;
     Material *materials;
     int *meshMaterial;
     int boneCount;
@@ -200,9 +203,9 @@ ffi.cdef [[
 
   typedef struct ModelAnimation {
     int boneCount;
-    BoneInfo *bones;
 
     int frameCount;
+    BoneInfo *bones;
     Transform **framePoses;
   } ModelAnimation;
 
@@ -233,26 +236,25 @@ ffi.cdef [[
 
   typedef struct rAudioBuffer rAudioBuffer;
   typedef struct AudioStream {
+    rAudioBuffer *buffer;
+
     unsigned int sampleRate;
     unsigned int sampleSize;
     unsigned int channels;
-
-    rAudioBuffer *buffer;
   } AudioStream;
 
   typedef struct Sound {
-    unsigned int sampleCount;
     AudioStream stream;
+    unsigned int sampleCount;
   } Sound;
 
   typedef struct Music {
+    AudioStream stream;
+    unsigned int sampleCount;
+    bool looping;
+
     int ctxType;
     void *ctxData;
-
-    bool looping;
-    unsigned int sampleCount;
-
-    AudioStream stream;
   } Music;
 
   typedef struct VrDeviceInfo {
@@ -269,15 +271,20 @@ ffi.cdef [[
   } VrDeviceInfo;
 
   typedef enum {
-    FLAG_RESERVED = 1,
-    FLAG_FULLSCREEN_MODE = 2,
-    FLAG_WINDOW_RESIZABLE = 4,
-    FLAG_WINDOW_UNDECORATED = 8,
-    FLAG_WINDOW_TRANSPARENT = 16,
-    FLAG_WINDOW_HIDDEN = 128,
-    FLAG_WINDOW_ALWAYS_RUN = 256,
-    FLAG_MSAA_4X_HINT = 32,
-    FLAG_VSYNC_HINT = 64
+    FLAG_VSYNC_HINT = 0x00000040,
+    FLAG_FULLSCREEN_MODE = 0x00000002,
+    FLAG_WINDOW_RESIZABLE = 0x00000004,
+    FLAG_WINDOW_UNDECORATED = 0x00000008,
+    FLAG_WINDOW_HIDDEN = 0x00000080,
+    FLAG_WINDOW_MINIMIZED = 0x00000200,
+    FLAG_WINDOW_MAXIMIZED = 0x00000400,
+    FLAG_WINDOW_UNFOCUSED = 0x00000800,
+    FLAG_WINDOW_TOPMOST = 0x00001000,
+    FLAG_WINDOW_ALWAYS_RUN = 0x00000100,
+    FLAG_WINDOW_TRANSPARENT = 0x00000010,
+    FLAG_WINDOW_HIGHDPI = 0x00002000,
+    FLAG_MSAA_4X_HINT = 0x00000020,
+    FLAG_INTERLACED_HINT = 0x00010000
   } ConfigFlag;
 
   typedef enum {
@@ -413,6 +420,20 @@ ffi.cdef [[
   } MouseButton;
 
   typedef enum {
+    MOUSE_CURSOR_DEFAULT = 0,
+    MOUSE_CURSOR_ARROW = 1,
+    MOUSE_CURSOR_IBEAM = 2,
+    MOUSE_CURSOR_CROSSHAIR = 3,
+    MOUSE_CURSOR_POINTING_HAND = 4,
+    MOUSE_CURSOR_RESIZE_EW = 5,
+    MOUSE_CURSOR_RESIZE_NS = 6,
+    MOUSE_CURSOR_RESIZE_NWSE = 7,
+    MOUSE_CURSOR_RESIZE_NESW = 8,
+    MOUSE_CURSOR_RESIZE_ALL = 9,
+    MOUSE_CURSOR_NOT_ALLOWED = 10
+  } MouseCursor;
+
+  typedef enum {
     GAMEPAD_PLAYER1 = 0,
     GAMEPAD_PLAYER2 = 1,
     GAMEPAD_PLAYER3 = 2,
@@ -538,6 +559,13 @@ ffi.cdef [[
   } TextureFilterMode;
 
   typedef enum {
+    WRAP_REPEAT = 0,
+    WRAP_CLAMP,
+    WRAP_MIRROR_REPEAT,
+    WRAP_MIRROR_CLAMP
+  } TextureWrapMode;
+
+  typedef enum {
     CUBEMAP_AUTO_DETECT = 0,
     CUBEMAP_LINE_VERTICAL,
     CUBEMAP_LINE_HORIZONTAL,
@@ -545,13 +573,6 @@ ffi.cdef [[
     CUBEMAP_CROSS_FOUR_BY_THREE,
     CUBEMAP_PANORAMA
   } CubemapLayoutType;
-
-  typedef enum {
-    WRAP_REPEAT = 0,
-    WRAP_CLAMP,
-    WRAP_MIRROR_REPEAT,
-    WRAP_MIRROR_CLAMP
-  } TextureWrapMode;
 
   typedef enum {
     FONT_DEFAULT = 0,
@@ -608,6 +629,33 @@ ffi.cdef [[
 ffi.cdef [[
   typedef struct float3 { float v[3]; } float3;
   typedef struct float16 { float v[16]; } float16;
+]]
+
+-- rlgl cdef
+ffi.cdef [[
+  typedef enum {
+    RL_ATTACHMENT_COLOR_CHANNEL0 = 0,
+    RL_ATTACHMENT_COLOR_CHANNEL1,
+    RL_ATTACHMENT_COLOR_CHANNEL2,
+    RL_ATTACHMENT_COLOR_CHANNEL3,
+    RL_ATTACHMENT_COLOR_CHANNEL4,
+    RL_ATTACHMENT_COLOR_CHANNEL5,
+    RL_ATTACHMENT_COLOR_CHANNEL6,
+    RL_ATTACHMENT_COLOR_CHANNEL7,
+    RL_ATTACHMENT_DEPTH = 100,
+    RL_ATTACHMENT_STENCIL = 200,
+  } FramebufferAttachType;
+
+  typedef enum {
+    RL_ATTACHMENT_CUBEMAP_POSITIVE_X = 0,
+    RL_ATTACHMENT_CUBEMAP_NEGATIVE_X,
+    RL_ATTACHMENT_CUBEMAP_POSITIVE_Y,
+    RL_ATTACHMENT_CUBEMAP_NEGATIVE_Y,
+    RL_ATTACHMENT_CUBEMAP_POSITIVE_Z,
+    RL_ATTACHMENT_CUBEMAP_NEGATIVE_Z,
+    RL_ATTACHMENT_TEXTURE2D = 100,
+    RL_ATTACHMENT_RENDERBUFFER = 200,
+  } FramebufferTexType;
 ]]
 
 -- Physac cdef

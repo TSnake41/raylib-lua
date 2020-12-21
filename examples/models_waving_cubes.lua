@@ -48,9 +48,7 @@ while not rl.WindowShouldClose() do
           (z - num_blocks / 2) * (scale * 3.0) + scatter)
 
         local cube_color = rl.ColorFromHSV(
-          rl.new("Vector3",
-            (((x + y + z) * 18) % 360), 0.75, 0.9
-          )
+          (((x + y + z) * 18) % 360), 0.75, 0.9
         )
 
         local cube_size = (2.4 - scale) * block_scale

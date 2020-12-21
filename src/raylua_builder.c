@@ -150,7 +150,7 @@ static int list_dir(lua_State *L)
     return 0;
 
   struct dirent *entry;
-  size_t count = 0;
+  size_t count = 1;
 
   lua_newtable(L);
 

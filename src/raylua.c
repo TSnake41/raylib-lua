@@ -68,8 +68,10 @@ void raylua_boot(lua_State *L, lua_CFunction loadfile, lua_CFunction listfiles,
 
   lua_setglobal(L, "raylua");
 
-  if (luaL_dostring(L, raylua_boot_lua))
+  if (luaL_dostring(L, raylua_boot_lua)) {
     fputs(luaL_checkstring(L, -1), stderr);
+    fputc('\n', stderr);
+  }
 }
 
 int luaopen_raylua(lua_State *L)

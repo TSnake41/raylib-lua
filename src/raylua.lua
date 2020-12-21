@@ -16,7 +16,7 @@
 
 local load = loadstring
 
-raylua.version = "v3.0f"
+raylua.version = "v3.5-pre1"
 
 function raylua.repl()
   print("> raylua " .. raylua.version .. " <")
@@ -65,16 +65,37 @@ if raylua.loadfile then
   end
 
   print "RAYLUA: Load main.lua from payload."
-  require "main"
+
+  local f, err = load(raylua.loadfile "main.lua", "main.lua")
+  if f then
+    local status, f_err = xpcall(f, debug.traceback)
+
+    if not status then
+      print(f_err)
+    end
+  else
+    print(err)
+  end
 
   if not raylua.isrepl then
-    -- Keep launching the repl even with `loadfile` defined.
     return
   end
+
+  -- Keep launching the repl even with `loadfile` defined.
 end
 
 if arg and arg[1] then
-  dofile(arg[1])
+  local f, err = loadfile(arg[1])
+  if f then
+    local status, f_err = xpcall(f, debug.traceback)
+
+    if not status then
+      print(f_err)
+    end
+  else
+    print(err)
+  end
+
   return
 end
 

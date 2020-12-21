@@ -52,7 +52,8 @@ for _,modname in ipairs(modules) do
 
     line = line:gsub("(%W)([%l%d][%w_]*)", function (before, part)
       for i,keyword in ipairs(keywords) do
-        if part == keyword then
+        if part == keyword
+          or part == "t" then -- uintX_t workaround
           return before .. part
         end
       end
