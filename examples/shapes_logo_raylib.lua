@@ -3,7 +3,7 @@ local lua_color =	rl.new("Color", 3, 3, 128, 255)
 local width, height = 800, 450
 
 rl.SetConfigFlags(rl.FLAG_VSYNC_HINT)
-rl.InitWindow(800, 450, "raylib [shapes] example - basic shapes drawing")
+rl.InitWindow(800, 450, "raylib [shapes] example - raylib logo")
 
 while not rl.WindowShouldClose() do
 	rl.BeginDrawing()
