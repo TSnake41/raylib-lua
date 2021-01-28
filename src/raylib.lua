@@ -660,11 +660,8 @@ ffi.cdef [[
 
 -- Physac cdef
 ffi.cdef [[
+  typedef enum PhysicsShapeType { PHYSICS_CIRCLE = 0, PHYSICS_POLYGON } PhysicsShapeType;
   typedef struct PhysicsBodyData *PhysicsBody;
-  typedef enum PhysicsShapeType {
-    PHYSICS_CIRCLE,
-    PHYSICS_POLYGON
-  } PhysicsShapeType;
 
   typedef struct Matrix2x2 {
     float m00;
@@ -673,18 +670,18 @@ ffi.cdef [[
     float m11;
   } Matrix2x2;
 
-  typedef struct PolygonData {
+  typedef struct PhysicsVertexData {
     unsigned int vertexCount;
     Vector2 positions[24];
     Vector2 normals[24];
-  } PolygonData;
+} PhysicsVertexData;
 
   typedef struct PhysicsShape {
     PhysicsShapeType type;
     PhysicsBody body;
+    PhysicsVertexData vertexData;
     float radius;
     Matrix2x2 transform;
-    PolygonData vertexData;
   } PhysicsShape;
 
   typedef struct PhysicsBodyData {
@@ -708,6 +705,19 @@ ffi.cdef [[
     bool freezeOrient;
     PhysicsShape shape;
   } PhysicsBodyData;
+
+  typedef struct PhysicsManifoldData {
+    unsigned int id;
+    PhysicsBody bodyA;
+    PhysicsBody bodyB;
+    float penetration;
+    Vector2 normal;
+    Vector2 contacts[2];
+    unsigned int contactsCount;
+    float restitution;
+    float dynamicFriction;
+    float staticFriction;
+  } PhysicsManifoldData, *PhysicsManifold;
 ]]
 
 -- gestures cdef
