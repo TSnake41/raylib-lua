@@ -57,8 +57,8 @@ raylib:
 raylua_s: src/raylua_s.o $(EXTERNAL_FILES) libraylua.a
 	$(CC) -o $@ $^ $(LDFLAGS) luajit/src/libluajit.a
 
-raylua_e: src/raylua_e.o src/raylua_self.o src/raylua_builder.o src/lib/miniz.o \
-		$(EXTERNAL_FILES) libraylua.a
+raylua_e: src/raylua_e.o src/raylua_self.o src/raylua_builder.o \
+		src/raylua_builder_ui.o src/lib/miniz.o $(EXTERNAL_FILES) libraylua.a
 	$(CC) -o $@ $^ $(LDFLAGS) luajit/src/libluajit.a
 
 src/res/icon.res: src/res/icon.rc
@@ -89,7 +89,7 @@ src/autogen/builder.c: src/raylua_builder.lua
 clean:
 	rm -rf raylua_s raylua_e libraylua.a src/raylua_e.o src/raylua_s.o \
 		src/raylua.o src/raylua_self.o src/raylua_builder.o src/autogen/*.c \
-		src/lib/miniz.o src/res/icon.res
+		src/raylua_builder_ui.o src/lib/miniz.o src/res/icon.res
 	$(MAKE) -C luajit clean
 	$(MAKE) -C raylib/src clean
 	rm -f raylib/libraylib.a

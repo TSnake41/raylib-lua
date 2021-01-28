@@ -32,6 +32,7 @@ FILE *raylua_open_self(const char *argv0);
 
 #ifndef RAYLUA_NO_BUILDER
 int raylua_builder_boot(lua_State *L, FILE *self);
+int raylua_builder_boot_ui(FILE *self);
 #endif
 
 static mz_zip_archive zip_file;
@@ -132,7 +133,8 @@ int main(int argc, const char **argv)
     puts("RAYLUA: No payload.");
     #else
     puts("RAYLUA: No payload, use internal builder.");
-    raylua_builder_boot(L, self);
+    //raylua_builder_boot(L, self);
+    raylua_builder_boot_ui(self);
     #endif
   } else {
     /* Boot on payload. */
