@@ -20,7 +20,7 @@ circle.enabled = false
 rl.SetTargetFPS(60)
 
 while not rl.WindowShouldClose() do
-  rl.RunPhysicsStep()
+  rl.UpdatePhysics()
 
   if needsReset then
     floor = rl.CreatePhysicsBodyRectangle({ screenWidth/2, screenHeight }, 500, 100, 10)
