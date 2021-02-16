@@ -14,7 +14,9 @@ local structs = {
   "Ray", "RayHitInfo", "BoundingBox", "Wave", "Sound", "Music",
   "AudioStream", "VrDeviceInfo", "Camera3D", "RenderTexture2D",
   "TextureCubemap", "TraceLogCallback", "PhysicsBody",
-  "GestureEvent", "GuiStyle", "GuiTextBoxState"
+  "GestureEvent", "GuiStyle", "GuiTextBoxState",
+  "TraceLogCallback", "MemAllocCallback", "MemReallocCallback",
+  "MemFreeCallback", "LoadFileDataCallback"
 }
 
 local functions = {}
@@ -46,43 +48,45 @@ end
 
 for _,modname in ipairs(modules) do
   for line in io.lines("tools/" .. modname .. ".h") do
-    if custom_support[modname] then
-      line = custom_support[modname](line)
+    if line:sub(0, 2) ~= "//" then
+      if custom_support[modname] then
+        line = custom_support[modname](line)
+      end
+
+      line = line:gsub("(%W)([%l%d][%w_]*)", function (before, part)
+        for i,keyword in ipairs(keywords) do
+          if part == keyword
+            or part == "t" then -- uintX_t workaround
+            return before .. part
+          end
+        end
+
+        return before
+      end)
+
+      line = line:gsub("%u%w+", function (part)
+        for i,struct in ipairs(structs) do
+          if part == struct then
+            return part
+          end
+        end
+
+        functions[#functions + 1] = part
+        counter = counter + 1
+
+        if count == 2 then
+          print("WARN: Multiple matches for: " .. line)
+        end
+
+        return "(*)"
+      end)
+
+      -- Strip spaces
+      line = line:gsub("([(),*.])%s+(%w)", function (a, b) return a .. b end)
+      line = line:gsub("(%w)%s+([(),*.])", function (a, b) return a .. b end)
+
+      proto[#proto + 1] = line
     end
-
-    line = line:gsub("(%W)([%l%d][%w_]*)", function (before, part)
-      for i,keyword in ipairs(keywords) do
-        if part == keyword
-          or part == "t" then -- uintX_t workaround
-          return before .. part
-        end
-      end
-
-      return before
-    end)
-
-    line = line:gsub("%u%w+", function (part)
-      for i,struct in ipairs(structs) do
-        if part == struct then
-          return part
-        end
-      end
-
-      functions[#functions + 1] = part
-      counter = counter + 1
-
-      if count == 2 then
-        print("WARN: Multiple matches for: " .. line)
-      end
-
-      return "(*)"
-    end)
-
-    -- Strip spaces
-    line = line:gsub("([(),*.])%s+(%w)", function (a, b) return a .. b end)
-    line = line:gsub("(%w)%s+([(),*.])", function (a, b) return a .. b end)
-
-    proto[#proto + 1] = line
   end
 end
 

@@ -623,6 +623,11 @@ ffi.cdef [[
   } NPatchType;
 
   typedef void (*TraceLogCallback)(int logType, const char *text, va_list args);
+  typedef void *(*MemAllocCallback)(int size);
+  typedef void *(*MemReallocCallback)(int size);
+  typedef void (*MemFreeCallback)(void *ptr);
+  typedef unsigned char* (*LoadFileDataCallback)(const char* fileName, unsigned int* bytesRead);
+  typedef char* (*LoadFileTextCallback)(const char* fileName);
 ]]
 
 -- raymath cdef
