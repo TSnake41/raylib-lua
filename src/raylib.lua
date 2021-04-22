@@ -104,7 +104,7 @@ ffi.cdef [[
     int top;
     int right;
     int bottom;
-    int type;
+    int layout;
   } NPatchInfo;
 
   typedef struct CharInfo {
@@ -130,7 +130,7 @@ ffi.cdef [[
     Vector3 target;
     Vector3 up;
     float fovy;
-    int type;
+    int projection;
   } Camera3D;
 
   typedef Camera3D Camera;
@@ -173,7 +173,7 @@ ffi.cdef [[
   typedef struct Material {
     Shader shader;
     MaterialMap *maps;
-    float *params;
+    float params[4];
   } Material;
 
   typedef struct Transform {
@@ -270,6 +270,15 @@ ffi.cdef [[
     float chromaAbCorrection[4];
   } VrDeviceInfo;
 
+  typedef struct VrStereoConfig {
+    float leftLensCenter[2];
+    float rightLensCenter[2];
+    float leftScreenCenter[2];
+    float rightScreenCenter[2];
+    float scale[2];
+    float scaleIn[2];
+  } VrStereoConfig;
+
   typedef enum {
     FLAG_VSYNC_HINT = 0x00000040,
     FLAG_FULLSCREEN_MODE = 0x00000002,
@@ -285,7 +294,7 @@ ffi.cdef [[
     FLAG_WINDOW_HIGHDPI = 0x00002000,
     FLAG_MSAA_4X_HINT = 0x00000020,
     FLAG_INTERLACED_HINT = 0x00010000
-  } ConfigFlag;
+  } ConfigFlags;
 
   typedef enum {
     LOG_ALL = 0,
@@ -296,9 +305,10 @@ ffi.cdef [[
     LOG_ERROR,
     LOG_FATAL,
     LOG_NONE
-  } TraceLogType;
+  } TraceLogLevel;
 
   typedef enum {
+    KEY_NULL = 0,
     KEY_APOSTROPHE = 39,
     KEY_COMMA = 44,
     KEY_MINUS = 45,
@@ -403,15 +413,13 @@ ffi.cdef [[
     KEY_KP_SUBTRACT = 333,
     KEY_KP_ADD = 334,
     KEY_KP_ENTER = 335,
-    KEY_KP_EQUAL = 336
-  } KeyboardKey;
-
-  typedef enum {
+    KEY_KP_EQUAL = 336,
+    /* Android key buttons */
     KEY_BACK = 4,
     KEY_MENU = 82,
     KEY_VOLUME_UP = 24,
     KEY_VOLUME_DOWN = 25
-  } AndroidButton;
+  } KeyboardKey;
 
   typedef enum {
     MOUSE_LEFT_BUTTON = 0,
@@ -432,13 +440,6 @@ ffi.cdef [[
     MOUSE_CURSOR_RESIZE_ALL = 9,
     MOUSE_CURSOR_NOT_ALLOWED = 10
   } MouseCursor;
-
-  typedef enum {
-    GAMEPAD_PLAYER1 = 0,
-    GAMEPAD_PLAYER2 = 1,
-    GAMEPAD_PLAYER3 = 2,
-    GAMEPAD_PLAYER4 = 3
-  } GamepadNumber;
 
   typedef enum {
     GAMEPAD_BUTTON_UNKNOWN = 0,
@@ -472,107 +473,107 @@ ffi.cdef [[
   } GamepadAxis;
 
   typedef enum {
-    LOC_VERTEX_POSITION = 0,
-    LOC_VERTEX_TEXCOORD01,
-    LOC_VERTEX_TEXCOORD02,
-    LOC_VERTEX_NORMAL,
-    LOC_VERTEX_TANGENT,
-    LOC_VERTEX_COLOR,
-    LOC_MATRIX_MVP,
-    LOC_MATRIX_MODEL,
-    LOC_MATRIX_VIEW,
-    LOC_MATRIX_PROJECTION,
-    LOC_VECTOR_VIEW,
-    LOC_COLOR_DIFFUSE,
-    LOC_COLOR_SPECULAR,
-    LOC_COLOR_AMBIENT,
-    LOC_MAP_ALBEDO,
-    LOC_MAP_METALNESS,
-    LOC_MAP_NORMAL,
-    LOC_MAP_ROUGHNESS,
-    LOC_MAP_OCCLUSION,
-    LOC_MAP_EMISSION,
-    LOC_MAP_HEIGHT,
-    LOC_MAP_CUBEMAP,
-    LOC_MAP_IRRADIANCE,
-    LOC_MAP_PREFILTER,
-    LOC_MAP_BRDF
+    SHADER_LOC_VERTEX_POSITION = 0,
+    SHADER_LOC_VERTEX_TEXCOORD01,
+    SHADER_LOC_VERTEX_TEXCOORD02,
+    SHADER_LOC_VERTEX_NORMAL,
+    SHADER_LOC_VERTEX_TANGENT,
+    SHADER_LOC_VERTEX_COLOR,
+    SHADER_LOC_MATRIX_MVP,
+    SHADER_LOC_MATRIX_MODEL,
+    SHADER_LOC_MATRIX_VIEW,
+    SHADER_LOC_MATRIX_PROJECTION,
+    SHADER_LOC_VECTOR_VIEW,
+    SHADER_LOC_COLOR_DIFFUSE,
+    SHADER_LOC_COLOR_SPECULAR,
+    SHADER_LOC_COLOR_AMBIENT,
+    SHADER_LOC_MAP_ALBEDO,
+    SHADER_LOC_MAP_METALNESS,
+    SHADER_LOC_MAP_NORMAL,
+    SHADER_LOC_MAP_ROUGHNESS,
+    SHADER_LOC_MAP_OCCLUSION,
+    SHADER_LOC_MAP_EMISSION,
+    SHADER_LOC_MAP_HEIGHT,
+    SHADER_LOC_MAP_CUBEMAP,
+    SHADER_LOC_MAP_IRRADIANCE,
+    SHADER_LOC_MAP_PREFILTER,
+    SHADER_LOC_MAP_BRDF
   } ShaderLocationIndex;
 
   typedef enum {
-    UNIFORM_FLOAT = 0,
-    UNIFORM_VEC2,
-    UNIFORM_VEC3,
-    UNIFORM_VEC4,
-    UNIFORM_INT,
-    UNIFORM_IVEC2,
-    UNIFORM_IVEC3,
-    UNIFORM_IVEC4,
-    UNIFORM_SAMPLER2D
+    SHADER_UNIFORM_FLOAT = 0,
+    SHADER_UNIFORM_VEC2,
+    SHADER_UNIFORM_VEC3,
+    SHADER_UNIFORM_VEC4,
+    SHADER_UNIFORM_INT,
+    SHADER_UNIFORM_IVEC2,
+    SHADER_UNIFORM_IVEC3,
+    SHADER_UNIFORM_IVEC4,
+    SHADER_UNIFORM_SAMPLER2D
   } ShaderUniformDataType;
 
   typedef enum {
-    MAP_ALBEDO = 0,
-    MAP_METALNESS = 1,
-    MAP_NORMAL = 2,
-    MAP_ROUGHNESS = 3,
-    MAP_OCCLUSION,
-    MAP_EMISSION,
-    MAP_HEIGHT,
-    MAP_CUBEMAP,
-    MAP_IRRADIANCE,
-    MAP_PREFILTER,
-    MAP_BRDF
-  } MaterialMapType;
+    MATERIAL_MAP_ALBEDO = 0,
+    MATERIAL_MAP_METALNESS = 1,
+    MATERIAL_MAP_NORMAL = 2,
+    MATERIAL_MAP_ROUGHNESS = 3,
+    MATERIAL_MAP_OCCLUSION,
+    MATERIAL_MAP_EMISSION,
+    MATERIAL_MAP_HEIGHT,
+    MATERIAL_MAP_BRDG,
+    MATERIAL_MAP_CUBEMAP,
+    MATERIAL_MAP_IRRADIANCE,
+    MATERIAL_MAP_PREFILTER
+  } MaterialMapIndex;
 
   typedef enum {
-    UNCOMPRESSED_GRAYSCALE = 1,
-    UNCOMPRESSED_GRAY_ALPHA,
-    UNCOMPRESSED_R5G6B5,
-    UNCOMPRESSED_R8G8B8,
-    UNCOMPRESSED_R5G5B5A1,
-    UNCOMPRESSED_R4G4B4A4,
-    UNCOMPRESSED_R8G8B8A8,
-    UNCOMPRESSED_R32,
-    UNCOMPRESSED_R32G32B32,
-    UNCOMPRESSED_R32G32B32A32,
-    COMPRESSED_DXT1_RGB,
-    COMPRESSED_DXT1_RGBA,
-    COMPRESSED_DXT3_RGBA,
-    COMPRESSED_DXT5_RGBA,
-    COMPRESSED_ETC1_RGB,
-    COMPRESSED_ETC2_RGB,
-    COMPRESSED_ETC2_EAC_RGBA,
-    COMPRESSED_PVRT_RGB,
-    COMPRESSED_PVRT_RGBA,
-    COMPRESSED_ASTC_4x4_RGBA,
-    COMPRESSED_ASTC_8x8_RGBA
+    PIXELFORMAT_UNCOMPRESSED_GRAYSCALE = 1,
+    PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA,
+    PIXELFORMAT_UNCOMPRESSED_R5G6B5,
+    PIXELFORMAT_UNCOMPRESSED_R8G8B8,
+    PIXELFORMAT_UNCOMPRESSED_R5G5B5A1,
+    PIXELFORMAT_UNCOMPRESSED_R4G4B4A4,
+    PIXELFORMAT_UNCOMPRESSED_R8G8B8A8,
+    PIXELFORMAT_UNCOMPRESSED_R32,
+    PIXELFORMAT_UNCOMPRESSED_R32G32B32,
+    PIXELFORMAT_UNCOMPRESSED_R32G32B32A32,
+    PIXELFORMAT_COMPRESSED_DXT1_RGB,
+    PIXELFORMAT_COMPRESSED_DXT1_RGBA,
+    PIXELFORMAT_COMPRESSED_DXT3_RGBA,
+    PIXELFORMAT_COMPRESSED_DXT5_RGBA,
+    PIXELFORMAT_COMPRESSED_ETC1_RGB,
+    PIXELFORMAT_COMPRESSED_ETC2_RGB,
+    PIXELFORMAT_COMPRESSED_ETC2_EAC_RGBA,
+    PIXELFORMAT_COMPRESSED_PVRT_RGB,
+    PIXELFORMAT_COMPRESSED_PVRT_RGBA,
+    PIXELFORMAT_COMPRESSED_ASTC_4x4_RGBA,
+    PIXELFORMAT_COMPRESSED_ASTC_8x8_RGBA
   } PixelFormat;
 
   typedef enum {
-    FILTER_POINT = 0,
-    FILTER_BILINEAR,
-    FILTER_TRILINEAR,
-    FILTER_ANISOTROPIC_4X,
-    FILTER_ANISOTROPIC_8X,
-    FILTER_ANISOTROPIC_16X,
-  } TextureFilterMode;
+    TEXTURE_FILTER_POINT = 0,
+    TEXTURE_FILTER_BILINEAR,
+    TEXTURE_FILTER_TRILINEAR,
+    TEXTURE_FILTER_ANISOTROPIC_4X,
+    TEXTURE_FILTER_ANISOTROPIC_8X,
+    TEXTURE_FILTER_ANISOTROPIC_16X,
+  } TextureFilter;
 
   typedef enum {
-    WRAP_REPEAT = 0,
-    WRAP_CLAMP,
-    WRAP_MIRROR_REPEAT,
-    WRAP_MIRROR_CLAMP
+    TEXTURE_WRAP_REPEAT = 0,
+    TEXTURE_WRAP_CLAMP,
+    TEXTURE_WRAP_MIRROR_REPEAT,
+    TEXTURE_WRAP_MIRROR_CLAMP
   } TextureWrapMode;
 
   typedef enum {
-    CUBEMAP_AUTO_DETECT = 0,
-    CUBEMAP_LINE_VERTICAL,
-    CUBEMAP_LINE_HORIZONTAL,
-    CUBEMAP_CROSS_THREE_BY_FOUR,
-    CUBEMAP_CROSS_FOUR_BY_THREE,
-    CUBEMAP_PANORAMA
-  } CubemapLayoutType;
+    CUBEMAP_LAYOUT_AUTO_DETECT = 0,
+    CUBEMAP_LAYOUT_LINE_VERTICAL,
+    CUBEMAP_LAYOUT_LINE_HORIZONTAL,
+    CUBEMAP_LAYOUT_CROSS_THREE_BY_FOUR,
+    CUBEMAP_LAYOUT_CROSS_FOUR_BY_THREE,
+    CUBEMAP_LAYOUT_PANORAMA
+  } CubemapLayout;
 
   typedef enum {
     FONT_DEFAULT = 0,
@@ -601,7 +602,7 @@ ffi.cdef [[
     GESTURE_SWIPE_DOWN = 128,
     GESTURE_PINCH_IN = 256,
     GESTURE_PINCH_OUT = 512
-  } GestureType;
+  } Gestures;
 
   typedef enum {
     CAMERA_CUSTOM = 0,
@@ -614,15 +615,15 @@ ffi.cdef [[
   typedef enum {
     CAMERA_PERSPECTIVE = 0,
     CAMERA_ORTHOGRAPHIC
-  } CameraType;
+  } CameraProjection;
 
   typedef enum {
-    NPT_9PATCH = 0,
-    NPT_3PATCH_VERTICAL,
-    NPT_3PATCH_HORIZONTAL
-  } NPatchType;
+    NPATCH_NINE_PATCH = 0,
+    NPATCH_THREE_PATCH_VERTICAL,
+    NPATCH_THREE_PATCH_HORIZONTAL
+  } NPatchLayout;
 
-  typedef void (*TraceLogCallback)(int logType, const char *text, va_list args);
+  typedef void (*TraceLogCallback)(int logLevel, const char *text, va_list args);
   typedef void *(*MemAllocCallback)(int size);
   typedef void *(*MemReallocCallback)(int size);
   typedef void (*MemFreeCallback)(void *ptr);
@@ -661,6 +662,90 @@ ffi.cdef [[
     RL_ATTACHMENT_TEXTURE2D = 100,
     RL_ATTACHMENT_RENDERBUFFER = 200,
   } FramebufferTexType;
+
+  /* NOTE: Assumes non-ES OpenGL. */
+  typedef struct VertexBuffer {
+    int elementsCount;
+
+    int vCounter;
+    int tcCounter;
+    int cCounter;
+
+    float *vertices;
+    float *texcoords;
+    unsigned char *colors;
+    unsigned int *indices;
+
+    unsigned int vaoId;
+    unsigned int vboId[4];
+  } VertexBuffer;
+
+  typedef struct DrawCall {
+    int mode;
+    int vertexCount;
+    int vertexAlignment;
+    //unsigned int vaoId;
+    //unsigned int shaderId;
+    unsigned int textureId;
+
+    //Matrix projection;
+    //Matrix modelview;
+  } DrawCall;
+
+  typedef struct RenderBatch {
+    int buffersCount;
+    int currentBuffer;
+    VertexBuffer *vertexBuffer;
+
+    DrawCall *draws;
+    int drawsCounter;
+    float currentDepth;
+  } RenderBatch;
+
+  typedef enum {
+    SHADER_ATTRIB_FLOAT = 0,
+    SHADER_ATTRIB_VEC2,
+    SHADER_ATTRIB_VEC3, 
+    SHADER_ATTRIB_VEC4
+  } ShaderAttributeDataType;
+
+  typedef struct VertexBuffer {
+    int elementsCount;
+
+    int vCounter;
+    int tcCounter;
+    int cCounter;
+
+    float *vertices;
+    float *texcoords;
+    unsigned char *colors;
+    unsigned int *indices;
+    
+    unsigned int vaoId;
+    unsigned int vboId[4];
+  } VertexBuffer;
+
+  typedef struct DrawCall {
+    int mode;
+    int vertexCount;
+    int vertexAlignment;
+    //unsigned int vaoId;
+    //unsigned int shaderId;
+    unsigned int textureId;
+
+    //Matrix projection;
+    //Matrix modelview;
+  } DrawCall;
+
+  typedef struct RenderBatch {
+    int buffersCount;
+    int currentBuffer;
+    VertexBuffer *vertexBuffer;
+
+    DrawCall *draws;
+    int drawsCounter;
+    float currentDepth;
+  } RenderBatch;
 ]]
 
 -- Physac cdef
@@ -941,10 +1026,10 @@ rl.BLANK = new_color(0, 0, 0, 0)
 rl.MAGENTA = new_color(255, 0, 255, 255)
 rl.RAYWHITE = new_color(245, 245, 245, 255)
 
-rl.LOC_MAP_DIFFUSE = C.LOC_MAP_ALBEDO
-rl.LOC_MAP_SPECULAR = C.LOC_MAP_METALNESS
-rl.MAP_DIFFUSE = C.MAP_ALBEDO
-rl.MAP_SPECULAR = C.MAP_METALNESS
+rl.SHADER_LOC_MAP_DIFFUSE = C.SHADER_LOC_MAP_ALBEDO
+rl.SHADER_LOC_MAP_SPECULAR = C.SHADER_LOC_MAP_METALNESS
+rl.MATERIAL_MAP_DIFFUSE = C.MATERIAL_MAP_ALBEDO
+rl.MATERIAL_MAP_SPECULAR = C.MATERIAL_MAP_METALNESS
 
 function rl.ref(obj)
   return ffi.cast(ffi.typeof("$ *", obj), obj)
