@@ -5,11 +5,13 @@ rl.InitWindow(800, 450, "raylib [shapes] example - basic shapes drawing")
 rl.InitAudioDevice()
 
 local logo = rl.LoadTexture "ressources/logo.png"
-local music = rl.LoadSound "ressources/mini1111.ogg"
+local music = rl.LoadMusicStream "ressources/mini1111.xm"
 
-rl.PlaySound(music)
+rl.PlayMusicStream(music)
 
 while not rl.WindowShouldClose() do
+  rl.UpdateMusicStream(music)
+
 	rl.BeginDrawing()
   rl.ClearBackground(rl.RAYWHITE)
 
@@ -18,6 +20,8 @@ while not rl.WindowShouldClose() do
 
   rl.EndDrawing()
 end
+
+rl.UnloadMusicStream(music)
 
 rl.CloseAudioDevice()
 rl.CloseWindow()

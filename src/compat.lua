@@ -18,59 +18,18 @@ local new = ffi.new
 
 -- Load*() wrappers.
 if raylua.loadfile then
-  local LoadImage = rl.LoadImage
-  function rl.LoadImage(path)
+  local LoadMusicStream = rl.LoadMusicStream
+  function rl.LoadMusicStream(path)
     local f, err = raylua.loadfile(path)
 
     if f then
-      local ext = path:gsub(".+%.", "")
+      local ext = "." .. path:gsub(".+%.", "")
 
-      return rl.LoadImageFromMemory(ext, f, #f)
+      return rl.LoadMusicStreamFromMemory(ext, ffi.cast("void *", f), #f)
     else
       print(("RAYLUA: %s"):format(err))
-      return LoadImage(path)
+      return LoadMusicStream(path)
     end
-  end
-
-  function rl.LoadTexture(path)
-    return rl.LoadTextureFromImage(rl.LoadImage(path))
-  end
-
-  local LoadFont, LoadFontEx = rl.LoadFont, rl.LoadFontEx
-  function rl.LoadFontEx(path, sz, chars, count)
-    local f, err = raylua.loadfile(path)
-
-    if f then
-      local ext = path:gsub(".+%.", "")
-
-      return rl.LoadFontFromMemory(ext, f, #f, sz, chars, count)
-    else
-      return LoadFontEx(sz, chars, count)
-    end
-  end
-
-  function rl.LoadFont(path)
-    -- HACK: Hardcoded values (FONT_TTF_DEFAULT_SIZE,
-    --       FONT_TTF_DEFAULT_NUMCHARS)
-    return rl.LoadFontEx(path, 32, nil, 95)
-  end
-
-  local LoadWave = rl.LoadWave
-  function rl.LoadWave(path)
-    local f, err = raylua.loadfile(path)
-
-    if f then
-      local ext = path:gsub(".+%.", "")
-
-      return rl.LoadWaveFromMemory(ext, f, #f)
-    else
-      print(("RAYLUA: %s"):format(err))
-      return LoadWave(path)
-    end
-  end
-
-  function rl.LoadSound(path)
-    return rl.LoadSoundFromWave(rl.LoadWave(path))
   end
 end
 

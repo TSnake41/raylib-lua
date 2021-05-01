@@ -62,7 +62,12 @@ int raylua_loadfile(lua_State *L)
     return 2;
   }
 
-  mz_zip_reader_extract_to_mem(&zip_file, index, buffer, size, 0);
+  if (!mz_zip_reader_extract_to_mem(&zip_file, index, buffer, size, 0)) {
+    free(buffer);
+    lua_pushnil(L);
+    lua_pushfstring(L, "%s: Can't extract file.", path);
+    return 2;
+  }
 
   lua_pushlstring(L, buffer, size);
   free(buffer);
@@ -86,6 +91,69 @@ int raylua_listfiles(lua_State *L)
   }
 
   return 1;
+}
+
+unsigned char *raylua_loadFileData(const char *path, unsigned int *out_size)
+{
+  int index = mz_zip_reader_locate_file(&zip_file, path, NULL, 0);
+  if (index == -1) {
+    printf("RAYLUA: WARN: File not found in payload. '%s'\n", path);
+    return NULL;
+  }
+
+  mz_zip_archive_file_stat stat;
+  if (!mz_zip_reader_file_stat(&zip_file, index, &stat)) {
+    printf("RAYLUA: WARN: Can't get file information in payload. '%s'\n", path);
+    return NULL;
+  }
+
+  size_t size = stat.m_uncomp_size;
+  unsigned char *buffer = RL_MALLOC(size);
+  if (buffer == NULL) {
+    printf("RAYLUA: WARN: Can't allocate file buffer. '%s'\n", path);
+    return NULL;
+  }
+
+  if (!mz_zip_reader_extract_to_mem(&zip_file, index, buffer, size, 0)) {
+    free(buffer);
+    printf("RAYLUA: WARN: Can't extract file. '%s'\n", path);
+    return NULL;
+  }
+
+  *out_size = size;
+  return buffer;
+}
+
+char *raylua_loadFileText(const char *path)
+{
+  int index = mz_zip_reader_locate_file(&zip_file, path, NULL, 0);
+  if (index == -1) {
+    printf("RAYLUA: WARN: File not found in payload. '%s'\n", path);
+    return NULL;
+  }
+
+  mz_zip_archive_file_stat stat;
+  if (!mz_zip_reader_file_stat(&zip_file, index, &stat)) {
+    printf("RAYLUA: WARN: Can't get file information in payload. '%s'\n", path);
+    return NULL;
+  }
+
+  size_t size = stat.m_uncomp_size;
+  char *buffer = RL_MALLOC(size + 1);
+  if (buffer == NULL) {
+    printf("RAYLUA: WARN: Can't allocate file buffer. '%s'\n", path);
+    return NULL;
+  }
+
+  buffer[size] = '\0';
+
+  if (!mz_zip_reader_extract_to_mem(&zip_file, index, buffer, size, 0)) {
+    free(buffer);
+    printf("RAYLUA: WARN: Can't extract file. '%s'\n", path);
+    return NULL;
+  }
+
+  return buffer;
 }
 
 static bool raylua_init_payload(FILE *self)
@@ -126,6 +194,9 @@ int main(int argc, const char **argv)
     puts("RAYLUA: Can't open self, cannot continue.");
     return 1;
   }
+
+  SetLoadFileDataCallback(raylua_loadFileData);
+  SetLoadFileTextCallback(raylua_loadFileText);
 
   if (!raylua_init_payload(self)) {
     #ifdef RAYLUA_NO_BUILDER
