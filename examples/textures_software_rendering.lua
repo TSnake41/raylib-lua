@@ -11,7 +11,7 @@ local fb_data = rl.new("Color[?]", width * height)
 
 framebuffer.width = width
 framebuffer.height = height
-framebuffer.format = rl.UNCOMPRESSED_R8G8B8A8
+framebuffer.format = rl.PIXELFORMAT_UNCOMPRESSED_R8G8B8A8
 framebuffer.mipmaps = 1
 framebuffer.data = fb_data
 

@@ -15,8 +15,8 @@ local structs = {
   "AudioStream", "VrDeviceInfo", "Camera3D", "RenderTexture2D",
   "TextureCubemap", "TraceLogCallback", "PhysicsBody",
   "GestureEvent", "GuiStyle", "GuiTextBoxState",
-  "TraceLogCallback", "MemAllocCallback", "MemReallocCallback",
-  "MemFreeCallback", "LoadFileDataCallback"
+  "TraceLogCallback", "VertexBuffer", "DrawCall", "RenderBatch",
+  "ShaderAttributeDataType", "MaterialMapIndex", "VrStereoConfig"
 }
 
 local functions = {}

@@ -46,7 +46,7 @@ rl.SetConfigFlags(rl.FLAG_VSYNC_HINT)
 rl.InitWindow(windowWidth, windowHeight, "my 32x32 game/demo")
 
 local target = rl.LoadRenderTexture(gameScreenWidth, gameScreenHeight)
-rl.SetTextureFilter(target.texture, rl.FILTER_POINT)
+rl.SetTextureFilter(target.texture, rl.TEXTURE_FILTER_POINT)
 
 rl.SetTargetFPS(60)
 

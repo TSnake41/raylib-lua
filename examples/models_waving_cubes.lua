@@ -22,10 +22,10 @@ local camera = rl.new("Camera3D", {
 local num_blocks = 15
 
 while not rl.WindowShouldClose() do
-  local time = rl.GetTime()
+  local t = rl.GetTime()
 
-  local scale = (2.0 + math.sin(time)) * 0.7
-  local camera_time = time * 0.3
+  local scale = (2.0 + math.sin(t)) * 0.7
+  local camera_time = t * 0.3
 
   camera.position.x = math.cos(camera_time) * 40.0
   camera.position.z = math.sin(camera_time) * 40.0
@@ -40,7 +40,7 @@ while not rl.WindowShouldClose() do
     for y=0,num_blocks-1 do
       for z=0,num_blocks-1 do
         local block_scale = (x + y + z) / 30
-        local scatter = math.sin(block_scale * 20.0 + time * 4.0)
+        local scatter = math.sin(block_scale * 20.0 + t * 4.0)
 
         local cube_pos = rl.new("Vector3",
           (x - num_blocks / 2) * (scale * 3.0) + scatter,

@@ -93,10 +93,7 @@ ffi.cdef [[
     Texture texture;
     Texture depth;
   } RenderTexture;
-
   typedef RenderTexture RenderTexture2D;
-
-  typedef enum { OPENGL_11 = 1, OPENGL_21, OPENGL_33, OPENGL_ES_20 } GlVersion;
 
   typedef struct NPatchInfo {
     Rectangle sourceRec;
@@ -203,7 +200,6 @@ ffi.cdef [[
 
   typedef struct ModelAnimation {
     int boneCount;
-
     int frameCount;
     BoneInfo *bones;
     Transform **framePoses;
@@ -271,6 +267,8 @@ ffi.cdef [[
   } VrDeviceInfo;
 
   typedef struct VrStereoConfig {
+    Matrix projection[2];
+    Matrix viewOffset[2];
     float leftLensCenter[2];
     float rightLensCenter[2];
     float leftScreenCenter[2];
@@ -473,6 +471,20 @@ ffi.cdef [[
   } GamepadAxis;
 
   typedef enum {
+    MATERIAL_MAP_ALBEDO = 0,
+    MATERIAL_MAP_METALNESS = 1,
+    MATERIAL_MAP_NORMAL = 2,
+    MATERIAL_MAP_ROUGHNESS = 3,
+    MATERIAL_MAP_OCCLUSION,
+    MATERIAL_MAP_EMISSION,
+    MATERIAL_MAP_HEIGHT,
+    MATERIAL_MAP_BRDG,
+    MATERIAL_MAP_CUBEMAP,
+    MATERIAL_MAP_IRRADIANCE,
+    MATERIAL_MAP_PREFILTER
+  } MaterialMapIndex;
+
+  typedef enum {
     SHADER_LOC_VERTEX_POSITION = 0,
     SHADER_LOC_VERTEX_TEXCOORD01,
     SHADER_LOC_VERTEX_TEXCOORD02,
@@ -481,6 +493,7 @@ ffi.cdef [[
     SHADER_LOC_VERTEX_COLOR,
     SHADER_LOC_MATRIX_MVP,
     SHADER_LOC_MATRIX_MODEL,
+    SHADER_LOC_MATRIX_NORMAL,
     SHADER_LOC_MATRIX_VIEW,
     SHADER_LOC_MATRIX_PROJECTION,
     SHADER_LOC_VECTOR_VIEW,
@@ -511,20 +524,6 @@ ffi.cdef [[
     SHADER_UNIFORM_IVEC4,
     SHADER_UNIFORM_SAMPLER2D
   } ShaderUniformDataType;
-
-  typedef enum {
-    MATERIAL_MAP_ALBEDO = 0,
-    MATERIAL_MAP_METALNESS = 1,
-    MATERIAL_MAP_NORMAL = 2,
-    MATERIAL_MAP_ROUGHNESS = 3,
-    MATERIAL_MAP_OCCLUSION,
-    MATERIAL_MAP_EMISSION,
-    MATERIAL_MAP_HEIGHT,
-    MATERIAL_MAP_BRDG,
-    MATERIAL_MAP_CUBEMAP,
-    MATERIAL_MAP_IRRADIANCE,
-    MATERIAL_MAP_PREFILTER
-  } MaterialMapIndex;
 
   typedef enum {
     PIXELFORMAT_UNCOMPRESSED_GRAYSCALE = 1,
@@ -624,11 +623,6 @@ ffi.cdef [[
   } NPatchLayout;
 
   typedef void (*TraceLogCallback)(int logLevel, const char *text, va_list args);
-  typedef void *(*MemAllocCallback)(int size);
-  typedef void *(*MemReallocCallback)(int size);
-  typedef void (*MemFreeCallback)(void *ptr);
-  typedef unsigned char* (*LoadFileDataCallback)(const char* fileName, unsigned int* bytesRead);
-  typedef char* (*LoadFileTextCallback)(const char* fileName);
 ]]
 
 -- raymath cdef
@@ -708,44 +702,6 @@ ffi.cdef [[
     SHADER_ATTRIB_VEC3, 
     SHADER_ATTRIB_VEC4
   } ShaderAttributeDataType;
-
-  typedef struct VertexBuffer {
-    int elementsCount;
-
-    int vCounter;
-    int tcCounter;
-    int cCounter;
-
-    float *vertices;
-    float *texcoords;
-    unsigned char *colors;
-    unsigned int *indices;
-    
-    unsigned int vaoId;
-    unsigned int vboId[4];
-  } VertexBuffer;
-
-  typedef struct DrawCall {
-    int mode;
-    int vertexCount;
-    int vertexAlignment;
-    //unsigned int vaoId;
-    //unsigned int shaderId;
-    unsigned int textureId;
-
-    //Matrix projection;
-    //Matrix modelview;
-  } DrawCall;
-
-  typedef struct RenderBatch {
-    int buffersCount;
-    int currentBuffer;
-    VertexBuffer *vertexBuffer;
-
-    DrawCall *draws;
-    int drawsCounter;
-    float currentDepth;
-  } RenderBatch;
 ]]
 
 -- Physac cdef
