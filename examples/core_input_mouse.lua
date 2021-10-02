@@ -9,11 +9,11 @@ while not rl.WindowShouldClose() do
     ball_position.x = rl.GetMouseX()
     ball_position.y = rl.GetMouseY()
 
-    if rl.IsMouseButtonPressed(rl.MOUSE_LEFT_BUTTON) then
+    if rl.IsMouseButtonPressed(rl.MOUSE_BUTTON_LEFT) then
       ball_color = rl.MAROON
-    elseif rl.IsMouseButtonPressed(rl.MOUSE_MIDDLE_BUTTON) then
+    elseif rl.IsMouseButtonPressed(rl.MOUSE_BUTTON_MIDDLE) then
       ball_color = rl.LIME
-    elseif rl.IsMouseButtonPressed(rl.MOUSE_RIGHT_BUTTON) then
+    elseif rl.IsMouseButtonPressed(rl.MOUSE_BUTTON_RIGHT) then
       ball_color = rl.DARKBLUE
     end
 

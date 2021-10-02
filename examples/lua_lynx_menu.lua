@@ -20,13 +20,10 @@ local menu = lynx.menu ({
 })
 
 rl.SetConfigFlags(rl.FLAG_VSYNC_HINT)
---rl.SetTargetFPS(60)
-
 rl.InitWindow(800, 450, "raylib [lua] example - lynx menu")
 
 while not rl.WindowShouldClose() do
 	rl.BeginDrawing()
-
 	rl.ClearBackground(rl.BLACK)
   local pos = rl.GetMousePosition()
   menu:input_mouse(pos.x, pos.y, 0)

@@ -14,7 +14,7 @@ local exit_window = false
 while not exit_window and not rl.WindowShouldClose() do
   mouse_pos = rl.GetMousePosition()
   
-  if rl.IsMouseButtonPressed(rl.MOUSE_LEFT_BUTTON) then
+  if rl.IsMouseButtonPressed(rl.MOUSE_BUTTON_LEFT) then
     if rl.CheckCollisionPointRec(mouse_pos, rl.new("Rectangle", 0, 0, width, 20)) then
       drag_window = true
       pan_offset = rl.new("Vector2", mouse_pos)
@@ -24,7 +24,7 @@ while not exit_window and not rl.WindowShouldClose() do
   if drag_window then
     window_pos = window_pos + mouse_pos - pan_offset
     
-    if rl.IsMouseButtonReleased(rl.MOUSE_LEFT_BUTTON) then
+    if rl.IsMouseButtonReleased(rl.MOUSE_BUTTON_RIGHT) then
       drag_window = false
     end
     

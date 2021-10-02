@@ -8,15 +8,23 @@ local keywords = {
 local structs = {
   "Vector2", "Vector3", "Vector4", "Quaternion",
   "Matrix", "Color", "Rectangle", "Image", "Texture", "Texture2D",
-  "RenderTexture", "NPatchInfo", "CharInfo", "Font",
+  "RenderTexture", "NPatchInfo", "GlyphInfo", "Font",
   "Camera", "Camera2D", "Mesh", "Shader", "MaterialMap",
   "Material", "Model", "Transform", "BoneInfo", "ModelAnimation",
-  "Ray", "RayHitInfo", "BoundingBox", "Wave", "Sound", "Music",
+  "Ray", "RayCollision", "BoundingBox", "Wave", "Sound", "Music",
   "AudioStream", "VrDeviceInfo", "Camera3D", "RenderTexture2D",
   "TextureCubemap", "TraceLogCallback", "PhysicsBody",
   "GestureEvent", "GuiStyle", "GuiTextBoxState",
   "TraceLogCallback", "VertexBuffer", "DrawCall", "RenderBatch",
   "ShaderAttributeDataType", "MaterialMapIndex", "VrStereoConfig"
+}
+
+local rl_structs = {
+  "rlTraceLogLevel", "rlPixelFormat", "rlTextureFilter",
+  "rlBlendMode", "rlShaderLocationIndex", "rlShaderUniformDataType",
+  "rlShaderAttributeDataType", "rlFramebufferAttachType",
+  "rlFramebufferAttachTextureType", "rlVertexBuffer", "rlDrawCall",
+  "rlRenderBatch"
 }
 
 local functions = {}
@@ -26,7 +34,7 @@ local counter = 0
 
 local custom_support = {
   ["rlgl"] = function (line)
-    return line:gsub("[%s*]+(rl%w+)", function (part)
+    return line:gsub("([%s*]+)(rl%w+)", function (pre, part)
       functions[#functions + 1] = part
       counter = counter + 1
 
@@ -57,6 +65,12 @@ for _,modname in ipairs(modules) do
         for i,keyword in ipairs(keywords) do
           if part == keyword
             or part == "t" then -- uintX_t workaround
+            return before .. part
+          end
+        end
+
+        for i,s in ipairs(rl_structs) do
+          if part == s then
             return before .. part
           end
         end

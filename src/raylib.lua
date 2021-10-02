@@ -104,21 +104,21 @@ ffi.cdef [[
     int layout;
   } NPatchInfo;
 
-  typedef struct CharInfo {
+  typedef struct GlyphInfo {
     int value;
     int offsetX;
     int offsetY;
     int advanceX;
     Image image;
-  } CharInfo;
+  } GlyphInfo;
 
   typedef struct Font {
     int baseSize;
-    int charsCount;
-    int charsPadding;
+    int glyphCount;
+    int glyphPadding;
     Texture2D texture;
     Rectangle *recs;
-    CharInfo *chars;
+    GlyphInfo *glyphs;
   } Font;
 
   typedef Font SpriteFont;
@@ -210,12 +210,12 @@ ffi.cdef [[
     Vector3 direction;
   } Ray;
 
-  typedef struct RayHitInfo {
+  typedef struct RayCollision {
     bool hit;
     float distance;
-    Vector3 position;
+    Vector3 point;
     Vector3 normal;
-  } RayHitInfo;
+  } RayCollision;
 
   typedef struct BoundingBox {
     Vector3 min;
@@ -223,7 +223,7 @@ ffi.cdef [[
   } BoundingBox;
 
   typedef struct Wave {
-    unsigned int sampleCount;
+    unsigned int frameCount;
     unsigned int sampleRate;
     unsigned int sampleSize;
     unsigned int channels;
@@ -241,12 +241,12 @@ ffi.cdef [[
 
   typedef struct Sound {
     AudioStream stream;
-    unsigned int sampleCount;
+    unsigned int frameCount;
   } Sound;
 
   typedef struct Music {
     AudioStream stream;
-    unsigned int sampleCount;
+    unsigned int frameCount;
     bool looping;
 
     int ctxType;
@@ -350,6 +350,10 @@ ffi.cdef [[
     KEY_X = 88,
     KEY_Y = 89,
     KEY_Z = 90,
+    KEY_LEFT_BRACKET = 91,
+    KEY_BACKSLASH = 92,
+    KEY_RIGHT_BRACKET = 93,
+    KEY_GRAVE = 96,
     KEY_SPACE = 32,
     KEY_ESCAPE = 256,
     KEY_ENTER = 257,
@@ -391,10 +395,6 @@ ffi.cdef [[
     KEY_RIGHT_ALT = 346,
     KEY_RIGHT_SUPER = 347,
     KEY_KB_MENU = 348,
-    KEY_LEFT_BRACKET= 91,
-    KEY_BACKSLASH = 92,
-    KEY_RIGHT_BRACKET = 93,
-    KEY_GRAVE = 96,
     KEY_KP_0 = 320,
     KEY_KP_1 = 321,
     KEY_KP_2 = 322,
@@ -420,9 +420,13 @@ ffi.cdef [[
   } KeyboardKey;
 
   typedef enum {
-    MOUSE_LEFT_BUTTON = 0,
-    MOUSE_RIGHT_BUTTON = 1,
-    MOUSE_MIDDLE_BUTTON = 2
+    MOUSE_BUTTON_LEFT = 0,
+    MOUSE_BUTTON_RIGHT = 1,
+    MOUSE_BUTTON_MIDDLE = 2,
+    MOUSE_BUTTON_SIDE = 3,
+    MOUSE_BUTTON_EXTRA = 4,
+    MOUSE_BUTTON_FORWARD = 5,
+    MOUSE_BUTTON_BACK = 6
   } MouseButton;
 
   typedef enum {
@@ -472,16 +476,16 @@ ffi.cdef [[
 
   typedef enum {
     MATERIAL_MAP_ALBEDO = 0,
-    MATERIAL_MAP_METALNESS = 1,
-    MATERIAL_MAP_NORMAL = 2,
-    MATERIAL_MAP_ROUGHNESS = 3,
+    MATERIAL_MAP_METALNESS,
+    MATERIAL_MAP_NORMAL,
+    MATERIAL_MAP_ROUGHNESS,
     MATERIAL_MAP_OCCLUSION,
     MATERIAL_MAP_EMISSION,
     MATERIAL_MAP_HEIGHT,
-    MATERIAL_MAP_BRDG,
     MATERIAL_MAP_CUBEMAP,
     MATERIAL_MAP_IRRADIANCE,
-    MATERIAL_MAP_PREFILTER
+    MATERIAL_MAP_PREFILTER,
+    MATERIAL_MAP_BRDF,
   } MaterialMapIndex;
 
   typedef enum {
@@ -492,10 +496,10 @@ ffi.cdef [[
     SHADER_LOC_VERTEX_TANGENT,
     SHADER_LOC_VERTEX_COLOR,
     SHADER_LOC_MATRIX_MVP,
-    SHADER_LOC_MATRIX_MODEL,
-    SHADER_LOC_MATRIX_NORMAL,
     SHADER_LOC_MATRIX_VIEW,
     SHADER_LOC_MATRIX_PROJECTION,
+    SHADER_LOC_MATRIX_MODEL,
+    SHADER_LOC_MATRIX_NORMAL,
     SHADER_LOC_VECTOR_VIEW,
     SHADER_LOC_COLOR_DIFFUSE,
     SHADER_LOC_COLOR_SPECULAR,
@@ -524,6 +528,13 @@ ffi.cdef [[
     SHADER_UNIFORM_IVEC4,
     SHADER_UNIFORM_SAMPLER2D
   } ShaderUniformDataType;
+
+  typedef enum {
+    SHADER_ATTRIB_FLOAT = 0,
+    SHADER_ATTRIB_VEC2,
+    SHADER_ATTRIB_VEC3,
+    SHADER_ATTRIB_VEC4
+  } ShaderAttributeDataType;
 
   typedef enum {
     PIXELFORMAT_UNCOMPRESSED_GRAYSCALE = 1,
@@ -601,7 +612,7 @@ ffi.cdef [[
     GESTURE_SWIPE_DOWN = 128,
     GESTURE_PINCH_IN = 256,
     GESTURE_PINCH_OUT = 512
-  } Gestures;
+  } Gesture;
 
   typedef enum {
     CAMERA_CUSTOM = 0,
@@ -634,6 +645,107 @@ ffi.cdef [[
 -- rlgl cdef
 ffi.cdef [[
   typedef enum {
+    RL_LOG_ALL = 0,
+    RL_LOG_TRACE,
+    RL_LOG_DEBUG,
+    RL_LOG_INFO,
+    RL_LOG_WARNING,
+    RL_LOG_ERROR,
+    RL_LOG_FATAL,
+    RL_LOG_NONE
+  } rlTraceLogLevel;
+
+  typedef enum {
+    RL_PIXELFORMAT_UNCOMPRESSED_GRAYSCALE = 1,
+    RL_PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA,
+    RL_PIXELFORMAT_UNCOMPRESSED_R5G6B5,
+    RL_PIXELFORMAT_UNCOMPRESSED_R8G8B8,
+    RL_PIXELFORMAT_UNCOMPRESSED_R5G5B5A1,
+    RL_PIXELFORMAT_UNCOMPRESSED_R4G4B4A4,
+    RL_PIXELFORMAT_UNCOMPRESSED_R8G8B8A8,
+    RL_PIXELFORMAT_UNCOMPRESSED_R32,
+    RL_PIXELFORMAT_UNCOMPRESSED_R32G32B32,
+    RL_PIXELFORMAT_UNCOMPRESSED_R32G32B32A32,
+    RL_PIXELFORMAT_COMPRESSED_DXT1_RGB,
+    RL_PIXELFORMAT_COMPRESSED_DXT1_RGBA,
+    RL_PIXELFORMAT_COMPRESSED_DXT3_RGBA,
+    RL_PIXELFORMAT_COMPRESSED_DXT5_RGBA,
+    RL_PIXELFORMAT_COMPRESSED_ETC1_RGB,
+    RL_PIXELFORMAT_COMPRESSED_ETC2_RGB,
+    RL_PIXELFORMAT_COMPRESSED_ETC2_EAC_RGBA,
+    RL_PIXELFORMAT_COMPRESSED_PVRT_RGB,
+    RL_PIXELFORMAT_COMPRESSED_PVRT_RGBA,
+    RL_PIXELFORMAT_COMPRESSED_ASTC_4x4_RGBA,
+    RL_PIXELFORMAT_COMPRESSED_ASTC_8x8_RGBA
+  } rlPixelFormat;
+
+  typedef enum {
+    RL_TEXTURE_FILTER_POINT = 0,
+    RL_TEXTURE_FILTER_BILINEAR,
+    RL_TEXTURE_FILTER_TRILINEAR,
+    RL_TEXTURE_FILTER_ANISOTROPIC_4X,
+    RL_TEXTURE_FILTER_ANISOTROPIC_8X,
+    RL_TEXTURE_FILTER_ANISOTROPIC_16X,
+  } rlTextureFilter;
+
+  typedef enum {
+    RL_BLEND_ALPHA = 0,
+    RL_BLEND_ADDITIVE,
+    RL_BLEND_MULTIPLIED,
+    RL_BLEND_ADD_COLORS,
+    RL_BLEND_SUBTRACT_COLORS,
+    RL_BLEND_CUSTOM
+  } rlBlendMode;
+
+  typedef enum {
+    RL_SHADER_LOC_VERTEX_POSITION = 0,
+    RL_SHADER_LOC_VERTEX_TEXCOORD01,
+    RL_SHADER_LOC_VERTEX_TEXCOORD02,
+    RL_SHADER_LOC_VERTEX_NORMAL,
+    RL_SHADER_LOC_VERTEX_TANGENT,
+    RL_SHADER_LOC_VERTEX_COLOR,
+    RL_SHADER_LOC_MATRIX_MVP,
+    RL_SHADER_LOC_MATRIX_VIEW,
+    RL_SHADER_LOC_MATRIX_PROJECTION,
+    RL_SHADER_LOC_MATRIX_MODEL,
+    RL_SHADER_LOC_MATRIX_NORMAL,
+    RL_SHADER_LOC_VECTOR_VIEW,
+    RL_SHADER_LOC_COLOR_DIFFUSE,
+    RL_SHADER_LOC_COLOR_SPECULAR,
+    RL_SHADER_LOC_COLOR_AMBIENT,
+    RL_SHADER_LOC_MAP_ALBEDO,
+    RL_SHADER_LOC_MAP_METALNESS,
+    RL_SHADER_LOC_MAP_NORMAL,
+    RL_SHADER_LOC_MAP_ROUGHNESS,
+    RL_SHADER_LOC_MAP_OCCLUSION,
+    RL_SHADER_LOC_MAP_EMISSION,
+    RL_SHADER_LOC_MAP_HEIGHT,
+    RL_SHADER_LOC_MAP_CUBEMAP,
+    RL_SHADER_LOC_MAP_IRRADIANCE,
+    RL_SHADER_LOC_MAP_PREFILTER,
+    RL_SHADER_LOC_MAP_BRDF
+  } rlShaderLocationIndex;
+
+  typedef enum {
+    RL_SHADER_UNIFORM_FLOAT = 0,
+    RL_SHADER_UNIFORM_VEC2,
+    RL_SHADER_UNIFORM_VEC3,
+    RL_SHADER_UNIFORM_VEC4,
+    RL_SHADER_UNIFORM_INT,
+    RL_SHADER_UNIFORM_IVEC2,
+    RL_SHADER_UNIFORM_IVEC3,
+    RL_SHADER_UNIFORM_IVEC4,
+    RL_SHADER_UNIFORM_SAMPLER2D
+  } rlShaderUniformDataType;
+
+  typedef enum {
+    RL_SHADER_ATTRIB_FLOAT = 0,
+    RL_SHADER_ATTRIB_VEC2,
+    RL_SHADER_ATTRIB_VEC3,
+    RL_SHADER_ATTRIB_VEC4
+  } rlShaderAttributeDataType;
+  
+  typedef enum {
     RL_ATTACHMENT_COLOR_CHANNEL0 = 0,
     RL_ATTACHMENT_COLOR_CHANNEL1,
     RL_ATTACHMENT_COLOR_CHANNEL2,
@@ -644,7 +756,7 @@ ffi.cdef [[
     RL_ATTACHMENT_COLOR_CHANNEL7,
     RL_ATTACHMENT_DEPTH = 100,
     RL_ATTACHMENT_STENCIL = 200,
-  } FramebufferAttachType;
+  } rlFramebufferAttachType;
 
   typedef enum {
     RL_ATTACHMENT_CUBEMAP_POSITIVE_X = 0,
@@ -655,11 +767,11 @@ ffi.cdef [[
     RL_ATTACHMENT_CUBEMAP_NEGATIVE_Z,
     RL_ATTACHMENT_TEXTURE2D = 100,
     RL_ATTACHMENT_RENDERBUFFER = 200,
-  } FramebufferTexType;
+  } rlFramebufferAttachTextureType;
 
   /* NOTE: Assumes non-ES OpenGL. */
-  typedef struct VertexBuffer {
-    int elementsCount;
+  typedef struct rlVertexBuffer {
+    int elementCount;
 
     int vCounter;
     int tcCounter;
@@ -672,9 +784,9 @@ ffi.cdef [[
 
     unsigned int vaoId;
     unsigned int vboId[4];
-  } VertexBuffer;
+  } rlVertexBuffer;
 
-  typedef struct DrawCall {
+  typedef struct rlDrawCall {
     int mode;
     int vertexCount;
     int vertexAlignment;
@@ -684,24 +796,17 @@ ffi.cdef [[
 
     //Matrix projection;
     //Matrix modelview;
-  } DrawCall;
+  } rlDrawCall;
 
-  typedef struct RenderBatch {
-    int buffersCount;
+  typedef struct rlRenderBatch {
+    int bufferCount;
     int currentBuffer;
-    VertexBuffer *vertexBuffer;
+    rlVertexBuffer *vertexBuffer;
 
-    DrawCall *draws;
-    int drawsCounter;
+    rlDrawCall *draws;
+    int drawCounter;
     float currentDepth;
-  } RenderBatch;
-
-  typedef enum {
-    SHADER_ATTRIB_FLOAT = 0,
-    SHADER_ATTRIB_VEC2,
-    SHADER_ATTRIB_VEC3, 
-    SHADER_ATTRIB_VEC4
-  } ShaderAttributeDataType;
+  } rlRenderBatch;
 ]]
 
 -- Physac cdef
@@ -768,13 +873,18 @@ ffi.cdef [[
 
 -- gestures cdef
 ffi.cdef [[
-  typedef enum { TOUCH_UP, TOUCH_DOWN, TOUCH_MOVE } TouchAction;
+  typedef enum { 
+    TOUCH_ACTION_UP = 0, 
+    TOUCH_ACTION_DOWN, 
+    TOUCH_ACTION_MOVE,
+    TOUCH_ACTION_CANCEL
+  } TouchAction;
 
   typedef struct {
     int touchAction;
     int pointCount;
-    int pointerId[4];
-    Vector2 position[4];
+    int pointerId[8]; // CONST
+    Vector2 position[8]; // CONST
   } GestureEvent;
 ]]
 
@@ -918,6 +1028,265 @@ ffi.cdef [[
     int index;
     int select;
   } GuiTextBoxState;
+
+  typedef enum {
+    RICON_NONE = 0,
+    RICON_FOLDER_FILE_OPEN = 1,
+    RICON_FILE_SAVE_CLASSIC = 2,
+    RICON_FOLDER_OPEN = 3,
+    RICON_FOLDER_SAVE = 4,
+    RICON_FILE_OPEN = 5,
+    RICON_FILE_SAVE = 6,
+    RICON_FILE_EXPORT = 7,
+    RICON_FILE_NEW = 8,
+    RICON_FILE_DELETE = 9,
+    RICON_FILETYPE_TEXT = 10,
+    RICON_FILETYPE_AUDIO = 11,
+    RICON_FILETYPE_IMAGE = 12,
+    RICON_FILETYPE_PLAY = 13,
+    RICON_FILETYPE_VIDEO = 14,
+    RICON_FILETYPE_INFO = 15,
+    RICON_FILE_COPY = 16,
+    RICON_FILE_CUT = 17,
+    RICON_FILE_PASTE = 18,
+    RICON_CURSOR_HAND = 19,
+    RICON_CURSOR_POINTER = 20,
+    RICON_CURSOR_CLASSIC = 21,
+    RICON_PENCIL = 22,
+    RICON_PENCIL_BIG = 23,
+    RICON_BRUSH_CLASSIC = 24,
+    RICON_BRUSH_PAINTER = 25,
+    RICON_WATER_DROP = 26,
+    RICON_COLOR_PICKER = 27,
+    RICON_RUBBER = 28,
+    RICON_COLOR_BUCKET = 29,
+    RICON_TEXT_T = 30,
+    RICON_TEXT_A = 31,
+    RICON_SCALE = 32,
+    RICON_RESIZE = 33,
+    RICON_FILTER_POINT = 34,
+    RICON_FILTER_BILINEAR = 35,
+    RICON_CROP = 36,
+    RICON_CROP_ALPHA = 37,
+    RICON_SQUARE_TOGGLE = 38,
+    RICON_SYMMETRY = 39,
+    RICON_SYMMETRY_HORIZONTAL = 40,
+    RICON_SYMMETRY_VERTICAL = 41,
+    RICON_LENS = 42,
+    RICON_LENS_BIG = 43,
+    RICON_EYE_ON = 44,
+    RICON_EYE_OFF = 45,
+    RICON_FILTER_TOP = 46,
+    RICON_FILTER = 47,
+    RICON_TARGET_POINT = 48,
+    RICON_TARGET_SMALL = 49,
+    RICON_TARGET_BIG = 50,
+    RICON_TARGET_MOVE = 51,
+    RICON_CURSOR_MOVE = 52,
+    RICON_CURSOR_SCALE = 53,
+    RICON_CURSOR_SCALE_RIGHT = 54,
+    RICON_CURSOR_SCALE_LEFT = 55,
+    RICON_UNDO = 56,
+    RICON_REDO = 57,
+    RICON_REREDO = 58,
+    RICON_MUTATE = 59,
+    RICON_ROTATE = 60,
+    RICON_REPEAT = 61,
+    RICON_SHUFFLE = 62,
+    RICON_EMPTYBOX = 63,
+    RICON_TARGET = 64,
+    RICON_TARGET_SMALL_FILL = 65,
+    RICON_TARGET_BIG_FILL = 66,
+    RICON_TARGET_MOVE_FILL = 67,
+    RICON_CURSOR_MOVE_FILL = 68,
+    RICON_CURSOR_SCALE_FILL = 69,
+    RICON_CURSOR_SCALE_RIGHT_FILL = 70,
+    RICON_CURSOR_SCALE_LEFT_FILL = 71,
+    RICON_UNDO_FILL = 72,
+    RICON_REDO_FILL = 73,
+    RICON_REREDO_FILL = 74,
+    RICON_MUTATE_FILL = 75,
+    RICON_ROTATE_FILL = 76,
+    RICON_REPEAT_FILL = 77,
+    RICON_SHUFFLE_FILL = 78,
+    RICON_EMPTYBOX_SMALL = 79,
+    RICON_BOX = 80,
+    RICON_BOX_TOP = 81,
+    RICON_BOX_TOP_RIGHT = 82,
+    RICON_BOX_RIGHT = 83,
+    RICON_BOX_BOTTOM_RIGHT = 84,
+    RICON_BOX_BOTTOM = 85,
+    RICON_BOX_BOTTOM_LEFT = 86,
+    RICON_BOX_LEFT = 87,
+    RICON_BOX_TOP_LEFT = 88,
+    RICON_BOX_CENTER = 89,
+    RICON_BOX_CIRCLE_MASK = 90,
+    RICON_POT = 91,
+    RICON_ALPHA_MULTIPLY = 92,
+    RICON_ALPHA_CLEAR = 93,
+    RICON_DITHERING = 94,
+    RICON_MIPMAPS = 95,
+    RICON_BOX_GRID = 96,
+    RICON_GRID = 97,
+    RICON_BOX_CORNERS_SMALL = 98,
+    RICON_BOX_CORNERS_BIG = 99,
+    RICON_FOUR_BOXES = 100,
+    RICON_GRID_FILL = 101,
+    RICON_BOX_MULTISIZE = 102,
+    RICON_ZOOM_SMALL = 103,
+    RICON_ZOOM_MEDIUM = 104,
+    RICON_ZOOM_BIG = 105,
+    RICON_ZOOM_ALL = 106,
+    RICON_ZOOM_CENTER = 107,
+    RICON_BOX_DOTS_SMALL = 108,
+    RICON_BOX_DOTS_BIG = 109,
+    RICON_BOX_CONCENTRIC = 110,
+    RICON_BOX_GRID_BIG = 111,
+    RICON_OK_TICK = 112,
+    RICON_CROSS = 113,
+    RICON_ARROW_LEFT = 114,
+    RICON_ARROW_RIGHT = 115,
+    RICON_ARROW_BOTTOM = 116,
+    RICON_ARROW_TOP = 117,
+    RICON_ARROW_LEFT_FILL = 118,
+    RICON_ARROW_RIGHT_FILL = 119,
+    RICON_ARROW_BOTTOM_FILL = 120,
+    RICON_ARROW_TOP_FILL = 121,
+    RICON_AUDIO = 122,
+    RICON_FX = 123,
+    RICON_WAVE = 124,
+    RICON_WAVE_SINUS = 125,
+    RICON_WAVE_SQUARE = 126,
+    RICON_WAVE_TRIANGULAR = 127,
+    RICON_CROSS_SMALL = 128,
+    RICON_PLAYER_PREVIOUS = 129,
+    RICON_PLAYER_PLAY_BACK = 130,
+    RICON_PLAYER_PLAY = 131,
+    RICON_PLAYER_PAUSE = 132,
+    RICON_PLAYER_STOP = 133,
+    RICON_PLAYER_NEXT = 134,
+    RICON_PLAYER_RECORD = 135,
+    RICON_MAGNET = 136,
+    RICON_LOCK_CLOSE = 137,
+    RICON_LOCK_OPEN = 138,
+    RICON_CLOCK = 139,
+    RICON_TOOLS = 140,
+    RICON_GEAR = 141,
+    RICON_GEAR_BIG = 142,
+    RICON_BIN = 143,
+    RICON_HAND_POINTER = 144,
+    RICON_LASER = 145,
+    RICON_COIN = 146,
+    RICON_EXPLOSION = 147,
+    RICON_1UP = 148,
+    RICON_PLAYER = 149,
+    RICON_PLAYER_JUMP = 150,
+    RICON_KEY = 151,
+    RICON_DEMON = 152,
+    RICON_TEXT_POPUP = 153,
+    RICON_GEAR_EX = 154,
+    RICON_CRACK = 155,
+    RICON_CRACK_POINTS = 156,
+    RICON_STAR = 157,
+    RICON_DOOR = 158,
+    RICON_EXIT = 159,
+    RICON_MODE_2D = 160,
+    RICON_MODE_3D = 161,
+    RICON_CUBE = 162,
+    RICON_CUBE_FACE_TOP = 163,
+    RICON_CUBE_FACE_LEFT = 164,
+    RICON_CUBE_FACE_FRONT = 165,
+    RICON_CUBE_FACE_BOTTOM = 166,
+    RICON_CUBE_FACE_RIGHT = 167,
+    RICON_CUBE_FACE_BACK = 168,
+    RICON_CAMERA = 169,
+    RICON_SPECIAL = 170,
+    RICON_LINK_NET = 171,
+    RICON_LINK_BOXES = 172,
+    RICON_LINK_MULTI = 173,
+    RICON_LINK = 174,
+    RICON_LINK_BROKE = 175,
+    RICON_TEXT_NOTES = 176,
+    RICON_NOTEBOOK = 177,
+    RICON_SUITCASE = 178,
+    RICON_SUITCASE_ZIP = 179,
+    RICON_MAILBOX = 180,
+    RICON_MONITOR = 181,
+    RICON_PRINTER = 182,
+    RICON_PHOTO_CAMERA = 183,
+    RICON_PHOTO_CAMERA_FLASH = 184,
+    RICON_HOUSE = 185,
+    RICON_HEART = 186,
+    RICON_CORNER = 187,
+    RICON_VERTICAL_BARS = 188,
+    RICON_VERTICAL_BARS_FILL = 189,
+    RICON_LIFE_BARS = 190,
+    RICON_INFO = 191,
+    RICON_CROSSLINE = 192,
+    RICON_HELP = 193,
+    RICON_FILETYPE_ALPHA = 194,
+    RICON_FILETYPE_HOME = 195,
+    RICON_LAYERS_VISIBLE = 196,
+    RICON_LAYERS = 197,
+    RICON_WINDOW = 198,
+    RICON_HIDPI = 199,
+    RICON_200 = 200,
+    RICON_201 = 201,
+    RICON_202 = 202,
+    RICON_203 = 203,
+    RICON_204 = 204,
+    RICON_205 = 205,
+    RICON_206 = 206,
+    RICON_207 = 207,
+    RICON_208 = 208,
+    RICON_209 = 209,
+    RICON_210 = 210,
+    RICON_211 = 211,
+    RICON_212 = 212,
+    RICON_213 = 213,
+    RICON_214 = 214,
+    RICON_215 = 215,
+    RICON_216 = 216,
+    RICON_217 = 217,
+    RICON_218 = 218,
+    RICON_219 = 219,
+    RICON_220 = 220,
+    RICON_221 = 221,
+    RICON_222 = 222,
+    RICON_223 = 223,
+    RICON_224 = 224,
+    RICON_225 = 225,
+    RICON_226 = 226,
+    RICON_227 = 227,
+    RICON_228 = 228,
+    RICON_229 = 229,
+    RICON_230 = 230,
+    RICON_231 = 231,
+    RICON_232 = 232,
+    RICON_233 = 233,
+    RICON_234 = 234,
+    RICON_235 = 235,
+    RICON_236 = 236,
+    RICON_237 = 237,
+    RICON_238 = 238,
+    RICON_239 = 239,
+    RICON_240 = 240,
+    RICON_241 = 241,
+    RICON_242 = 242,
+    RICON_243 = 243,
+    RICON_244 = 244,
+    RICON_245 = 245,
+    RICON_246 = 246,
+    RICON_247 = 247,
+    RICON_248 = 248,
+    RICON_249 = 249,
+    RICON_250 = 250,
+    RICON_251 = 251,
+    RICON_252 = 252,
+    RICON_253 = 253,
+    RICON_254 = 254,
+    RICON_255 = 255,
+  } guiIconName;
 ]]
 
 -- Load bind entry

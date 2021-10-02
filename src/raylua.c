@@ -24,16 +24,16 @@
 #include <rlgl.h>
 
 #include <raymath.h>
-#include <easings.h>
-#include <gestures.h>
+#include <extras/easings.h>
+#include <rgestures.h>
 
-#define RAYGUI_SUPPORT_ICONS
+#define RAYGUI_SUPPORT_RICONS
 #define RAYGUI_IMPLEMENTATION
 #define RAYGUI_STATIC
 #include <raygui.h>
 
 #define PHYSAC_IMPLEMENTATION
-#include <physac.h>
+#include <extras/physac.h>
 
 #include "autogen/bind.c"
 #include "autogen/boot.c"
@@ -63,6 +63,10 @@ void raylua_boot(lua_State *L, lua_CFunction loadfile, lua_CFunction listfiles,
 
   lua_pushstring(L, "isrepl");
   lua_pushboolean(L, repl);
+  lua_settable(L, -3);
+
+  lua_pushstring(L, "raylib_version");
+  lua_pushstring(L, RAYLIB_VERSION);
   lua_settable(L, -3);
 
   lua_setglobal(L, "raylua");

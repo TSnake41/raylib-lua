@@ -37,9 +37,9 @@ while not rl.WindowShouldClose() do
     needsReset = true
   end
 
-  if rl.IsMouseButtonPressed(rl.MOUSE_LEFT_BUTTON) then
+  if rl.IsMouseButtonPressed(rl.MOUSE_BUTTON_LEFT) then
     rl.CreatePhysicsBodyPolygon(rl.GetMousePosition(), rl.GetRandomValue(20, 80), rl.GetRandomValue(3, 8), 10);
-  elseif rl.IsMouseButtonPressed(rl.MOUSE_RIGHT_BUTTON) then
+  elseif rl.IsMouseButtonPressed(rl.MOUSE_BUTTON_RIGHT) then
     rl.CreatePhysicsBodyCircle(rl.GetMousePosition(), rl.GetRandomValue(10, 45), 10)
   end
 
