@@ -645,6 +645,14 @@ ffi.cdef [[
 -- rlgl cdef
 ffi.cdef [[
   typedef enum {
+    OPENGL_11 = 1,
+    OPENGL_21,
+    OPENGL_33,
+    OPENGL_43,
+    OPENGL_ES_20
+  } rlGlVersion;
+
+  typedef enum {
     RL_LOG_ALL = 0,
     RL_LOG_TRACE,
     RL_LOG_DEBUG,
@@ -772,10 +780,6 @@ ffi.cdef [[
   /* NOTE: Assumes non-ES OpenGL. */
   typedef struct rlVertexBuffer {
     int elementCount;
-
-    int vCounter;
-    int tcCounter;
-    int cCounter;
 
     float *vertices;
     float *texcoords;

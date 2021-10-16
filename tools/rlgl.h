@@ -96,7 +96,7 @@ unsigned int rlLoadTexture(void *data, int width, int height, int format, int mi
 unsigned int rlLoadTextureDepth(int width, int height, bool useRenderBuffer)
 unsigned int rlLoadTextureCubemap(void *data, int size, int format)
 void rlUpdateTexture(unsigned int id, int offsetX, int offsetY, int width, int height, int format, const void *data)
-void rlGetGlTextureFormats(int format, unsigned int *glInternalFormat, unsigned int *glFormat, unsigned int *glType)
+void rlGetGlTextureFormats(int format, int *glInternalFormat, int *glFormat, int *glType)
 const char *rlGetPixelFormatName(unsigned int format)
 void rlUnloadTexture(unsigned int id)
 void rlGenTextureMipmaps(unsigned int id, int width, int height, int format, int *mipmaps)

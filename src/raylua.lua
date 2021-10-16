@@ -45,6 +45,10 @@ end
 
 package.path = "?.lua;?/init.lua"
 
+if os.getenv "LUA_PATH" then
+  package.path = package.path .. ";" .. os.getenv "LUA_PATH"
+end
+
 if raylua.loadfile then
   -- Change the second loader to load files using raylua.loadfile
   package.loaders[2] = function (name)
