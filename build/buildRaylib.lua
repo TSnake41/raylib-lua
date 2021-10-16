@@ -1,3 +1,5 @@
+local future = arg[1]
+
 local saphire = require "saphire"
 local c = require "saphire-c"
 
@@ -5,7 +7,6 @@ local cc = os.getenv "CC" or "cc"
 local ar = os.getenv "AR" or "ar"
 
 local cflags = os.getenv "CFLAGS" or "-O2 -s"
-local ldflags = os.getenv "LDFLAGS" or "-O2 -s -lm"
 
 local include_paths = "-I. -Iexternal/glfw/include -Iexternal/glfw/deps/mingw"
 
@@ -33,9 +34,11 @@ for i,v in ipairs(vars) do
   vars[v[1]] = v[2]
 end
 
+local flags = string.format("%s -D%s -D%s %s", cflags, vars.PLATFORM, vars.GRAPHICS, include_paths)
+
 local src = {
   -- ["obj.o"] = { src... }
-  { "rcore.o", { "rcore.c", "raylib.h", "rlgl.h", "utils.h", "raymath.h", "camera.h", "rgestures.h" } },
+  { "rcore.o", { "rcore.c", "raylib.h", "rlgl.h", "utils.h", "raymath.h", "rcamera.h", "rgestures.h" } },
   { "rglfw.o", { "rglfw.c", flags = os.getenv "GLFW_OSX" or "" } },
   { "rshapes.o", { "rshapes.c", "raylib.h", "rlgl.h" } },
   { "rtextures.o", { "rtextures.c", "raylib.h", "rlgl.h", "utils.h" } },
@@ -45,5 +48,10 @@ local src = {
   { "raudio.o", { "raudio.c", "raylib.h" } }
 }
 
-local objs = c.compile(src, table.concat({ "-D" .. vars.PLATFORM, "-D" .. vars.GRAPHICS, include_paths }, " "))
-local libraylib = c.lib("libraylib.a", objs)
+local objs = c.compile(src, flags, "raylib", cc)
+local libraylib = c.lib("libraylib.a", objs, "raylib")
+
+libraylib:wait()
+if future then
+  future:resolve()
+end
