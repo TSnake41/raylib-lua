@@ -32,9 +32,12 @@ local cflags = os.getenv "CFLAGS" or "-O2 -s"
 local ldflags = os.getenv "LDFLAGS" or "-O2 -s -lm"
 
 local modules = "raymath rlgl easings gestures physac raygui"
+local graphics = os.getenv "GRAPHICS" or "GRAPHICS_API_OPENGL_33"
 
 cflags = cflags .. " -Iluajit/src -Iraygui/src -Iraylib/src"
 ldflags = ldflags .. " luajit/src/libluajit.a raylib/src/libraylib.a luajit/src/libluajit.a"
+
+cflags = cflags .. " -D" .. graphics
 
 local exe_ldflags = ""
 
@@ -102,7 +105,7 @@ local raylua_src = {
     }, true)
   end)
 }
-local raylua_obj = c.compile(raylua_src, cflags, "raylua", cc)
+local raylua_obj = c.compile(raylua_src, cflags .. " -D" .. graphics, "raylua", cc)
 
 local libraylua = c.lib("libraylua.a", raylua_obj, "raylua", ar)
 

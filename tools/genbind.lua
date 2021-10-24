@@ -31,11 +31,15 @@ local functions = {}
 local proto = {}
 
 local counter = 0
+local file = io.open(arg[1], "wb")
+local modules = { "api" }
+local funcname
 
 local custom_support = {
   ["rlgl"] = function (line)
     return line:gsub("([%s*]+)(rl%w+)", function (pre, part)
       functions[#functions + 1] = part
+      funcname = part
       counter = counter + 1
 
       if counter == 2 then
@@ -47,65 +51,9 @@ local custom_support = {
   end
 }
 
-local file = io.open(arg[1], "wb")
-local modules = { "api" }
-
 for i=2,#arg do
   modules[i] = arg[i]
 end
-
-for _,modname in ipairs(modules) do
-  for line in io.lines("tools/" .. modname .. ".h") do
-    if line:sub(0, 2) ~= "//" then
-      if custom_support[modname] then
-        line = custom_support[modname](line)
-      end
-
-      line = line:gsub("(%W)([%l%d][%w_]*)", function (before, part)
-        for i,keyword in ipairs(keywords) do
-          if part == keyword
-            or part == "t" then -- uintX_t workaround
-            return before .. part
-          end
-        end
-
-        for i,s in ipairs(rl_structs) do
-          if part == s then
-            return before .. part
-          end
-        end
-
-        return before
-      end)
-
-      line = line:gsub("%u%w+", function (part)
-        for i,struct in ipairs(structs) do
-          if part == struct then
-            return part
-          end
-        end
-
-        functions[#functions + 1] = part
-        counter = counter + 1
-
-        if count == 2 then
-          print("WARN: Multiple matches for: " .. line)
-        end
-
-        return "(*)"
-      end)
-
-      -- Strip spaces
-      line = line:gsub("([(),*.])%s+(%w)", function (a, b) return a .. b end)
-      line = line:gsub("(%w)%s+([(),*.])", function (a, b) return a .. b end)
-
-      proto[#proto + 1] = line
-    end
-  end
-end
-
-assert(#proto == #functions, "Mismatching proto and function count : " ..
-  #proto .. " ~= " .. #functions)
 
 file:write [[
 struct raylua_bind_entry {
@@ -117,12 +65,76 @@ struct raylua_bind_entry {
 struct raylua_bind_entry raylua_entries[] = {
 ]]
 
-for i=1,#proto do
-  local name, proto = functions[i], proto[i]
-  file:write(string.format('{ "%s", "%s", &%s },\n', name, proto, name))
+for _,modname in ipairs(modules) do
+  for line in io.lines("tools/" .. modname .. ".h") do
+    if line:sub(1, 2) ~= "//" then
+      if line:sub(1, 1) == "#" then
+        file:write("  " .. line .. "\n")
+      else
+        counter = 0
+        funcname = nil
+
+        if custom_support[modname] then
+          line = custom_support[modname](line)
+        end
+
+        line = line:gsub("(%W)([%l%d][%w_]*)", function (before, part)
+          for i,keyword in ipairs(keywords) do
+            if part == keyword
+              or part == "t" then -- uintX_t workaround
+              return before .. part
+            end
+          end
+
+          for i,s in ipairs(rl_structs) do
+            if part == s then
+              return before .. part
+            end
+          end
+
+          return before
+        end)
+
+        line = line:gsub("%u%w+", function (part)
+          for i,struct in ipairs(structs) do
+            if part == struct then
+              return part
+            end
+          end
+
+          functions[#functions + 1] = part
+          funcname = part
+          counter = counter + 1
+
+          if counter == 2 then
+            print("WARN: Multiple matches for: " .. line)
+          end
+
+          return "(*)"
+        end)
+
+        -- Strip spaces
+        line = line:gsub("([(),*.])%s+(%w)", function (a, b) return a .. b end)
+        line = line:gsub("(%w)%s+([(),*.])", function (a, b) return a .. b end)
+
+        proto[#proto + 1] = line
+
+        if funcname and line then
+          file:write(string.format('  { "%s", "%s", &%s },\n', funcname, line, funcname))
+        elseif counter == 0 then
+          print("WARN: Invalid entry", funcname, line)
+        end
+      end
+    end
+  end
 end
 
-file:write '{ NULL, NULL, NULL },\n'
+assert(#proto == #functions, "Mismatching proto and function count : " ..
+  #proto .. " ~= " .. #functions)
+
+print(string.format("Bound %d functions.", #proto))
+
+file:write '  { NULL, NULL, NULL },\n'
 file:write "};\n"
 
 file:close()

@@ -23,7 +23,7 @@ local vars = saphire.map({
   { "RAYLIB_LIB_NAME", "raylib" },
   { "RAYLIB_RES_FILE", "./raylib.dll.rc.data" },
   { "PLATFORM", "PLATFORM_DESKTOP" },
-  { "GRAPHICS", "GRAPHICS_API_OPENGL_43" },
+  { "GRAPHICS", "GRAPHICS_API_OPENGL_33" },
   { "USE_EXTERNAL_GLFW", "FALSE" },
   { "USE_WAYLAND_DISPLAY", "FALSE" }
 }, function (v)

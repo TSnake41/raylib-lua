@@ -6,14 +6,16 @@ LUA ?= luajit/src/luajit
 
 WINDRES ?= windres
 
-CFLAGS += -Iluajit/src -Iraylib/src -Iraygui/src -DSUPPORT_COMPUTE_SHADERS
+CFLAGS += -Iluajit/src -Iraylib/src -Iraygui/src
 LDFLAGS += luajit/src/libluajit.a raylib/src/libraylib.a
 
 MODULES := raymath rlgl easings gestures physac raygui
 
 # raylib settings
 PLATFORM ?= PLATFORM_DESKTOP
-GRAPHICS ?= GRAPHICS_API_OPENGL_43
+GRAPHICS ?= GRAPHICS_API_OPENGL_33
+
+CFLAGS += -D$(GRAPHICS)
 
 USE_WAYLAND_DISPLAY ?= FALSE
 USE_EXTERNAL_GLFW ?= FALSE
