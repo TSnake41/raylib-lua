@@ -1,105 +1,134 @@
 local ffi = require "ffi"
-local width, height = 1024, 1024
-rl.InitWindow(width, height, "raylib-lua [core] example - compute shader")
-local computeShaderCode
-do
-  local f = io.open("resources/gol.glsl", "rb")
-  assert(f, "Can't read resources/gol.glsl file")
-  computeShaderCode = f:read "*a"
-  f:close()
-end
 
-local computeShader = rl.rlCompileShader(computeShaderCode, rl.RL_COMPUTE_SHADER)
-local csProgram = rl.rlLoadComputeShaderProgram(computeShader)
-print(csProgram)
+-- IMPORTANT: This must match gol*.glsl GOL_WIDTH constant.
+-- This must be a multiple of 16 (check golLogic compute dispatch).
+local GOL_WIDTH = 768
 
-local ssbo_size = ffi.sizeof("int32_t[?]", width * height)
-local ssbo_baseBuffer = ffi.new("int32_t[?]", width * height)
-for i=0,width * height - 1 do
-  ssbo_baseBuffer[i] = 0
-end
+-- Maximum amount of queued draw commands (squares draw from mouse down events).
+local MAX_BUFFERED_TRANSFERTS = 48
 
-local shader_framebuffer = rl.new("Color[?]", width * height)
-local ssbo_image = rl.new "Image" ---@type Image
+ffi.cdef [[
+  typedef struct GolUpdateCmd {
+    unsigned int x;
+    unsigned int y;
+    unsigned int w;
+    unsigned int enabled;
+  } GolUpdateCmd;
+]]
 
-ssbo_image.data = shader_framebuffer
-ssbo_image.width = width
-ssbo_image.height = height
-ssbo_image.format = rl.PIXELFORMAT_UNCOMPRESSED_R8G8B8A8
-ssbo_image.mipmaps = 1
+ffi.cdef(string.format([[
+  typedef struct GolUpdateSSBO {
+    unsigned int count;
+    GolUpdateCmd commands[%d];
+  } GolUpdateSSBO;
+]], MAX_BUFFERED_TRANSFERTS))
 
-local ssboA = rl.rlLoadShaderBuffer(ssbo_size, ssbo_baseBuffer, rl.RL_STREAM_COPY)
-local ssboB = rl.rlLoadShaderBuffer(ssbo_size, ssbo_baseBuffer, rl.RL_STREAM_COPY)
+rl.InitWindow(GOL_WIDTH, GOL_WIDTH, "raylib [rlgl] example - compute shader - game of life")
 
--- Create a texture to apply shader
-local renderTexture = rl.LoadRenderTexture(width, height)
+local resolution = rl.new("Vector2", GOL_WIDTH, GOL_WIDTH)
+local brushSize = 8
 
-local renderShader = rl.LoadShaderFromMemory(nil, [[
-#version 430
-out vec4 finalColor;
-in vec2 fragTexCoord;
+-- Game of Life logic compute shader
+local golLogicCode = rl.LoadFileText("resources/glsl430/gol.glsl")
+local golLogicShader = rl.rlCompileShader(golLogicCode, rl.RL_COMPUTE_SHADER);
+local golLogicProgram = rl.rlLoadComputeShaderProgram(golLogicShader);
+rl.UnloadFileText(golLogicCode);
 
-layout(std430, binding = 1) readonly buffer golLayout {
-  int golBuffer[];
-};
+-- Game of Life rendering compute shader
+local golRenderShader = rl.LoadShader(nil, "resources/glsl430/gol_render.glsl")
+local resUniformLoc = rl.GetShaderLocation(golRenderShader, "resolution")
 
-uniform vec2 res;
+local golTransfertCode = rl.LoadFileText("resources/glsl430/gol_transfert.glsl");
+local golTransfertShader = rl.rlCompileShader(golTransfertCode, rl.RL_COMPUTE_SHADER);
+local golTransfertProgram = rl.rlLoadComputeShaderProgram(golTransfertShader);
+rl.UnloadFileText(golTransfertCode);
 
-void main()
-{
-  ivec2 coords = ivec2(fragTexCoord * res);
+local ssboSize = ffi.sizeof("int[?]", GOL_WIDTH * GOL_WIDTH)
+local ssboA = rl.rlLoadShaderBuffer(ssboSize, nil, rl.RL_DYNAMIC_COPY);
+local ssboB = rl.rlLoadShaderBuffer(ssboSize, nil, rl.RL_DYNAMIC_COPY);
 
-  if (golBuffer[coords.x + coords.y * uint(res.x)] == 1)
-    finalColor = vec4(1.0);
-  else
-    finalColor = vec4(0.0, 0.0, 0.0, 1.0);
-}
-]])
+local transfertBuffer = ffi.new("struct GolUpdateSSBO")
+transfertBuffer.count = 0
 
-local resolution = ffi.new("float[2]", width, height)
-local res_uniform = rl.GetShaderLocation(renderShader, "res")
+local transfertBufferSize = ffi.sizeof "struct GolUpdateSSBO"
+
+local transfertSSBO = rl.rlLoadShaderBuffer(transfertBufferSize, nil, rl.RL_DYNAMIC_COPY);
+
+-- Create a white texture of the size of the window to update 
+-- each pixel of the window using the fragment shader
+local whiteImage = rl.GenImageColor(GOL_WIDTH, GOL_WIDTH, rl.WHITE);
+local whiteTex = rl.LoadTextureFromImage(whiteImage);
+rl.UnloadImage(whiteImage)
 
 while not rl.WindowShouldClose() do
-  rl.BeginDrawing()
 
-  if rl.IsMouseButtonDown(rl.MOUSE_BUTTON_LEFT) then
-    rl.rlReadShaderBufferElements(ssboB, ssbo_baseBuffer, ssbo_size, 0)
+  brushSize = math.floor(brushSize + rl.GetMouseWheelMove())
 
-    -- Correct colors
-    for i=0,(width * height)-1 do
-      local toggled = ssbo_baseBuffer[i]
+  if ((rl.IsMouseButtonDown(rl.MOUSE_BUTTON_LEFT) or rl.IsMouseButtonDown(rl.MOUSE_BUTTON_RIGHT))
+    and (transfertBuffer.count < MAX_BUFFERED_TRANSFERTS)) then
+    -- Buffer a new command
+    transfertBuffer.commands[transfertBuffer.count].x = rl.GetMouseX() - brushSize/2
+    transfertBuffer.commands[transfertBuffer.count].y = rl.GetMouseY() - brushSize/2
+    transfertBuffer.commands[transfertBuffer.count].w = brushSize
+    transfertBuffer.commands[transfertBuffer.count].enabled = rl.IsMouseButtonDown(rl.MOUSE_BUTTON_LEFT)
+    transfertBuffer.count = transfertBuffer.count + 1
+  elseif transfertBuffer.count > 0 then
+    -- Process transfert buffer
 
-      shader_framebuffer[i].r = toggled * 255
-      shader_framebuffer[i].g = toggled * 255
-      shader_framebuffer[i].b = toggled * 255
-      shader_framebuffer[i].a = toggled * 255
-    end
+    -- Send SSBO buffer to GPU
+    rl.rlUpdateShaderBufferElements(transfertSSBO, transfertBuffer, transfertBufferSize, 0);
+    
+    -- Process ssbo command
+    rl.rlEnableShader(golTransfertProgram);
+    rl.rlBindShaderBuffer(ssboA, 1);
+    rl.rlBindShaderBuffer(transfertSSBO, 3);
+    rl.rlComputeShaderDispatch(transfertBuffer.count, 1, 1) -- each GPU unit will process a command
+    rl.rlDisableShader();
 
-    rl.ImageDrawRectangleV(ssbo_image, rl.GetMousePosition(), rl.new("Vector2", 25, 25), rl.WHITE)
-
-    for x=0,ssbo_image.width-1 do
-      for y=0,ssbo_image.height-1 do
-        ssbo_baseBuffer[x + y * width] = (shader_framebuffer[x + y * width].r > 0)
-      end
-    end
-    rl.rlUpdateShaderBufferElements(ssboB, ssbo_baseBuffer, ssbo_size, 0)
+    transfertBuffer.count = 0;
   else
-    rl.rlEnableShader(csProgram)
+    -- Process game of life logic
+    rl.rlEnableShader(golLogicProgram)
     rl.rlBindShaderBuffer(ssboA, 1)
     rl.rlBindShaderBuffer(ssboB, 2)
-    rl.rlComputeShaderDispatch(width / 16, height / 16, 1)
+    rl.rlComputeShaderDispatch(GOL_WIDTH / 16, GOL_WIDTH / 16, 1)
     rl.rlDisableShader()
+
+    ssboA, ssboB = ssboB, ssboA
   end
 
-  rl.ClearBackground(rl.BLANK)
-  rl.SetShaderValue(renderShader, res_uniform, resolution, rl.SHADER_UNIFORM_VEC2)
-  rl.BeginShaderMode(renderShader)
-  rl.DrawTexture(renderTexture.texture, 0, 0, rl.WHITE)
-  rl.EndShaderMode()
-  rl.DrawFPS(0, 0)
-  rl.EndDrawing()
+  rl.rlBindShaderBuffer(ssboA, 1)
+  rl.SetShaderValue(golRenderShader, resUniformLoc, resolution, rl.SHADER_UNIFORM_VEC2);
 
-  ssboA, ssboB = ssboB, ssboA
+  rl.BeginDrawing()
+
+  rl.ClearBackground(rl.BLANK)
+
+  rl.BeginShaderMode(golRenderShader)
+  rl.DrawTexture(whiteTex, 0, 0, rl.WHITE)
+  rl.EndShaderMode()
+  
+  rl.DrawRectangleLines(
+    rl.GetMouseX() - brushSize/2,
+    rl.GetMouseY() - brushSize/2,
+    brushSize, brushSize,
+    rl.RED)
+
+  rl.DrawText("Use Mouse wheel to increase/decrease brush size", 10, 10, 20, rl.WHITE);
+  rl.DrawFPS(rl.GetScreenWidth() - 100, 10);
+
+  rl.EndDrawing()
 end
 
-rl.CloseWindow()
+rl.rlUnloadShaderBuffer(ssboA);
+rl.rlUnloadShaderBuffer(ssboB);
+rl.rlUnloadShaderBuffer(transfertSSBO);
+
+-- Unload compute shader programs
+rl.rlUnloadShaderProgram(golTransfertProgram)
+rl.rlUnloadShaderProgram(golLogicProgram)
+
+rl.UnloadTexture(whiteTex) -- Unload white texture
+rl.UnloadShader(golRenderShader) -- Unload rendering fragment shader
+
+rl.CloseWindow() -- Close window and OpenGL context
