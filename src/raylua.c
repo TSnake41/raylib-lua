@@ -40,6 +40,9 @@
 
 extern const char *raylua_boot_str;
 
+#ifdef WIN32
+__declspec(dllexport)
+#endif
 void raylua_boot(lua_State *L, lua_CFunction loadfile, lua_CFunction listfiles,
   bool repl)
 {
@@ -77,6 +80,9 @@ void raylua_boot(lua_State *L, lua_CFunction loadfile, lua_CFunction listfiles,
   }
 }
 
+#ifdef WIN32
+__declspec(dllexport)
+#endif
 int luaopen_raylua(lua_State *L)
 {
   raylua_boot(L, NULL, NULL, false);
