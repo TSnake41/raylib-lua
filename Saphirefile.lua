@@ -25,26 +25,29 @@ local ar = os.getenv "AR" or "ar"
 local windres = os.getenv "WINDRES" or "windres"
 
 -- TODO: Use current lua interpreter
-local lua = os.getenv "LUA" or "luajit\\src\\luajit"
+local lua = os.getenv "LUA"
 local needs_luajit_built = not (os.getenv "LUA")
 
 local cflags = os.getenv "CFLAGS" or "-O2 -s"
 local ldflags = os.getenv "LDFLAGS" or "-O2 -s -lm"
 
 local modules = "raymath rlgl easings gestures physac raygui"
-local graphics = os.getenv "GRAPHICS" or "GRAPHICS_API_OPENGL_33"
+local graphics = os.getenv "GRAPHICS" or "GRAPHICS_API_OPENGL_43"
 
-cflags = cflags .. " -Iluajit/src -Iraygui/src -Iraylib/src"
-ldflags = ldflags .. " luajit/src/libluajit.a raylib/src/libraylib.a luajit/src/libluajit.a"
+cflags = cflags .. " -Iluajit/src -Iraygui/src -Iraylib/src".. " -D" .. graphics
 
-cflags = cflags .. " -D" .. graphics
-
-local exe_ldflags = ""
+local raylua_so_path = "raylua.so" -- assume unix-like by default
+local so_ldflags = ldflags
 
 if los.type() == "linux" then
   ldflags = ldflags .. " -ldl -pthread"
+  so_ldflags = ldflags .. " -llua5.1"
+  lua = lua or "luajit/src/luajit"
 elseif los.type() == "win32" then
   ldflags = ldflags .. " -lopengl32 -lgdi32 -lwinmm -static "
+  so_ldflags = ldflags .. " -llua5.1.dll"
+  raylua_so_path = "raylua.dll"
+  lua = lua or "luajit\\src\\luajit"
 end
 
 local libluajit
@@ -142,5 +145,13 @@ local raylua_e = c.link("raylua_e",
   ldflags,
   false,
   "raylua_e",
+  cc
+)
+
+local raylua_so = c.link(raylua_so_path,
+  saphire.merge(raylua_obj, { libraylib }),
+  so_ldflags,
+  true,
+  raylua_so_path,
   cc
 )
