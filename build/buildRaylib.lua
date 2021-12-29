@@ -12,6 +12,10 @@ local include_paths = "-I. -Iexternal/glfw/include -Iexternal/glfw/deps/mingw"
 
 local los = require "los"
 
+if los.type() == "linux" then
+  cflags = cflags .. " -fPIC"
+end
+
 local consts = {
   RAYLIB_VERSION = "4.0.0",
   RAYLIB_API_VERSION = "400",
@@ -23,7 +27,7 @@ local vars = saphire.map({
   { "RAYLIB_LIB_NAME", "raylib" },
   { "RAYLIB_RES_FILE", "./raylib.dll.rc.data" },
   { "PLATFORM", "PLATFORM_DESKTOP" },
-  { "GRAPHICS", "GRAPHICS_API_OPENGL_33" },
+  { "GRAPHICS", "GRAPHICS_API_OPENGL_43" },
   { "USE_EXTERNAL_GLFW", "FALSE" },
   { "USE_WAYLAND_DISPLAY", "FALSE" }
 }, function (v)

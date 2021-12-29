@@ -27,7 +27,6 @@
 #include <extras/easings.h>
 #include <rgestures.h>
 
-#define RAYGUI_SUPPORT_RICONS
 #define RAYGUI_IMPLEMENTATION
 #define RAYGUI_STATIC
 #include <raygui.h>

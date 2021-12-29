@@ -41,6 +41,7 @@ local so_ldflags = ldflags
 
 if los.type() == "linux" then
   ldflags = ldflags .. " -ldl -pthread"
+  cflags = cflags .. " -fPIC"
   so_ldflags = ldflags .. " -llua5.1"
   lua = lua or "luajit/src/luajit"
 elseif los.type() == "win32" then
