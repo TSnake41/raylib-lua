@@ -1015,6 +1015,15 @@ ffi.cdef [[
   } GuiProgressBarProperty;
 
   typedef enum {
+    ARROWS_SIZE = 16,
+    ARROWS_VISIBLE,
+    SCROLL_SLIDER_PADDING,
+    SCROLL_SLIDER_SIZE,
+    SCROLL_PADDING,
+    SCROLL_SPEED,
+  } GuiScrollBarProperty;
+
+  typedef enum {
     CHECK_PADDING = 16
   } GuiCheckBoxProperty;
 
@@ -1025,29 +1034,18 @@ ffi.cdef [[
 
   typedef enum {
     ARROW_PADDING = 16,
-    DROPDOWN_ITEMS_PADDING
+    DROPDOWN_ITEMS_SPACING
   } GuiDropdownBoxProperty;
 
   typedef enum {
     TEXT_INNER_PADDING = 16,
-    TEXT_LINES_PADDING,
-    COLOR_SELECTED_FG,
-    COLOR_SELECTED_BG
+    TEXT_LINES_SPACING
   } GuiTextBoxProperty;
 
   typedef enum {
     SPIN_BUTTON_WIDTH = 16,
-    SPIN_BUTTON_PADDING,
+    SPIN_BUTTON_SPACING,
   } GuiSpinnerProperty;
-
-  typedef enum {
-    ARROWS_SIZE = 16,
-    ARROWS_VISIBLE,
-    SCROLL_SLIDER_PADDING,
-    SCROLL_SLIDER_SIZE,
-    SCROLL_PADDING,
-    SCROLL_SPEED,
-  } GuiScrollBarProperty;
 
   typedef enum {
     SCROLLBAR_LEFT_SIDE = 0,
@@ -1056,7 +1054,7 @@ ffi.cdef [[
 
   typedef enum {
     LIST_ITEMS_HEIGHT = 16,
-    LIST_ITEMS_PADDING,
+    LIST_ITEMS_SPACING,
     SCROLLBAR_WIDTH,
     SCROLLBAR_SIDE,
   } GuiListViewProperty;
@@ -1277,9 +1275,9 @@ ffi.cdef [[
     RAYGUI_ICON_LAYERS = 197,
     RAYGUI_ICON_WINDOW = 198,
     RAYGUI_ICON_HIDPI = 199,
-    RAYGUI_ICON_200 = 200,
-    RAYGUI_ICON_201 = 201,
-    RAYGUI_ICON_202 = 202,
+    RAYGUI_ICON_FILETYPE_BINARY = 200,
+    RAYGUI_ICON_HEX = 201,
+    RAYGUI_ICON_SHIELD = 202,
     RAYGUI_ICON_203 = 203,
     RAYGUI_ICON_204 = 204,
     RAYGUI_ICON_205 = 205,
