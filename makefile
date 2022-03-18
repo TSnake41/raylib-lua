@@ -22,6 +22,7 @@ USE_EXTERNAL_GLFW ?= FALSE
 
 ifeq ($(OS),Windows_NT)
 	LDFLAGS += -lopengl32 -lgdi32 -lwinmm -static
+	LDFLAGS_R += -mwindows 
 	EXTERNAL_FILES := src/res/icon.res
 else ifeq ($(shell uname),Darwin)
 	LDFLAGS += -framework CoreVideo -framework IOKit -framework Cocoa \
@@ -65,7 +66,7 @@ raylua_e: src/raylua_e.o src/raylua_self.o src/raylua_builder.o src/lib/miniz.o 
 
 raylua_r: src/raylua_e.o src/raylua_self.o src/raylua_builder.o src/lib/miniz.o \
 		$(EXTERNAL_FILES) libraylua.a
-	$(CC) -o $@ $^ $(LDFLAGS) -mwindows luajit/src/libluajit.a
+	$(CC) -o $@ $^ $(LDFLAGS) $(LDFLAGS_R) luajit/src/libluajit.a
 
 src/res/icon.res: src/res/icon.rc
 	$(WINDRES) $^ -O coff $@
