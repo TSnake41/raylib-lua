@@ -15,7 +15,7 @@ MODULES := raymath rlgl easings gestures physac raygui
 PLATFORM ?= PLATFORM_DESKTOP
 GRAPHICS ?= GRAPHICS_API_OPENGL_33
 
-CFLAGS += -D$(GRAPHICS)
+CFLAGS += -D$(GRAPHICS) -D$(PLATFORM)
 
 USE_WAYLAND_DISPLAY ?= FALSE
 USE_EXTERNAL_GLFW ?= FALSE
@@ -38,7 +38,7 @@ else
 	EXTERNAL_FILES :=
 endif
 
-all: raylua_s raylua_e luajit raylib
+all: raylua_s raylua_e raylua_r luajit raylib
 
 %.o: %.c
 	$(CC) -c -o $@ $< $(CFLAGS)
@@ -62,6 +62,10 @@ raylua_s: src/raylua_s.o $(EXTERNAL_FILES) libraylua.a
 raylua_e: src/raylua_e.o src/raylua_self.o src/raylua_builder.o src/lib/miniz.o \
 		$(EXTERNAL_FILES) libraylua.a
 	$(CC) -o $@ $^ $(LDFLAGS) luajit/src/libluajit.a
+
+raylua_r: src/raylua_e.o src/raylua_self.o src/raylua_builder.o src/lib/miniz.o \
+		$(EXTERNAL_FILES) libraylua.a
+	$(CC) -o $@ $^ $(LDFLAGS) -mwindows luajit/src/libluajit.a
 
 src/res/icon.res: src/res/icon.rc
 	$(WINDRES) $^ -O coff $@

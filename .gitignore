@@ -2,6 +2,7 @@
 *.res
 *.a
 raylua_e.exe
+raylua_r.exe
 raylua_s.exe
 raylua_s
 raylua_e
