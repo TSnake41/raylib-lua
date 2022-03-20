@@ -30,6 +30,7 @@ local needs_luajit_built = not (os.getenv "LUA")
 
 local cflags = os.getenv "CFLAGS" or "-O2 -s"
 local ldflags = os.getenv "LDFLAGS" or "-O2 -s -lm"
+local ldflags_r = os.getenv "LDFLAGS_R" or ""
 
 local modules = "raymath rlgl easings gestures physac raygui"
 local graphics = os.getenv "GRAPHICS" or "GRAPHICS_API_OPENGL_43"
@@ -48,6 +49,7 @@ elseif los.type() == "win32" then
   ldflags = ldflags .. " -lopengl32 -lgdi32 -lwinmm -static "
   so_ldflags = ldflags .. " -llua5.1.dll"
   raylua_so_path = "raylua.dll"
+  ldflags_r = ldflags_r .. "-mwindows"
   lua = lua or "luajit\\src\\luajit"
 end
 
@@ -146,6 +148,14 @@ local raylua_e = c.link("raylua_e",
   ldflags,
   false,
   "raylua_e",
+  cc
+)
+
+local raylua_r = c.link("raylua_r",
+  saphire.merge(raylua_e_objs, { libraylua, libraylib, libluajit, icon }),
+  ldflags .. " " .. ldflags_r,
+  false,
+  "raylua_r",
   cc
 )
 
