@@ -231,8 +231,11 @@ ffi.cdef [[
   } Wave;
 
   typedef struct rAudioBuffer rAudioBuffer;
+  typedef struct rAudioProcessor rAudioProcessor;
+
   typedef struct AudioStream {
     rAudioBuffer *buffer;
+    rAudioProcessor *processor;
 
     unsigned int sampleRate;
     unsigned int sampleSize;
@@ -635,6 +638,7 @@ ffi.cdef [[
   } NPatchLayout;
 
   typedef void (*TraceLogCallback)(int logLevel, const char *text, va_list args);
+  typedef void (*AudioCallback)(void *bufferData, unsigned int frames);
 ]]
 
 -- raymath cdef
@@ -1083,7 +1087,7 @@ ffi.cdef [[
     RAYGUI_ICON_FILE_OPEN = 5,
     RAYGUI_ICON_FILE_SAVE = 6,
     RAYGUI_ICON_FILE_EXPORT = 7,
-    RAYGUI_ICON_FILE_NEW = 8,
+    RAYGUI_ICON_FILE_ADD = 8,
     RAYGUI_ICON_FILE_DELETE = 9,
     RAYGUI_ICON_FILETYPE_TEXT = 10,
     RAYGUI_ICON_FILETYPE_AUDIO = 11,
@@ -1278,8 +1282,8 @@ ffi.cdef [[
     RAYGUI_ICON_FILETYPE_BINARY = 200,
     RAYGUI_ICON_HEX = 201,
     RAYGUI_ICON_SHIELD = 202,
-    RAYGUI_ICON_203 = 203,
-    RAYGUI_ICON_204 = 204,
+    RAYGUI_ICON_FILE_NEW = 203,
+    RAYGUI_ICON_FOLDER_ADD = 204,
     RAYGUI_ICON_205 = 205,
     RAYGUI_ICON_206 = 206,
     RAYGUI_ICON_207 = 207,
