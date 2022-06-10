@@ -35,7 +35,7 @@ local ldflags_r = os.getenv "LDFLAGS_R" or ""
 local modules = "raymath rlgl easings gestures physac raygui"
 local graphics = os.getenv "GRAPHICS" or "GRAPHICS_API_OPENGL_43"
 
-cflags = cflags .. " -Iluajit/src -Iraygui/src -Iraylib/src".. " -D" .. graphics
+cflags = cflags .. " -Iluajit/src -Iraygui/src -Iphysac/src -Iraylib/src".. " -D" .. graphics
 
 local raylua_so_path = "raylua.so" -- assume unix-like by default
 local so_ldflags = ldflags

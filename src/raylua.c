@@ -32,7 +32,7 @@
 #include <raygui.h>
 
 #define PHYSAC_IMPLEMENTATION
-#include <extras/physac.h>
+#include <physac.h>
 
 #include "autogen/bind.c"
 #include "autogen/boot.c"

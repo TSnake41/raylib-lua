@@ -10,6 +10,10 @@ url = https://github.com/raysan5/raylib
 path = raygui
 url = https://github.com/raysan5/raygui
 
+[submodule "physac"]
+path = physac
+url = https://github.com/raysan5/physac
+
 [submodule "examples/lynx"]
 path = examples/lynx
 url = https://gitlab.com/TSnake41/lynx
