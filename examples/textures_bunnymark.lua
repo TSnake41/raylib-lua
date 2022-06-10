@@ -45,7 +45,7 @@ local bunnies = {}
 -- Main game loop
 while not rl.WindowShouldClose() do    -- Detect window close button or ESC key
   -- Update
-  if rl.IsMouseButtonDown(rl.MOUSE_LEFT_BUTTON) then
+  if rl.IsMouseButtonDown(rl.MOUSE_BUTTON_LEFT) then
     -- Create more bunnies
     for i = 1, 100 do
       if #bunnies < MAX_BUNNIES then
