@@ -91,7 +91,7 @@ while not rl.WindowShouldClose() do
     rl.rlEnableShader(golLogicProgram)
     rl.rlBindShaderBuffer(ssboA, 1)
     rl.rlBindShaderBuffer(ssboB, 2)
-    rl.rlComputeShaderDispatch(GOL_WIDTH / 16, GOL_WIDTH / 16, 1)
+    rl.rlComputeShaderDispatch(GOL_WIDTH / 8, GOL_WIDTH / 8, 1)
     rl.rlDisableShader()
 
     ssboA, ssboB = ssboB, ssboA
