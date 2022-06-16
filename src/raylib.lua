@@ -280,6 +280,12 @@ ffi.cdef [[
     float scaleIn[2];
   } VrStereoConfig;
 
+  typedef struct FilePathList {
+    unsigned int capacity;
+    unsigned int count;
+    char **paths;
+  } FilePathList;
+
   typedef enum {
     FLAG_VSYNC_HINT = 0x00000040,
     FLAG_FULLSCREEN_MODE = 0x00000002,
@@ -293,6 +299,7 @@ ffi.cdef [[
     FLAG_WINDOW_ALWAYS_RUN = 0x00000100,
     FLAG_WINDOW_TRANSPARENT = 0x00000010,
     FLAG_WINDOW_HIGHDPI = 0x00002000,
+    FLAG_WINDOW_MOUSE_PASSTHROUGH = 0x00004000,
     FLAG_MSAA_4X_HINT = 0x00000020,
     FLAG_INTERLACED_HINT = 0x00010000
   } ConfigFlags;
