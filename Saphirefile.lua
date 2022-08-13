@@ -32,7 +32,7 @@ local cflags = os.getenv "CFLAGS" or "-O2 -s"
 local ldflags = os.getenv "LDFLAGS" or "-O2 -s -lm"
 local ldflags_r = os.getenv "LDFLAGS_R" or ""
 
-local modules = "raymath rlgl easings gestures physac raygui"
+local modules = "raymath rlgl gestures physac raygui"
 local graphics = os.getenv "GRAPHICS" or "GRAPHICS_API_OPENGL_43"
 
 cflags = cflags .. " -Iluajit/src -Iraygui/src -Iphysac/src -Iraylib/src".. " -D" .. graphics

@@ -9,7 +9,7 @@ WINDRES ?= windres
 CFLAGS += -Iluajit/src -Iraylib/src -Iraygui/src -Iphysac/src
 LDFLAGS += luajit/src/libluajit.a raylib/src/libraylib.a
 
-MODULES := raymath rlgl easings gestures physac raygui
+MODULES := raymath rlgl gestures physac raygui
 
 # raylib settings
 PLATFORM ?= PLATFORM_DESKTOP

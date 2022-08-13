@@ -24,7 +24,6 @@
 #include <rlgl.h>
 
 #include <raymath.h>
-#include <easings.h>
 #include <rgestures.h>
 
 #define RAYGUI_IMPLEMENTATION
