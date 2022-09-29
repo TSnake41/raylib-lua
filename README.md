@@ -25,15 +25,37 @@ raylua_e is the embedding-mode binary of raylib-lua.
 This binary allows you to build standalone raylib applications from Lua code.
 
 There are 3 ways to use it :
- - zip mode :
+ - **zip mode** :
      If you specify a zip file as argument, this zip will be used as payload
      application, this file expects to have a `main.lua` which is the entry point
      of the application.
- - directory mode :
+
+        # Windows
+        raylua_e someGame.zip
+
+        # Unix
+        ./raylua_e someGame.zip
+
+ - **directory mode** :
      Similar to zip mode except that it automatically build the zip payload from
      the specified directory.
- - lua mode :
+
+        # project/ is a directory
+
+        # Windows
+        raylua_e project
+
+        # Unix
+        ./raylua_e project
+
+ - **lua mode** :
      Build the executable from a single Lua file.
+
+        # Windows
+        raylua_e core_basic_window.lua
+
+        # Unix
+        ./raylua_e core_basic_window.lua
 
 Using `require` in embedded mode works as expected but `dofile` and `loadfile`
 may not work as expected as these functions load from a external file rather
