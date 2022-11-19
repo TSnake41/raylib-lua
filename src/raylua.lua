@@ -16,7 +16,7 @@
 
 local load = loadstring
 
-raylua.version = "v4.2-dev"
+raylua.version = "v4.5-dev"
 
 function raylua.repl()
   print("> raylua " .. raylua.version .. " <")

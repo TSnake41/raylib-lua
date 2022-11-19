@@ -608,7 +608,8 @@ ffi.cdef [[
     BLEND_ADD_COLORS,
     BLEND_SUBTRACT_COLORS,
     BLEND_ALPHA_PREMULTIPLY,
-    BLEND_CUSTOM
+    BLEND_CUSTOM,
+    BLEND_CUSTOM_SEPARATE
   } BlendMode;
 
   typedef enum {
@@ -789,6 +790,11 @@ ffi.cdef [[
     RL_ATTACHMENT_TEXTURE2D = 100,
     RL_ATTACHMENT_RENDERBUFFER = 200,
   } rlFramebufferAttachTextureType;
+
+  typedef enum {
+    RL_CULL_FACE_FRONT = 0,
+    RL_CULL_FACE_BACK
+  } rlCullMode;
 
   /* NOTE: Assumes non-ES OpenGL. */
   typedef struct rlVertexBuffer {

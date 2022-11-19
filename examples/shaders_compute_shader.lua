@@ -76,7 +76,7 @@ while not rl.WindowShouldClose() do
     -- Process transfert buffer
 
     -- Send SSBO buffer to GPU
-    rl.rlUpdateShaderBufferElements(transfertSSBO, transfertBuffer, transfertBufferSize, 0);
+    rl.rlUpdateShaderBuffer(transfertSSBO, transfertBuffer, transfertBufferSize, 0);
     
     -- Process ssbo command
     rl.rlEnableShader(golTransfertProgram);
