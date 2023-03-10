@@ -25,6 +25,7 @@
 
 #include <raymath.h>
 #include <rgestures.h>
+#include <rcamera.h>
 
 #define RAYGUI_IMPLEMENTATION
 #define RAYGUIAPI static
