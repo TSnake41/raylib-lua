@@ -1,7 +1,13 @@
+print "---@meta [raylib-lua]"
 print "---@diagnostic disable"
 
 print "---raylib-lua binding"
 print "rl = {}"
+
+-- Insert prelude
+for line in io.lines "prelude.lua" do
+  print(line)
+end
 
 local ffi_type_list = {}
 
@@ -95,7 +101,11 @@ for i=1,#arg do
       local args = {}
       local vla = false
 
-      for i,param in ipairs(func.params or {}) do
+      for _,param in ipairs(func.params or {}) do
+        if param.name == "end" then
+          param.name = "end_"
+        end
+
         if param.name ~= "" then
           arraySize = param.name:match "%[(.-)%]"
           if arraySize then

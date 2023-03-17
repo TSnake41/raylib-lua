@@ -1,6 +1,20 @@
+---@meta [raylib-lua]
 ---@diagnostic disable
 ---raylib-lua binding
 rl = {}
+---Internal raylua stuff
+raylua = {}
+---@type string
+---raylib-lua version string
+raylua.version = ""
+---Start a repl, and block until repl is active.
+function raylua.repl() end
+---@type function|nil
+---@return string|nil content, string|nil error
+---@param path string
+---Load an internal payload file.
+---Only exists in raylua_e or raylua_r 
+function raylua.loadfile(path) end
 ---@param t number
 ---@param b number
 ---@param c number
@@ -1467,6 +1481,7 @@ function rl.GuiCheckIconPixel(iconId,x,y) end
 ---| 'FLAG_WINDOW_ALWAYS_RUN'
 ---| 'FLAG_WINDOW_TRANSPARENT'
 ---| 'FLAG_WINDOW_HIGHDPI'
+---| 'FLAG_WINDOW_MOUSE_PASSTHROUGH'
 ---| 'FLAG_MSAA_4X_HINT'
 ---| 'FLAG_INTERLACED_HINT'
 ---System/Window config flags
@@ -1495,6 +1510,8 @@ rl.FLAG_WINDOW_ALWAYS_RUN = 256
 rl.FLAG_WINDOW_TRANSPARENT = 16
 ---Set to support HighDPI
 rl.FLAG_WINDOW_HIGHDPI = 8192
+---Set to support mouse passthrough, only supported when FLAG_WINDOW_UNDECORATED
+rl.FLAG_WINDOW_MOUSE_PASSTHROUGH = 16384
 ---Set to try enabling MSAA 4X
 rl.FLAG_MSAA_4X_HINT = 32
 ---Set to try enabling interlaced video format (for V3D)
@@ -1879,7 +1896,7 @@ rl.MOUSE_BUTTON_MIDDLE = 2
 rl.MOUSE_BUTTON_SIDE = 3
 ---Mouse button extra (advanced mouse device)
 rl.MOUSE_BUTTON_EXTRA = 4
----Mouse button fordward (advanced mouse device)
+---Mouse button forward (advanced mouse device)
 rl.MOUSE_BUTTON_FORWARD = 5
 ---Mouse button back (advanced mouse device)
 rl.MOUSE_BUTTON_BACK = 6
@@ -1915,7 +1932,7 @@ rl.MOUSE_CURSOR_RESIZE_NS = 6
 rl.MOUSE_CURSOR_RESIZE_NWSE = 7
 ---The top-right to bottom-left diagonal resize/move arrow shape
 rl.MOUSE_CURSOR_RESIZE_NESW = 8
----The omni-directional resize/move cursor shape
+---The omnidirectional resize/move cursor shape
 rl.MOUSE_CURSOR_RESIZE_ALL = 9
 ---The operation-not-allowed shape
 rl.MOUSE_CURSOR_NOT_ALLOWED = 10
@@ -2274,13 +2291,13 @@ rl.TEXTURE_WRAP_MIRROR_CLAMP = 3
 rl.CUBEMAP_LAYOUT_AUTO_DETECT = 0
 ---Layout is defined by a vertical line with faces
 rl.CUBEMAP_LAYOUT_LINE_VERTICAL = 1
----Layout is defined by an horizontal line with faces
+---Layout is defined by a horizontal line with faces
 rl.CUBEMAP_LAYOUT_LINE_HORIZONTAL = 2
 ---Layout is defined by a 3x4 cross with cubemap faces
 rl.CUBEMAP_LAYOUT_CROSS_THREE_BY_FOUR = 3
 ---Layout is defined by a 4x3 cross with cubemap faces
 rl.CUBEMAP_LAYOUT_CROSS_FOUR_BY_THREE = 4
----Layout is defined by a panorama image (equirectangular map)
+---Layout is defined by a panorama image (equirrectangular map)
 rl.CUBEMAP_LAYOUT_PANORAMA = 5
 ---@alias FontType
 ---| 'FONT_DEFAULT'
@@ -2302,6 +2319,7 @@ rl.FONT_SDF = 2
 ---| 'BLEND_SUBTRACT_COLORS'
 ---| 'BLEND_ALPHA_PREMULTIPLY'
 ---| 'BLEND_CUSTOM'
+---| 'BLEND_CUSTOM_SEPARATE'
 ---Color blending modes (pre-defined)
 
 ---Blend textures considering alpha (default)
@@ -2316,8 +2334,10 @@ rl.BLEND_ADD_COLORS = 3
 rl.BLEND_SUBTRACT_COLORS = 4
 ---Blend premultiplied textures considering alpha
 rl.BLEND_ALPHA_PREMULTIPLY = 5
----Blend textures using custom src/dst factors (use rlSetBlendMode())
+---Blend textures using custom src/dst factors (use rlSetBlendFactors())
 rl.BLEND_CUSTOM = 6
+---Blend textures using custom rgb/alpha separate src/dst factors (use rlSetBlendFactorsSeparate())
+rl.BLEND_CUSTOM_SEPARATE = 7
 ---@alias Gesture
 ---| 'GESTURE_NONE'
 ---| 'GESTURE_TAP'
@@ -2417,7 +2437,7 @@ local Vector3 = {}
 ---@field w number # Vector w component
 ---Constructed using `rl.new("Vector4", ...)`
 local Vector4 = {}
----@class Matrix @ Matrix, 4x4 components, column major, OpenGL style, right handed
+---@class Matrix @ Matrix, 4x4 components, column major, OpenGL style, right-handed
 ---@alias Matrix_ptr Matrix
 ---@alias Matrix_ptr_ptr Matrix
 ---@field m0 number # Matrix first row (4 components)
@@ -2524,7 +2544,7 @@ local Font = {}
 ---@field position Vector3 # Camera position
 ---@field target Vector3 # Camera target it looks-at
 ---@field up Vector3 # Camera up vector (rotation over its axis)
----@field fovy number # Camera field-of-view apperture in Y (degrees) in perspective, used as near plane width in orthographic
+---@field fovy number # Camera field-of-view aperture in Y (degrees) in perspective, used as near plane width in orthographic
 ---@field projection number # Camera projection: CAMERA_PERSPECTIVE or CAMERA_ORTHOGRAPHIC
 ---Constructed using `rl.new("Camera3D", ...)`
 local Camera3D = {}
@@ -2580,7 +2600,7 @@ local MaterialMap = {}
 ---@field params number # Material generic parameters (if required)
 ---Constructed using `rl.new("Material", ...)`
 local Material = {}
----@class Transform @ Transform, vectex transformation data
+---@class Transform @ Transform, vertex transformation data
 ---@alias Transform_ptr Transform
 ---@alias Transform_ptr_ptr Transform
 ---@field translation Vector3 # Translation
@@ -2629,8 +2649,8 @@ local Ray = {}
 ---@alias RayCollision_ptr RayCollision
 ---@alias RayCollision_ptr_ptr RayCollision
 ---@field hit bool # Did the ray hit something?
----@field distance number # Distance to nearest hit
----@field point Vector3 # Point of nearest hit
+---@field distance number # Distance to the nearest hit
+---@field point Vector3 # Point of the nearest hit
 ---@field normal Vector3 # Surface normal of hit
 ---Constructed using `rl.new("RayCollision", ...)`
 local RayCollision = {}
@@ -2706,6 +2726,14 @@ local VrDeviceInfo = {}
 ---@field scaleIn number # VR distortion scale in
 ---Constructed using `rl.new("VrStereoConfig", ...)`
 local VrStereoConfig = {}
+---@class FilePathList @ File path list
+---@alias FilePathList_ptr FilePathList
+---@alias FilePathList_ptr_ptr FilePathList
+---@field capacity number # Filepaths max entries
+---@field count number # Filepaths entries count
+---@field paths string|lightuserdata # Filepaths entries
+---Constructed using `rl.new("FilePathList", ...)`
+local FilePathList = {}
 ---@param width number
 ---@param height number
 ---@param title string|lightuserdata
@@ -2756,8 +2784,12 @@ function rl.MinimizeWindow() end
 ---Set window state: not minimized/maximized (only PLATFORM_DESKTOP)
 function rl.RestoreWindow() end
 ---@param image Image
----Set icon for window (only PLATFORM_DESKTOP)
+---Set icon for window (single image, RGBA 32bit, only PLATFORM_DESKTOP)
 function rl.SetWindowIcon(image) end
+---@param images Image_ptr|lightuserdata
+---@param count number
+---Set icon for window (multiple images, RGBA 32bit, only PLATFORM_DESKTOP)
+function rl.SetWindowIcons(images,count) end
 ---@param title string|lightuserdata
 ---Set title for window (only PLATFORM_DESKTOP)
 function rl.SetWindowTitle(title) end
@@ -2928,6 +2960,10 @@ function rl.LoadShader(vsFileName,fsFileName) end
 ---Load shader from code strings and bind default locations
 function rl.LoadShaderFromMemory(vsCode,fsCode) end
 ---@param shader Shader
+---@return bool
+---Check if a shader is ready
+function rl.IsShaderReady(shader) end
+---@param shader Shader
 ---@param uniformName string|lightuserdata
 ---@return number
 ---Get shader uniform location
@@ -3044,6 +3080,9 @@ function rl.MemRealloc(ptr,size) end
 ---@param ptr string|lightuserdata
 ---Internal memory free
 function rl.MemFree(ptr) end
+---@param url string|lightuserdata
+---Open URL with default system browser (if available)
+function rl.OpenURL(url) end
 ---@param callback TraceLogCallback
 ---Set custom trace log
 function rl.SetTraceLogCallback(callback) end
@@ -3138,22 +3177,32 @@ function rl.GetApplicationDirectory() end
 ---@return bool
 ---Change working directory, return true on success
 function rl.ChangeDirectory(dir) end
+---@param path string|lightuserdata
+---@return bool
+---Check if a given path is a file or a directory
+function rl.IsPathFile(path) end
 ---@param dirPath string|lightuserdata
----@param count number
----@return string|lightuserdata
+---@return FilePathList
 ---Load directory filepaths
-function rl.LoadDirectoryFiles(dirPath,count) end
----Unload directory filepaths
-function rl.UnloadDirectoryFiles() end
+function rl.LoadDirectoryFiles(dirPath) end
+---@param basePath string|lightuserdata
+---@param filter string|lightuserdata
+---@param scanSubdirs bool
+---@return FilePathList
+---Load directory filepaths with extension filtering and recursive directory scan
+function rl.LoadDirectoryFilesEx(basePath,filter,scanSubdirs) end
+---@param files FilePathList
+---Unload filepaths
+function rl.UnloadDirectoryFiles(files) end
 ---@return bool
 ---Check if a file has been dropped into window
 function rl.IsFileDropped() end
----@param count number
----@return string|lightuserdata
+---@return FilePathList
 ---Load dropped filepaths
-function rl.LoadDroppedFiles(count) end
+function rl.LoadDroppedFiles() end
+---@param files FilePathList
 ---Unload dropped filepaths
-function rl.UnloadDroppedFiles() end
+function rl.UnloadDroppedFiles(files) end
 ---@param fileName string|lightuserdata
 ---@return number
 ---Get file modification time (last write time)
@@ -3181,18 +3230,6 @@ function rl.EncodeDataBase64(data,dataSize,outputSize) end
 ---@return string|lightuserdata
 ---Decode Base64 string data, memory must be MemFree()
 function rl.DecodeDataBase64(data,outputSize) end
----@param position number
----@param value number
----@return bool
----Save integer value to storage file (to defined position), returns true on success
-function rl.SaveStorageValue(position,value) end
----@param position number
----@return number
----Load integer value from storage file (from defined position)
-function rl.LoadStorageValue(position) end
----@param url string|lightuserdata
----Open URL with default system browser (if available)
-function rl.OpenURL(url) end
 ---@param key number
 ---@return bool
 ---Check if a key has been pressed once
@@ -3303,8 +3340,11 @@ function rl.SetMouseOffset(offsetX,offsetY) end
 ---Set mouse scaling
 function rl.SetMouseScale(scaleX,scaleY) end
 ---@return number
----Get mouse wheel movement Y
+---Get mouse wheel movement for X or Y, whichever is larger
 function rl.GetMouseWheelMove() end
+---@return Vector2
+---Get mouse wheel movement for both X and Y
+function rl.GetMouseWheelMoveV() end
 ---@param cursor number
 ---Set mouse cursor
 function rl.SetMouseCursor(cursor) end
@@ -3350,30 +3390,16 @@ function rl.GetGesturePinchVector() end
 ---@return number
 ---Get gesture pinch angle
 function rl.GetGesturePinchAngle() end
----@param camera Camera
----@param mode number
----Set camera mode (multiple camera modes available)
-function rl.SetCameraMode(camera,mode) end
 ---@param camera Camera_ptr|lightuserdata
+---@param mode number
 ---Update camera position for selected mode
-function rl.UpdateCamera(camera) end
----@param keyPan number
----Set camera pan key to combine with mouse movement (free camera)
-function rl.SetCameraPanControl(keyPan) end
----@param keyAlt number
----Set camera alt key to combine with mouse movement (free camera)
-function rl.SetCameraAltControl(keyAlt) end
----@param keySmoothZoom number
----Set camera smooth zoom key to combine with mouse (free camera)
-function rl.SetCameraSmoothZoomControl(keySmoothZoom) end
----@param keyFront number
----@param keyBack number
----@param keyRight number
----@param keyLeft number
----@param keyUp number
----@param keyDown number
----Set camera move controls (1st person and 3rd person cameras)
-function rl.SetCameraMoveControls(keyFront,keyBack,keyRight,keyLeft,keyUp,keyDown) end
+function rl.UpdateCamera(camera,mode) end
+---@param camera Camera_ptr|lightuserdata
+---@param movement Vector3
+---@param rotation Vector3
+---@param zoom number
+---Update camera movement/rotation
+function rl.UpdateCameraPro(camera,movement,rotation,zoom) end
 ---@param texture Texture2D
 ---@param source Rectangle
 ---Set texture and rectangle to be used on shapes drawing
@@ -3653,6 +3679,12 @@ function rl.CheckCollisionPointCircle(point,center,radius) end
 ---@return bool
 ---Check if point is inside a triangle
 function rl.CheckCollisionPointTriangle(point,p1,p2,p3) end
+---@param point Vector2
+---@param points Vector2_ptr|lightuserdata
+---@param pointCount number
+---@return bool
+---Check if point is within a polygon described by array of vertices
+function rl.CheckCollisionPointPoly(point,points,pointCount) end
 ---@param startPos1 Vector2
 ---@param endPos1 Vector2
 ---@param startPos2 Vector2
@@ -3703,6 +3735,10 @@ function rl.LoadImageFromTexture(texture) end
 ---@return Image
 ---Load image from screen buffer and (screenshot)
 function rl.LoadImageFromScreen() end
+---@param image Image
+---@return bool
+---Check if an image is ready
+function rl.IsImageReady(image) end
 ---@param image Image
 ---Unload image from CPU memory (RAM)
 function rl.UnloadImage(image) end
@@ -3761,10 +3797,24 @@ function rl.GenImageChecked(width,height,checksX,checksY,col1,col2) end
 function rl.GenImageWhiteNoise(width,height,factor) end
 ---@param width number
 ---@param height number
+---@param offsetX number
+---@param offsetY number
+---@param scale number
+---@return Image
+---Generate image: perlin noise
+function rl.GenImagePerlinNoise(width,height,offsetX,offsetY,scale) end
+---@param width number
+---@param height number
 ---@param tileSize number
 ---@return Image
 ---Generate image: cellular algorithm, bigger tileSize means bigger cells
 function rl.GenImageCellular(width,height,tileSize) end
+---@param width number
+---@param height number
+---@param text string|lightuserdata
+---@return Image
+---Generate image: grayscale image from text data
+function rl.GenImageText(width,height,text) end
 ---@param image Image
 ---@return Image
 ---Create an image duplicate (useful for transformations)
@@ -3816,6 +3866,10 @@ function rl.ImageAlphaMask(image,alphaMask) end
 ---@param image Image_ptr|lightuserdata
 ---Premultiply alpha channel
 function rl.ImageAlphaPremultiply(image) end
+---@param image Image_ptr|lightuserdata
+---@param blurSize number
+---Apply Gaussian blur using a box blur approximation
+function rl.ImageBlurGaussian(image,blurSize) end
 ---@param image Image_ptr|lightuserdata
 ---@param newWidth number
 ---@param newHeight number
@@ -3931,23 +3985,36 @@ function rl.ImageDrawPixelV(dst,position,color) end
 function rl.ImageDrawLine(dst,startPosX,startPosY,endPosX,endPosY,color) end
 ---@param dst Image_ptr|lightuserdata
 ---@param start Vector2
----@param end Vector2
+---@param end_ Vector2
 ---@param color Color
 ---Draw line within an image (Vector version)
-function rl.ImageDrawLineV(dst,start,end,color) end
+function rl.ImageDrawLineV(dst,start,end_,color) end
 ---@param dst Image_ptr|lightuserdata
 ---@param centerX number
 ---@param centerY number
 ---@param radius number
 ---@param color Color
----Draw circle within an image
+---Draw a filled circle within an image
 function rl.ImageDrawCircle(dst,centerX,centerY,radius,color) end
 ---@param dst Image_ptr|lightuserdata
 ---@param center Vector2
 ---@param radius number
 ---@param color Color
----Draw circle within an image (Vector version)
+---Draw a filled circle within an image (Vector version)
 function rl.ImageDrawCircleV(dst,center,radius,color) end
+---@param dst Image_ptr|lightuserdata
+---@param centerX number
+---@param centerY number
+---@param radius number
+---@param color Color
+---Draw circle outline within an image
+function rl.ImageDrawCircleLines(dst,centerX,centerY,radius,color) end
+---@param dst Image_ptr|lightuserdata
+---@param center Vector2
+---@param radius number
+---@param color Color
+---Draw circle outline within an image (Vector version)
+function rl.ImageDrawCircleLinesV(dst,center,radius,color) end
 ---@param dst Image_ptr|lightuserdata
 ---@param posX number
 ---@param posY number
@@ -4016,8 +4083,16 @@ function rl.LoadTextureCubemap(image,layout) end
 ---Load texture for rendering (framebuffer)
 function rl.LoadRenderTexture(width,height) end
 ---@param texture Texture2D
+---@return bool
+---Check if a texture is ready
+function rl.IsTextureReady(texture) end
+---@param texture Texture2D
 ---Unload texture from GPU memory (VRAM)
 function rl.UnloadTexture(texture) end
+---@param target RenderTexture2D
+---@return bool
+---Check if a render texture is ready
+function rl.IsRenderTextureReady(target) end
 ---@param target RenderTexture2D
 ---Unload render texture from GPU memory (VRAM)
 function rl.UnloadRenderTexture(target) end
@@ -4066,22 +4141,6 @@ function rl.DrawTextureEx(texture,position,rotation,scale,tint) end
 ---Draw a part of a texture defined by a rectangle
 function rl.DrawTextureRec(texture,source,position,tint) end
 ---@param texture Texture2D
----@param tiling Vector2
----@param offset Vector2
----@param quad Rectangle
----@param tint Color
----Draw texture quad with tiling and offset parameters
-function rl.DrawTextureQuad(texture,tiling,offset,quad,tint) end
----@param texture Texture2D
----@param source Rectangle
----@param dest Rectangle
----@param origin Vector2
----@param rotation number
----@param scale number
----@param tint Color
----Draw part of a texture (defined by a rectangle) with rotation and scale tiled into dest.
-function rl.DrawTextureTiled(texture,source,dest,origin,rotation,scale,tint) end
----@param texture Texture2D
 ---@param source Rectangle
 ---@param dest Rectangle
 ---@param origin Vector2
@@ -4097,14 +4156,6 @@ function rl.DrawTexturePro(texture,source,dest,origin,rotation,tint) end
 ---@param tint Color
 ---Draws a texture (or part of it) that stretches or shrinks nicely
 function rl.DrawTextureNPatch(texture,nPatchInfo,dest,origin,rotation,tint) end
----@param texture Texture2D
----@param center Vector2
----@param points Vector2_ptr|lightuserdata
----@param texcoords Vector2_ptr|lightuserdata
----@param pointCount number
----@param tint Color
----Draw a textured polygon
-function rl.DrawTexturePoly(texture,center,points,texcoords,pointCount,tint) end
 ---@param color Color
 ---@param alpha number
 ---@return Color
@@ -4132,6 +4183,21 @@ function rl.ColorToHSV(color) end
 ---@return Color
 ---Get a Color from HSV values, hue [0..360], saturation/value [0..1]
 function rl.ColorFromHSV(hue,saturation,value) end
+---@param color Color
+---@param tint Color
+---@return Color
+---Get color multiplied with another color
+function rl.ColorTint(color,tint) end
+---@param color Color
+---@param factor number
+---@return Color
+---Get color with brightness correction, brightness factor goes from -1.0f to 1.0f
+function rl.ColorBrightness(color,factor) end
+---@param color Color
+---@param contrast number
+---@return Color
+---Get color with contrast correction, contrast values between -1.0f and 1.0f
+function rl.ColorContrast(color,contrast) end
 ---@param color Color
 ---@param alpha number
 ---@return Color
@@ -4192,6 +4258,10 @@ function rl.LoadFontFromImage(image,key,firstChar) end
 ---@return Font
 ---Load font from memory buffer, fileType refers to extension: i.e. '.ttf'
 function rl.LoadFontFromMemory(fileType,fileData,dataSize,fontSize,fontChars,glyphCount) end
+---@param font Font
+---@return bool
+---Check if a font is ready
+function rl.IsFontReady(font) end
 ---@param fileData string|lightuserdata
 ---@param dataSize number
 ---@param fontSize number
@@ -4294,6 +4364,14 @@ function rl.GetGlyphInfo(font,codepoint) end
 ---@return Rectangle
 ---Get glyph rectangle in font atlas for a codepoint (unicode character), fallback to '?' if not found
 function rl.GetGlyphAtlasRec(font,codepoint) end
+---@param codepoints number
+---@param length number
+---@return string|lightuserdata
+---Load UTF-8 text encoded from codepoints array
+function rl.LoadUTF8(codepoints,length) end
+---@param text string|lightuserdata
+---Unload UTF-8 text encoded from codepoints array
+function rl.UnloadUTF8(text) end
 ---@param text string|lightuserdata
 ---@param count number
 ---@return number
@@ -4307,20 +4385,25 @@ function rl.UnloadCodepoints(codepoints) end
 ---Get total number of codepoints in a UTF-8 encoded string
 function rl.GetCodepointCount(text) end
 ---@param text string|lightuserdata
----@param bytesProcessed number
+---@param codepointSize number
 ---@return number
 ---Get next codepoint in a UTF-8 encoded string, 0x3f('?') is returned on failure
-function rl.GetCodepoint(text,bytesProcessed) end
+function rl.GetCodepoint(text,codepointSize) end
+---@param text string|lightuserdata
+---@param codepointSize number
+---@return number
+---Get next codepoint in a UTF-8 encoded string, 0x3f('?') is returned on failure
+function rl.GetCodepointNext(text,codepointSize) end
+---@param text string|lightuserdata
+---@param codepointSize number
+---@return number
+---Get previous codepoint in a UTF-8 encoded string, 0x3f('?') is returned on failure
+function rl.GetCodepointPrevious(text,codepointSize) end
 ---@param codepoint number
----@param byteSize number
+---@param utf8Size number
 ---@return string|lightuserdata
 ---Encode one codepoint into UTF-8 byte array (array length returned as parameter)
-function rl.CodepointToUTF8(codepoint,byteSize) end
----@param codepoints number
----@param length number
----@return string|lightuserdata
----Encode text as codepoints array into UTF-8 text string (WARNING: memory must be freed!)
-function rl.TextCodepointsToUTF8(codepoints,length) end
+function rl.CodepointToUTF8(codepoint,utf8Size) end
 ---@param dst string|lightuserdata
 ---@param src string|lightuserdata
 ---@return number
@@ -4447,23 +4530,6 @@ function rl.DrawCubeWires(position,width,height,length,color) end
 ---@param color Color
 ---Draw cube wires (Vector version)
 function rl.DrawCubeWiresV(position,size,color) end
----@param texture Texture2D
----@param position Vector3
----@param width number
----@param height number
----@param length number
----@param color Color
----Draw cube textured
-function rl.DrawCubeTexture(texture,position,width,height,length,color) end
----@param texture Texture2D
----@param source Rectangle
----@param position Vector3
----@param width number
----@param height number
----@param length number
----@param color Color
----Draw cube with a region of a texture
-function rl.DrawCubeTextureRec(texture,source,position,width,height,length,color) end
 ---@param centerPos Vector3
 ---@param radius number
 ---@param color Color
@@ -4515,6 +4581,22 @@ function rl.DrawCylinderWires(position,radiusTop,radiusBottom,height,slices,colo
 ---@param color Color
 ---Draw a cylinder wires with base at startPos and top at endPos
 function rl.DrawCylinderWiresEx(startPos,endPos,startRadius,endRadius,sides,color) end
+---@param startPos Vector3
+---@param endPos Vector3
+---@param radius number
+---@param slices number
+---@param rings number
+---@param color Color
+---Draw a capsule with the center of its sphere caps at startPos and endPos
+function rl.DrawCapsule(startPos,endPos,radius,slices,rings,color) end
+---@param startPos Vector3
+---@param endPos Vector3
+---@param radius number
+---@param slices number
+---@param rings number
+---@param color Color
+---Draw capsule wireframe with the center of its sphere caps at startPos and endPos
+function rl.DrawCapsuleWires(startPos,endPos,radius,slices,rings,color) end
 ---@param centerPos Vector3
 ---@param size Vector2
 ---@param color Color
@@ -4537,11 +4619,12 @@ function rl.LoadModel(fileName) end
 ---Load model from generated mesh (default material)
 function rl.LoadModelFromMesh(mesh) end
 ---@param model Model
+---@return bool
+---Check if a model is ready
+function rl.IsModelReady(model) end
+---@param model Model
 ---Unload model (including meshes) from memory (RAM and/or VRAM)
 function rl.UnloadModel(model) end
----@param model Model
----Unload model (but not meshes) from memory (RAM and/or VRAM)
-function rl.UnloadModelKeepMeshes(model) end
 ---@param model Model
 ---@return BoundingBox
 ---Compute model bounding box limits (considers all meshes)
@@ -4641,9 +4724,6 @@ function rl.GetMeshBoundingBox(mesh) end
 ---@param mesh Mesh_ptr|lightuserdata
 ---Compute mesh tangents
 function rl.GenMeshTangents(mesh) end
----@param mesh Mesh_ptr|lightuserdata
----Compute mesh binormals
-function rl.GenMeshBinormals(mesh) end
 ---@param sides number
 ---@param radius number
 ---@return Mesh
@@ -4718,6 +4798,10 @@ function rl.LoadMaterials(fileName,materialCount) end
 ---@return Material
 ---Load default material (Supports: DIFFUSE, SPECULAR, NORMAL maps)
 function rl.LoadMaterialDefault() end
+---@param material Material
+---@return bool
+---Check if a material is ready
+function rl.IsMaterialReady(material) end
 ---@param material Material
 ---Unload material from GPU memory (VRAM)
 function rl.UnloadMaterial(material) end
@@ -4823,6 +4907,10 @@ function rl.LoadWave(fileName) end
 ---@return Wave
 ---Load wave from memory buffer, fileType refers to extension: i.e. '.wav'
 function rl.LoadWaveFromMemory(fileType,fileData,dataSize) end
+---@param wave Wave
+---@return bool
+---Checks if wave data is ready
+function rl.IsWaveReady(wave) end
 ---@param fileName string|lightuserdata
 ---@return Sound
 ---Load sound from file
@@ -4831,6 +4919,10 @@ function rl.LoadSound(fileName) end
 ---@return Sound
 ---Load sound from wave data
 function rl.LoadSoundFromWave(wave) end
+---@param sound Sound
+---@return bool
+---Checks if a sound is ready
+function rl.IsSoundReady(sound) end
 ---@param sound Sound
 ---@param data string|lightuserdata
 ---@param sampleCount number
@@ -4864,14 +4956,6 @@ function rl.PauseSound(sound) end
 ---@param sound Sound
 ---Resume a paused sound
 function rl.ResumeSound(sound) end
----@param sound Sound
----Play a sound (using multichannel buffer pool)
-function rl.PlaySoundMulti(sound) end
----Stop any sound playing (using multichannel buffer pool)
-function rl.StopSoundMulti() end
----@return number
----Get number of sounds playing in the multichannel
-function rl.GetSoundsPlaying() end
 ---@param sound Sound
 ---@return bool
 ---Check if a sound is currently playing
@@ -4920,6 +5004,10 @@ function rl.LoadMusicStream(fileName) end
 ---@return Music
 ---Load music stream from data
 function rl.LoadMusicStreamFromMemory(fileType,data,dataSize) end
+---@param music Music
+---@return bool
+---Checks if a music stream is ready
+function rl.IsMusicReady(music) end
 ---@param music Music
 ---Unload music stream
 function rl.UnloadMusicStream(music) end
@@ -4973,6 +5061,10 @@ function rl.GetMusicTimePlayed(music) end
 ---Load audio stream (to stream raw audio pcm data)
 function rl.LoadAudioStream(sampleRate,sampleSize,channels) end
 ---@param stream AudioStream
+---@return bool
+---Checks if an audio stream is ready
+function rl.IsAudioStreamReady(stream) end
+---@param stream AudioStream
 ---Unload audio stream and free memory
 function rl.UnloadAudioStream(stream) end
 ---@param stream AudioStream
@@ -5021,10 +5113,113 @@ function rl.SetAudioStreamBufferSizeDefault(size) end
 function rl.SetAudioStreamCallback(stream,callback) end
 ---@param stream AudioStream
 ---@param processor AudioCallback
+---Attach audio stream processor to stream
 function rl.AttachAudioStreamProcessor(stream,processor) end
 ---@param stream AudioStream
 ---@param processor AudioCallback
+---Detach audio stream processor from stream
 function rl.DetachAudioStreamProcessor(stream,processor) end
+---@param processor AudioCallback
+---Attach audio stream processor to the entire audio pipeline
+function rl.AttachAudioMixedProcessor(processor) end
+---@param processor AudioCallback
+---Detach audio stream processor from the entire audio pipeline
+function rl.DetachAudioMixedProcessor(processor) end
+---@alias CameraProjection
+---| 'CAMERA_PERSPECTIVE'
+---| 'CAMERA_ORTHOGRAPHIC'
+---Camera projection
+
+---Perspective projection
+rl.CAMERA_PERSPECTIVE = 0
+---Orthographic projection
+rl.CAMERA_ORTHOGRAPHIC = 1
+---@alias CameraMode
+---| 'CAMERA_CUSTOM'
+---| 'CAMERA_FREE'
+---| 'CAMERA_ORBITAL'
+---| 'CAMERA_FIRST_PERSON'
+---| 'CAMERA_THIRD_PERSON'
+---Camera system modes
+
+---Camera custom, controlled by user (UpdateCamera() does nothing)
+rl.CAMERA_CUSTOM = 0
+---Camera free mode
+rl.CAMERA_FREE = 1
+---Camera orbital, around target, zoom supported
+rl.CAMERA_ORBITAL = 2
+---Camera first person
+rl.CAMERA_FIRST_PERSON = 3
+---Camera third person
+rl.CAMERA_THIRD_PERSON = 4
+---@class Vector2 @ Vector2, 2 components
+---@alias Vector2_ptr Vector2
+---@alias Vector2_ptr_ptr Vector2
+---@field x number # Vector x component
+---@field y number # Vector y component
+---Constructed using `rl.new("Vector2", ...)`
+local Vector2 = {}
+---@class Vector3 @ Vector3, 3 components
+---@alias Vector3_ptr Vector3
+---@alias Vector3_ptr_ptr Vector3
+---@field x number # Vector x component
+---@field y number # Vector y component
+---@field z number # Vector z component
+---Constructed using `rl.new("Vector3", ...)`
+local Vector3 = {}
+---@class Camera3D @ Camera type, defines a camera position/orientation in 3d space
+---@alias Camera3D_ptr Camera3D
+---@alias Camera3D_ptr_ptr Camera3D
+---@field position Vector3 # Camera position
+---@field target Vector3 # Camera target it looks-at
+---@field up Vector3 # Camera up vector (rotation over its axis)
+---@field fovy number # Camera field-of-view apperture in Y (degrees) in perspective, used as near plane width in orthographic
+---@field projection number # Camera projection type: CAMERA_PERSPECTIVE or CAMERA_ORTHOGRAPHIC
+---Constructed using `rl.new("Camera3D", ...)`
+local Camera3D = {}
+---@param camera Camera_ptr|lightuserdata
+---@return Vector3
+function rl.GetCameraForward(camera) end
+---@param camera Camera_ptr|lightuserdata
+---@return Vector3
+function rl.GetCameraUp(camera) end
+---@param camera Camera_ptr|lightuserdata
+---@return Vector3
+function rl.GetCameraRight(camera) end
+---@param camera Camera_ptr|lightuserdata
+---@param distance number
+---@param moveInWorldPlane bool
+function rl.CameraMoveForward(camera,distance,moveInWorldPlane) end
+---@param camera Camera_ptr|lightuserdata
+---@param distance number
+function rl.CameraMoveUp(camera,distance) end
+---@param camera Camera_ptr|lightuserdata
+---@param distance number
+---@param moveInWorldPlane bool
+function rl.CameraMoveRight(camera,distance,moveInWorldPlane) end
+---@param camera Camera_ptr|lightuserdata
+---@param delta number
+function rl.CameraMoveToTarget(camera,delta) end
+---@param camera Camera_ptr|lightuserdata
+---@param angle number
+---@param rotateAroundTarget bool
+function rl.CameraYaw(camera,angle,rotateAroundTarget) end
+---@param camera Camera_ptr|lightuserdata
+---@param angle number
+---@param lockView bool
+---@param rotateAroundTarget bool
+---@param rotateUp bool
+function rl.CameraPitch(camera,angle,lockView,rotateAroundTarget,rotateUp) end
+---@param camera Camera_ptr|lightuserdata
+---@param angle number
+function rl.CameraRoll(camera,angle) end
+---@param camera Camera_ptr|lightuserdata
+---@return Matrix
+function rl.GetCameraViewMatrix(camera) end
+---@param camera Camera_ptr|lightuserdata
+---@param aspect number
+---@return Matrix
+function rl.GetCameraProjectionMatrix(camera,aspect) end
 ---@alias rlGlVersion
 ---| 'OPENGL_11'
 ---| 'OPENGL_21'
@@ -6041,6 +6236,10 @@ function rl.rlGetMatrixViewOffsetStereo(eye) end
 ---@overload fun(t: '"Music"', ...): Music
 ---@overload fun(t: '"VrDeviceInfo"', ...): VrDeviceInfo
 ---@overload fun(t: '"VrStereoConfig"', ...): VrStereoConfig
+---@overload fun(t: '"FilePathList"', ...): FilePathList
+---@overload fun(t: '"Vector2"', ...): Vector2
+---@overload fun(t: '"Vector3"', ...): Vector3
+---@overload fun(t: '"Camera3D"', ...): Camera3D
 ---@overload fun(t: '"rlVertexBuffer"', ...): rlVertexBuffer
 ---@overload fun(t: '"rlDrawCall"', ...): rlDrawCall
 ---@overload fun(t: '"rlRenderBatch"', ...): rlRenderBatch
