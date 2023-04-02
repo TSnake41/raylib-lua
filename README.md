@@ -6,7 +6,7 @@
 ## raylib-lua
 
 [LuaJIT](https://luajit.org/)-based binding for [raylib](https://www.raylib.com/), a simple and easy-to-use
-library to learn videogames programming.
+library to learn video game programming.
 
 This binding is partially based on [raylib-wren/wray](https://github.com/TSnake41/raylib-wren).
 
