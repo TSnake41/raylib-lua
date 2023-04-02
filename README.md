@@ -13,8 +13,8 @@ This binding is partially based on [raylib-wren/wray](https://github.com/TSnake4
 ### Usage (`raylua_s`)
 
 `raylua_s` is the script-mode binary of raylib-lua.
-Without any argument, you get into the REPL which gives you a minimal Lua]
-shell that allows you to run Lua code from terminal.]
+Without any argument, you get into the REPL which gives you a minimal Lua
+shell that allows you to run Lua code from terminal.
 
 You can specify a Lua file as argument to run the specified Lua file.
 
