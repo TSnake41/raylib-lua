@@ -16,7 +16,7 @@ This binding is partially based on [raylib-wren/wray](https://github.com/TSnake4
 Without any argument, `raylua_s` gets you into the REPL (the read-eval-print loop, i.e. the interactive interpretor) which gives you a minimal Lua
 shell that allows you to run Lua code from a terminal (aka a command prompt).
 
-You can specify a Lua file as argument to run the specified Lua file.
+You can give the name of a Lua file as an argument to `raylua_s` to run the specified Lua file.
 
 ### Usage (`raylua_e`)
 
