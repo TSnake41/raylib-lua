@@ -10,17 +10,17 @@ library to learn video game programming.
 
 This binding is partially based on [raylib-wren/wray](https://github.com/TSnake41/raylib-wren).
 
-### Usage (raylua_s)
+### Usage (`raylua_s`)
 
-raylua_s is the script-mode binary of raylib-lua.
+`raylua_s` is the script-mode binary of raylib-lua.
 Without any argument, you get into the REPL which gives you a minimal Lua]
 shell that allows you to run Lua code from terminal.]
 
 You can specify a Lua file as argument to run the specified Lua file.
 
-### Usage (raylua_e)
+### Usage (`raylua_e`)
 
-raylua_e is the embedding-mode binary of raylib-lua.
+`raylua_e` is the embedding-mode binary of raylib-lua.
 
 This binary allows you to build standalone raylib applications from Lua code.
 
