@@ -80,9 +80,9 @@ If you are unfamliar with `make`, see [the wikipedia for Make](https://en.wikipe
 
 Support for `make` on Windows can sometimes be poor though, so remember that there is a download button at the top of this page for if you just want ready-to-use copies of the `raylua_s`, `raylua_e`, and `raylua_r` executable files for Windows. That may be the easiest way to get started for many users. (It can be easy to overlook the download buttons on GitHub pages if you aren't paying close enough attention, so heads-up on that.)
 
-A working Lua interpreter is needed, by default the luajit interpreter built
+A working Lua interpreter is needed. By default, the luajit interpreter built
 along with `libluajit.a` is used. In case of cross-compiling, you may want to
-change which Lua interpreter is used to a one your system supports.
+change which Lua interpreter is used to one your system supports.
 You can specify the interpreter with the `LUA` variable.
 
 If you need to update raylib binding, there are few tasks to do :
