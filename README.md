@@ -154,7 +154,7 @@ You can make raylib-lua (raylua) partially compatible with
 [raylib-lua-sol](https://github.com/RobLoach/raylib-lua-sol) with the global API by
 adding `setmetatable(_G, { __index = rl })` on the first line.
 
-This will allow direct use of the raylib binding through globals instead of `rl` table.
+This will allow direct use of the raylib binding through globals instead of through the `rl` table.
 
 You have an example of this in `lua_global_api.lua`.
 
