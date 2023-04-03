@@ -210,7 +210,7 @@ There are some other bindings, which may or may not be up to date.
 
 ### Licence
 
-Copyright (C) 2020 Astie Teddy
+Copyright (C) 2023 Astie Teddy
 
 Permission to use, copy, modify, and/or distribute this software for any
 purpose with or without fee is hereby granted, provided that the above
