@@ -66,7 +66,7 @@ than from `package` loaders.
 ### Building / Updating raylib / Contribution
 
 To build raylib-lua from source, you need to take care that submodules are
-imported, if not or you are unsure :
+imported. Otherwise, if submodules haven't been imported or if you are unsure:
 
 ```shell
 git submodule init
