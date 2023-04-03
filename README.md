@@ -119,7 +119,7 @@ local data = tostring(rl.LoadFileData("test.txt", int_ptr))
 local count = tonumber(int_ptr[0])
 ```
 
-### Example
+### Simple example to test if your raylib-lua is working
 
 ```lua
 rl.SetConfigFlags(rl.FLAG_VSYNC_HINT)
