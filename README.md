@@ -185,9 +185,10 @@ You also need to setup a launch configuration in Visual Studio Code to run `rayl
     "args": [ "main.lua OR ${file} OR WHATEVER" ]
 }
 ```
-This debugger doesn't support pausing, you need to place a breakpoint before executing
-to get a actual debug, otherwise, a error needs to be thrown in the application to get the debugging.
-This debugger has a significant overhead, expect a performance loss in intensive projects.
+This debugger doesn't support pausing at arbitrary unspecified points. You will need to place a breakpoint before executing your code
+to get an actual steppable debug working. Otherwise, an error will need to be thrown in the application to get the debugging to trigger.
+
+This debugger has significant overhead, expect a potentially large performance loss in intensive projects if you use it.
 
 ### Other bindings
 
