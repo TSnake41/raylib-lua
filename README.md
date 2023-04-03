@@ -26,9 +26,10 @@ This binary allows you to build standalone raylib applications from Lua code.
 
 There are 3 ways to use it :
  - **zip mode** :
-     If you specify a zip file as argument, this zip will be used as payload
-     application, this file expects to have a `main.lua` which is the entry point
-     of the application.
+     If you specify a zip file as an argument to `raylua_e`, this zip file's contents 
+     will be used to build the application. `raylua_e` expects the zip file to contain 
+     a `main.lua` file, which is the entry point of the application (i.e. `main.lua` is 
+     where you want your program to start running).
 
         # Windows
         raylua_e someGame.zip
