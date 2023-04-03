@@ -174,7 +174,7 @@ do local f = getmetatable(rl).__index;rawset(rl, "__index", function (_, k) retu
 package.path = package.path .. os.getenv "LUA_PATH"
 local lldebugger = require "lldebugger"; lldebugger.start()
 ```
-You also need to setup a launch configuration in Visual Studio Code to run raylua_s with debugger attached, e.g
+You also need to setup a launch configuration in Visual Studio Code to run `raylua_s` with the debugger attached, e.g
 ```json
 {
     "type": "lua-local",
