@@ -160,9 +160,9 @@ You have an example of this in `lua_global_api.lua`.
 
 ### Editor support
 
-There is a limited autocompletion support for VSCode and other EmmyLua frontends using [this definition file](https://github.com/TSnake41/raylib-lua/blob/master/tools/autocomplete/plugin.lua).
+There is limited autocompletion support for VSCode and other EmmyLua frontends using [this definition file](https://github.com/TSnake41/raylib-lua/blob/master/tools/autocomplete/plugin.lua).
 
-Check [this](https://github.com/LuaLS/lua-language-server/wiki/Libraries#custom) for more informations.
+Check [this page](https://github.com/LuaLS/lua-language-server/wiki/Libraries#custom) for more informations.
 
 #### Debugging
 
