@@ -151,7 +151,7 @@ Please report any issues you have with raygui with raylib-lua (raylua) on GitHub
 
 You can make raylib-lua (raylua) partially compatible with
 [original raylib-lua](https://github.com/raysan5/raylib-lua) or
-[raylib-lua-sol](https://github.com/RobLoach/raylib-lua-sol) with global API by
+[raylib-lua-sol](https://github.com/RobLoach/raylib-lua-sol) with the global API by
 adding `setmetatable(_G, { __index = rl })` on the first line.
 
 This will allow direct use of the raylib binding through globals instead of `rl` table.
