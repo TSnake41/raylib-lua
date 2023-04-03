@@ -85,9 +85,9 @@ along with `libluajit.a` is used. In case of cross-compiling, you may want to
 change which Lua interpreter is used to one your system supports.
 You can specify the interpreter with the `LUA` variable.
 
-If you need to update raylib binding, there are few tasks to do :
- - update `tools/api.h` functions signatures, keep file clean with exactly one function per line.
- - update struct definitions in `src/raylib.lua`
+If you need to update the raylib binding, there are a few tasks you will need to do:
+ - Update the `tools/api.h` function signatures. Keep the file clean, with exactly one function per line.
+ - Update the struct definitions in `src/raylib.lua`.
 
 ### Loading embedded ressources
 
