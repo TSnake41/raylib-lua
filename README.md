@@ -109,7 +109,7 @@ However, many functions in raylib won't require the use of such structs, so ther
 #### Note concerning pointers
 
 You can use the `rl.ref` function to build a pointer from a cdata struct.
-The `r1.ref` function only works with cdata structs. In the case of primitive 
+The `rl.ref` function only works with cdata structs. In the case of primitive 
 (non-struct) cdata in contrast, you will need to make an array and pass it directly.
 
 e.g :
