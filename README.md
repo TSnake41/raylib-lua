@@ -60,7 +60,7 @@ There are 3 ways to use it :
         ./raylua_e core_basic_window.lua
 
 Using `require` in embedded mode works as expected but `dofile` and `loadfile`
-may not work as expected as these functions load from a external file rather
+may not work as expected as these functions load from an external file rather
 than from `package` loaders.
 
 ### Building / Updating raylib / Contribution
