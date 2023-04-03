@@ -91,9 +91,9 @@ If you need to update the raylib binding, there are a few tasks you will need to
 
 ### Loading embedded ressources
 
-Currently, raylib-lua support loading ressources from payload using
-raylib API. You can also arbitrarily load files from payload using
-`raylua.loadfile` which returns a boolean indicating success and file content.
+Currently, raylib-lua supports loading resources from payloads using the
+raylib API. You can also arbitrarily load files from payloads using
+`raylua.loadfile`, which returns a boolean indicating success or failure and the file's content.
 
 ### Making structs
 
