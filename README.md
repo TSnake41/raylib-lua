@@ -38,8 +38,8 @@ There are 3 ways to use it :
         ./raylua_e someGame.zip
 
  - **directory mode** :
-     Similar to zip mode except that it automatically build the zip payload from
-     the specified directory.
+     This mode is similar to zip mode, except that it automatically builds the zip file 
+     payload from the specified directory and then uses that zip file to build the application.
 
         # project/ is a directory
 
