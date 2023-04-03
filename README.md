@@ -49,8 +49,9 @@ There are 3 ways to use it :
         # Unix
         ./raylua_e project
 
- - **lua mode** :
-     Build the executable from a single Lua file.
+ - **Lua mode** :
+     Alternatively, if your program is contained within a single Lua file, then you can 
+     build the executable directly from a single Lua file.
 
         # Windows
         raylua_e core_basic_window.lua
