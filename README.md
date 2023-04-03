@@ -102,7 +102,9 @@ To make raylib structs, you need to use the LuaJIT FFI.
 local ffi = require "ffi"
 ```
 
-Then use ffi.new to make a struct, e.g `ffi.new("Color", r, g, b, a)`
+After importing the necessary package (as above), use `ffi.new` to make a struct, e.g `ffi.new("Color", r, g, b, a)`.
+
+However, many functions in raylib won't require the use of such structs, so there's no need to worry until you actually need this.
 
 #### Note concerning pointers
 
