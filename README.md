@@ -65,7 +65,7 @@ than from `package` loaders.
 
 ### Usage (`raylua_r`, Windows only)
 
-On Windows systems, you may notice that there is an additional executable (named `raylua_r`) that is included with the pre-built Windows release download of this raylib-lua bindings library (or which you can build yourself). The purpose of `raylua_r` is to remove the extra terminal window (aka command prompt) that would normally open alongside the graphical raylib window whenever you run it. So, if you don't want that additional text window to show then you can use `raylua_r` to build your project without it.
+On Windows systems, you may notice that there is an additional executable (named `raylua_r`) that is included with the pre-built Windows release download of this raylib-lua bindings library (or which you can build yourself). The purpose of `raylua_r` is to remove the extra terminal window (aka command prompt) that would normally open alongside the graphical raylib window whenever you run it. So, if you don't want that additional text window to show then you can use `raylua_r` instead of `raylua_e` to build your project without it.
 
 Other operating systems may not consistently support this mechanism, and so there is currently no corresponding `raylua_r` for them.
 
