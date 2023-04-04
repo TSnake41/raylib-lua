@@ -145,7 +145,7 @@ raylib-lua (raylua) currently uses raylib 4.5 API. See [compat.lua](https://gith
 [physac](https://github.com/victorfisac/Physac) and [rlgl](https://github.com/raysan5/raylib/blob/master/src/rlgl.h) modules are also built-in by default.
 [raygui](https://github.com/raysan5/raygui) is supported, but is minimally tested. 
 
-Please report any issues you have with raygui with raylib-lua (raylua) on GitHub or on the raylib Discord (the #raylib-lua channel).
+Please report any issues you have with raygui with raylib-lua (raylua) on GitHub or on the #raylib-lua subchannel of [the raylib Discord server](https://discord.gg/raylib). To find the #raylib-lua page, join the raylib Discord server by clicking the above link, then scroll down on the left side of Discord's list of channels until you find #raylib-lua and click it. You can chat and ask questions there.
 
 #### Global API
 
