@@ -63,6 +63,14 @@ Using `require` in embedded mode works as expected but `dofile` and `loadfile`
 may not work as expected as these functions load from an external file rather
 than from `package` loaders.
 
+### Usage (`raylua_r`, Windows only)
+
+On Windows systems, you may notice that there is an additional executable (named `raylua_r`) that is included with the pre-built Windows release download of this raylib-lua bindings library (or which you can build yourself). The purpose of `raylua_r` is to remove the extra terminal window (aka command prompt) that would normally open alongside the graphical raylib window whenever you run it. So, if you don't want that additional text window to show then you can use `raylua_r` instead of `raylua_e` to build your project without it.
+
+Other operating systems may not consistently support this mechanism, and so there is currently no corresponding `raylua_r` for them.
+
+For more information on the origin of `raylua_r`, see [this old pull request](https://github.com/TSnake41/raylib-lua/pull/3) where this feature was originally added.
+
 ### Building / Updating raylib / Contribution
 
 To build raylib-lua from source, you need to take care that submodules are
@@ -145,7 +153,7 @@ raylib-lua (raylua) currently uses raylib 4.5 API. See [compat.lua](https://gith
 [physac](https://github.com/victorfisac/Physac) and [rlgl](https://github.com/raysan5/raylib/blob/master/src/rlgl.h) modules are also built-in by default.
 [raygui](https://github.com/raysan5/raygui) is supported, but is minimally tested. 
 
-Please report any issues you have with raygui with raylib-lua (raylua) on GitHub or on the raylib Discord (the #raylib-lua channel).
+Please report any issues you have with raygui with raylib-lua (raylua) on GitHub or on the #raylib-lua subchannel of [the raylib Discord server](https://discord.gg/raylib). To find the #raylib-lua page, join the raylib Discord server by clicking the above link, then scroll down on the left side of Discord's list of channels until you find #raylib-lua and click it. You can chat and ask questions there.
 
 #### Global API
 
