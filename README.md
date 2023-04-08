@@ -172,7 +172,7 @@ There is limited autocompletion support for VSCode and other EmmyLua frontends u
 
 Check [this page](https://github.com/LuaLS/lua-language-server/wiki/Libraries#custom) for more information.
 
-It may also be possible to get auto-complete working in [ZeroBrane Studio](https://github.com/pkulchenko/ZeroBraneStudio) (a popular IDE exclusively designed for Lua) according to the information on [this page](https://github.com/Rabios/raylua/blob/master/zerobrane/README.md) written by a different Lua raylib binding author, which mentions that their own autocomplete implementation (raylua) coincedentally has some compatibility with this binding (raylib-lua) too.
+It may also be possible to get auto-complete working in [ZeroBrane Studio](https://github.com/pkulchenko/ZeroBraneStudio) (a popular IDE exclusively designed for Lua) according to the information on [this page](https://github.com/Rabios/raylua/blob/master/zerobrane/README.md) written by a different Lua raylib binding author, which mentions that their own autocomplete implementation ([raylua](https://github.com/Rabios/raylua)) coincedentally has some compatibility with this binding ([raylib-lua](https://github.com/TSnake41/raylib-lua)) too.
 
 #### Debugging
 
