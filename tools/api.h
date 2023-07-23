@@ -178,6 +178,7 @@ float GetGestureDragAngle(void)
 Vector2 GetGesturePinchVector(void)
 float GetGesturePinchAngle(void)
 void UpdateCamera(Camera *camera, int mode)
+void UpdateCameraPro(Camera *camera, Vector3 movement, Vector3 rotation, float zoom);
 void SetShapesTexture(Texture2D texture, Rectangle source)
 void DrawPixel(int posX, int posY, Color color)
 void DrawPixelV(Vector2 position, Color color)
