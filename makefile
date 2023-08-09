@@ -27,7 +27,7 @@ ifeq ($(OS),Windows_NT)
 else ifeq ($(shell uname),Darwin)
 	LDFLAGS += -framework CoreVideo -framework IOKit -framework Cocoa \
 		-framework GLUT -framework OpenGL 
-	ifeq ($(MACHINE),arm64)
+	ifeq ($(shell uname -m),arm64)
 		# Additional flags for ARM64 on macOS
 		CFLAGS += -target arm64-apple-macos11
 	else
