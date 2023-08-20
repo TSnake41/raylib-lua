@@ -26,8 +26,13 @@ ifeq ($(OS),Windows_NT)
 	EXTERNAL_FILES := src/res/icon.res
 else ifeq ($(shell uname),Darwin)
 	LDFLAGS += -framework CoreVideo -framework IOKit -framework Cocoa \
-		-framework GLUT -framework OpenGL \
-		-Wl,-pagezero_size,10000,-image_base,100000000
+		-framework GLUT -framework OpenGL 
+	ifeq ($(shell uname -m),arm64)
+		# Additional flags for ARM64 on macOS
+		CFLAGS += -target arm64-apple-macos11
+	else
+		CFLAGS += -Wl,-pagezero_size,10000,-image_base,100000000
+	endif
 	EXTERNAL_FILES :=
 else
 	LDFLAGS += -ldl -lpthread
