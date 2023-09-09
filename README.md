@@ -12,7 +12,7 @@ This binding is partially based on [raylib-wren/wray](https://github.com/TSnake4
 
 ### Usage of `raylua_s`
 
-`raylua_s` is the script-mode binary of raylib-lua.
+`raylua_s` is the **script-mode binary** of raylib-lua.
 Without any argument, `raylua_s` gets you into the REPL (the read-eval-print loop, i.e. the interactive interpretor) which gives you a minimal Lua
 shell that allows you to run Lua code from a terminal (aka command prompt, console, or shell).
 
@@ -20,9 +20,9 @@ You can give the name of a Lua file as an argument to `raylua_s` to run the spec
 
 ### Usage of `raylua_e`
 
-`raylua_e` is the embedding-mode binary of raylib-lua.
+`raylua_e` is the **embedding-mode binary** of raylib-lua.
 
-This binary allows you to build standalone raylib applications from Lua code.
+This binary allows you to build standalone raylib applications from Lua code. This is useful both for testing and for packaging and distribution.
 
 There are 3 ways to use it :
  - **zip mode** :
