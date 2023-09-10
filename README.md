@@ -10,19 +10,19 @@ library to learn video game programming.
 
 This binding is partially based on [raylib-wren/wray](https://github.com/TSnake41/raylib-wren).
 
-### Usage (`raylua_s`)
+### Usage of `raylua_s`
 
-`raylua_s` is the script-mode binary of raylib-lua.
+`raylua_s` is the **script-mode binary** of raylib-lua.
 Without any argument, `raylua_s` gets you into the REPL (the read-eval-print loop, i.e. the interactive interpretor) which gives you a minimal Lua
-shell that allows you to run Lua code from a terminal (aka a command prompt).
+shell that allows you to run Lua code from a terminal (aka command prompt, console, or shell).
 
 You can give the name of a Lua file as an argument to `raylua_s` to run the specified Lua file.
 
-### Usage (`raylua_e`)
+### Usage of `raylua_e`
 
-`raylua_e` is the embedding-mode binary of raylib-lua.
+`raylua_e` is the **embedding-mode binary** of raylib-lua.
 
-This binary allows you to build standalone raylib applications from Lua code.
+This binary allows you to build standalone raylib applications from Lua code. This is useful both for testing and for packaging and distribution.
 
 There are 3 ways to use it :
  - **zip mode** :
@@ -63,9 +63,9 @@ Using `require` in embedded mode works as expected but `dofile` and `loadfile`
 may not work as expected as these functions load from an external file rather
 than from `package` loaders.
 
-### Usage (`raylua_r`, Windows only)
+### Usage of `raylua_r` (Windows only)
 
-On Windows systems, you may notice that there is an additional executable (named `raylua_r`) that is included with the pre-built Windows release download of this raylib-lua bindings library (or which you can build yourself). The purpose of `raylua_r` is to remove the extra terminal window (aka command prompt) that would normally open alongside the graphical raylib window whenever you run it. So, if you don't want that additional text window to show then you can use `raylua_r` instead of `raylua_e` to build your project without it.
+On Windows systems, you may notice that there is an additional executable (named `raylua_r`) that is included with the pre-built Windows release download of this raylib-lua bindings library (or which you can build yourself). The purpose of `raylua_r` is to remove the extra terminal window (aka command prompt, console, or shell) that would normally open alongside the graphical raylib window whenever you run it. So, if you don't want that additional text window to show then you can use `raylua_r` instead of `raylua_e` to build your project without it.
 
 Other operating systems may not consistently support this mechanism, and so there is currently no corresponding `raylua_r` for them.
 
@@ -110,7 +110,7 @@ To make raylib structs, you need to use the LuaJIT FFI.
 local ffi = require "ffi"
 ```
 
-After importing the necessary package (as above), use `ffi.new` to make a struct, e.g `ffi.new("Color", r, g, b, a)`.
+After importing the necessary package (as above), use `ffi.new` to make a struct, e.g. `ffi.new("Color", r, g, b, a)`.
 
 However, many functions in raylib won't require the use of such structs, so there's no need to worry until you actually need this.
 
