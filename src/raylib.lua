@@ -203,6 +203,7 @@ ffi.cdef [[
     int frameCount;
     BoneInfo *bones;
     Transform **framePoses;
+    char name[32];
   } ModelAnimation;
 
   typedef struct Ray {
@@ -286,6 +287,18 @@ ffi.cdef [[
     char **paths;
   } FilePathList;
 
+  typedef struct AutomationEvent {
+    unsigned int frame;
+    unsigned int type;
+    int params[4];
+  } AutomationEvent;
+  
+  typedef struct AutomationEventList {
+    unsigned int capacity;
+    unsigned int count;
+    AutomationEvent *events;
+  } AutomationEventList;
+
   typedef enum {
     FLAG_VSYNC_HINT = 0x00000040,
     FLAG_FULLSCREEN_MODE = 0x00000002,
@@ -300,6 +313,7 @@ ffi.cdef [[
     FLAG_WINDOW_TRANSPARENT = 0x00000010,
     FLAG_WINDOW_HIGHDPI = 0x00002000,
     FLAG_WINDOW_MOUSE_PASSTHROUGH = 0x00004000,
+    FLAG_BORDERLESS_WINDOWED_MODE = 0x00008000,
     FLAG_MSAA_4X_HINT = 0x00000020,
     FLAG_INTERLACED_HINT = 0x00010000
   } ConfigFlags;
@@ -557,6 +571,9 @@ ffi.cdef [[
     PIXELFORMAT_UNCOMPRESSED_R32,
     PIXELFORMAT_UNCOMPRESSED_R32G32B32,
     PIXELFORMAT_UNCOMPRESSED_R32G32B32A32,
+    PIXELFORMAT_UNCOMPRESSED_R16,
+    PIXELFORMAT_UNCOMPRESSED_R16G16B16,
+    PIXELFORMAT_UNCOMPRESSED_R16G16B16A16,
     PIXELFORMAT_COMPRESSED_DXT1_RGB,
     PIXELFORMAT_COMPRESSED_DXT1_RGBA,
     PIXELFORMAT_COMPRESSED_DXT3_RGBA,
@@ -662,7 +679,8 @@ ffi.cdef [[
     RL_OPENGL_21,
     RL_OPENGL_33,
     RL_OPENGL_43,
-    RL_OPENGL_ES_20
+    RL_OPENGL_ES_20,
+    RL_OPENGL_ES_30
   } rlGlVersion;
 
   typedef enum {
@@ -687,6 +705,9 @@ ffi.cdef [[
     RL_PIXELFORMAT_UNCOMPRESSED_R32,
     RL_PIXELFORMAT_UNCOMPRESSED_R32G32B32,
     RL_PIXELFORMAT_UNCOMPRESSED_R32G32B32A32,
+    RL_PIXELFORMAT_UNCOMPRESSED_R16,
+    RL_PIXELFORMAT_UNCOMPRESSED_R16G16B16,
+    RL_PIXELFORMAT_UNCOMPRESSED_R16G16B16A16,
     RL_PIXELFORMAT_COMPRESSED_DXT1_RGB,
     RL_PIXELFORMAT_COMPRESSED_DXT1_RGBA,
     RL_PIXELFORMAT_COMPRESSED_DXT3_RGBA,
@@ -769,24 +790,24 @@ ffi.cdef [[
   
   typedef enum {
     RL_ATTACHMENT_COLOR_CHANNEL0 = 0,
-    RL_ATTACHMENT_COLOR_CHANNEL1,
-    RL_ATTACHMENT_COLOR_CHANNEL2,
-    RL_ATTACHMENT_COLOR_CHANNEL3,
-    RL_ATTACHMENT_COLOR_CHANNEL4,
-    RL_ATTACHMENT_COLOR_CHANNEL5,
-    RL_ATTACHMENT_COLOR_CHANNEL6,
-    RL_ATTACHMENT_COLOR_CHANNEL7,
+    RL_ATTACHMENT_COLOR_CHANNEL1 = 1,
+    RL_ATTACHMENT_COLOR_CHANNEL2 = 2,
+    RL_ATTACHMENT_COLOR_CHANNEL3 = 3,
+    RL_ATTACHMENT_COLOR_CHANNEL4 = 4,
+    RL_ATTACHMENT_COLOR_CHANNEL5 = 5,
+    RL_ATTACHMENT_COLOR_CHANNEL6 = 6,
+    RL_ATTACHMENT_COLOR_CHANNEL7 = 7,
     RL_ATTACHMENT_DEPTH = 100,
     RL_ATTACHMENT_STENCIL = 200,
   } rlFramebufferAttachType;
 
   typedef enum {
     RL_ATTACHMENT_CUBEMAP_POSITIVE_X = 0,
-    RL_ATTACHMENT_CUBEMAP_NEGATIVE_X,
-    RL_ATTACHMENT_CUBEMAP_POSITIVE_Y,
-    RL_ATTACHMENT_CUBEMAP_NEGATIVE_Y,
-    RL_ATTACHMENT_CUBEMAP_POSITIVE_Z,
-    RL_ATTACHMENT_CUBEMAP_NEGATIVE_Z,
+    RL_ATTACHMENT_CUBEMAP_NEGATIVE_X = 1,
+    RL_ATTACHMENT_CUBEMAP_POSITIVE_Y = 2,
+    RL_ATTACHMENT_CUBEMAP_NEGATIVE_Y = 3,
+    RL_ATTACHMENT_CUBEMAP_POSITIVE_Z = 4,
+    RL_ATTACHMENT_CUBEMAP_NEGATIVE_Z = 5,
     RL_ATTACHMENT_TEXTURE2D = 100,
     RL_ATTACHMENT_RENDERBUFFER = 200,
   } rlFramebufferAttachTextureType;
@@ -987,7 +1008,7 @@ ffi.cdef [[
   typedef struct GuiStyleProp {
     unsigned short controlId;
     unsigned short propertyId;
-    unsigned int propertyValue;
+    int propertyValue;
   } GuiStyleProp;
 
   typedef enum {
@@ -1002,6 +1023,18 @@ ffi.cdef [[
     GUI_TEXT_ALIGN_CENTER,
     GUI_TEXT_ALIGN_RIGHT,
   } GuiTextAlignment;
+
+  typedef enum {
+    TEXT_ALIGN_TOP = 0,
+    TEXT_ALIGN_MIDDLE,
+    TEXT_ALIGN_BOTTOM
+  } GuiTextAlignmentVertical;
+
+  typedef enum {
+    TEXT_WRAP_NONE = 0,
+    TEXT_WRAP_CHAR,
+    TEXT_WRAP_WORD
+  } GuiTextWrapMode;
 
   typedef enum {
     DEFAULT = 0,
@@ -1038,7 +1071,6 @@ ffi.cdef [[
     BORDER_WIDTH,
     TEXT_PADDING,
     TEXT_ALIGNMENT,
-    RESERVED
   } GuiControlProperty;
 
   typedef enum {
@@ -1046,6 +1078,9 @@ ffi.cdef [[
     TEXT_SPACING,
     LINE_COLOR,
     BACKGROUND_COLOR,
+    TEXT_LINE_SPACING,
+    TEXT_ALIGNMENT_VERTICAL,
+    TEXT_WRAP_MODE
   } GuiDefaultProperty;
 
   typedef enum {
@@ -1085,8 +1120,7 @@ ffi.cdef [[
   } GuiDropdownBoxProperty;
 
   typedef enum {
-    TEXT_INNER_PADDING = 16,
-    TEXT_LINES_SPACING
+    TEXT_READONLY = 16
   } GuiTextBoxProperty;
 
   typedef enum {

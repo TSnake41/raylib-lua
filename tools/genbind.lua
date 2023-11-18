@@ -17,7 +17,7 @@ local structs = {
   "GestureEvent", "GuiStyle", "GuiTextBoxState",
   "TraceLogCallback", "VertexBuffer", "DrawCall", "RenderBatch",
   "ShaderAttributeDataType", "MaterialMapIndex", "VrStereoConfig",
-  "FilePathList", "AudioCallback"
+  "FilePathList", "AudioCallback", "AutomationEvent", "AutomationEventList"
 }
 
 local rl_structs = {
