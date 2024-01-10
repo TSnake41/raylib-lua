@@ -7,9 +7,27 @@ return {
       description = ""
     },
     {
+      name = "RAYGUI_VERSION_MAJOR",
+      type = "INT",
+      value = 4,
+      description = ""
+    },
+    {
+      name = "RAYGUI_VERSION_MINOR",
+      type = "INT",
+      value = 0,
+      description = ""
+    },
+    {
+      name = "RAYGUI_VERSION_PATCH",
+      type = "INT",
+      value = 0,
+      description = ""
+    },
+    {
       name = "RAYGUI_VERSION",
       type = "STRING",
-      value = "3.2-dev",
+      value = "4.0",
       description = ""
     },
     {
@@ -67,10 +85,16 @@ return {
       description = ""
     },
     {
+      name = "CHECK_BOUNDS_ID(src, dst)",
+      type = "MACRO",
+      value = "((src.x == dst.x) && (src.y == dst.y) && (src.width == dst.width) && (src.height == dst.height))",
+      description = ""
+    },
+    {
       name = "RAYGUI_ICON_SIZE",
       type = "INT",
       value = 16,
-      description = "Size of icons (squared)"
+      description = "Size of icons in pixels (squared)"
     },
     {
       name = "RAYGUI_ICON_MAX_ICONS",
@@ -94,13 +118,13 @@ return {
       name = "RAYGUI_MAX_CONTROLS",
       type = "INT",
       value = 16,
-      description = "Maximum number of standard controls"
+      description = "Maximum number of controls"
     },
     {
       name = "RAYGUI_MAX_PROPS_BASE",
       type = "INT",
       value = 16,
-      description = "Maximum number of standard properties"
+      description = "Maximum number of base properties"
     },
     {
       name = "RAYGUI_MAX_PROPS_EXTENDED",
@@ -181,10 +205,40 @@ return {
       description = ""
     },
     {
+      name = "RAYGUI_TABBAR_ITEM_WIDTH",
+      type = "INT",
+      value = 160,
+      description = ""
+    },
+    {
+      name = "RAYGUI_MIN_SCROLLBAR_WIDTH",
+      type = "INT",
+      value = 40,
+      description = ""
+    },
+    {
+      name = "RAYGUI_MIN_SCROLLBAR_HEIGHT",
+      type = "INT",
+      value = 40,
+      description = ""
+    },
+    {
       name = "RAYGUI_TOGGLEGROUP_MAX_ITEMS",
       type = "INT",
       value = 32,
       description = ""
+    },
+    {
+      name = "RAYGUI_TEXTBOX_AUTO_CURSOR_COOLDOWN",
+      type = "INT",
+      value = 40,
+      description = "Frames to wait for autocursor movement"
+    },
+    {
+      name = "RAYGUI_TEXTBOX_AUTO_CURSOR_DELAY",
+      type = "INT",
+      value = 1,
+      description = "Frames delay for autocursor movement"
     },
     {
       name = "RAYGUI_VALUEBOX_MAX_CHARS",
@@ -213,7 +267,7 @@ return {
     {
       name = "RAYGUI_TEXTINPUTBOX_BUTTON_HEIGHT",
       type = "INT",
-      value = 28,
+      value = 24,
       description = ""
     },
     {
@@ -225,7 +279,7 @@ return {
     {
       name = "RAYGUI_TEXTINPUTBOX_HEIGHT",
       type = "INT",
-      value = 28,
+      value = 26,
       description = ""
     },
     {
@@ -243,19 +297,19 @@ return {
     {
       name = "BIT_CHECK(a,b)",
       type = "MACRO",
-      value = "((a) & (1<<(b)))",
+      value = "((a) & (1u<<(b)))",
       description = ""
     },
     {
-      name = "BIT_SET(a,b)",
-      type = "MACRO",
-      value = "((a) |= (1<<(b)))",
+      name = "ICON_TEXT_PADDING",
+      type = "INT",
+      value = 4,
       description = ""
     },
     {
-      name = "BIT_CLEAR(a,b)",
-      type = "MACRO",
-      value = "((a) &= ~((1)<<(b)))",
+      name = "RAYGUI_MAX_TEXT_LINES",
+      type = "INT",
+      value = 128,
       description = ""
     },
     {
@@ -263,12 +317,6 @@ return {
       type = "MACRO",
       value = "((int)h%2)",
       description = "Vertical alignment for pixel perfect"
-    },
-    {
-      name = "RAYGUI_ICON_TEXT_PADDING",
-      type = "INT",
-      value = 4,
-      description = ""
     },
     {
       name = "RAYGUI_TEXTSPLIT_MAX_ITEMS",
@@ -411,6 +459,37 @@ return {
       }
     },
     {
+      name = "Image",
+      description = "Image, pixel data stored in CPU memory (RAM)",
+      fields = {
+        {
+          type = "void *",
+          name = "data",
+          description = "Image raw data"
+        },
+        {
+          type = "int",
+          name = "width",
+          description = "Image base width"
+        },
+        {
+          type = "int",
+          name = "height",
+          description = "Image base height"
+        },
+        {
+          type = "int",
+          name = "mipmaps",
+          description = "Mipmap levels, 1 by default"
+        },
+        {
+          type = "int",
+          name = "format",
+          description = "Data format (PixelFormat type)"
+        }
+      }
+    },
+    {
       name = "GlyphInfo",
       description = "GlyphInfo, font characters glyphs info",
       fields = {
@@ -453,42 +532,83 @@ return {
         {
           type = "int",
           name = "glyphCount",
-          description = "Number of characters"
+          description = "Number of glyph characters"
+        },
+        {
+          type = "int",
+          name = "glyphPadding",
+          description = "Padding around the glyph characters"
         },
         {
           type = "Texture2D",
           name = "texture",
-          description = "Characters texture atlas"
+          description = "Texture atlas containing the glyphs"
         },
         {
           type = "Rectangle *",
           name = "recs",
-          description = "Characters rectangles in texture"
+          description = "Rectangles in texture for the glyphs"
         },
         {
           type = "GlyphInfo *",
-          name = "chars",
-          description = "Characters info data"
+          name = "glyphs",
+          description = "Glyphs info data"
         }
       }
     },
     {
       name = "GuiStyleProp",
-      description = "Style property",
+      description = "NOTE: Used when exporting style as code for convenience",
       fields = {
         {
           type = "unsigned short",
           name = "controlId",
-          description = ""
+          description = "Control identifier"
         },
         {
           type = "unsigned short",
           name = "propertyId",
-          description = ""
+          description = "Property identifier"
         },
         {
           type = "int",
           name = "propertyValue",
+          description = "Property value"
+        }
+      }
+    },
+    {
+      name = "GuiTextStyle",
+      description = "NOTE: Text style is defined by control",
+      fields = {
+        {
+          type = "unsigned int",
+          name = "size",
+          description = ""
+        },
+        {
+          type = "int",
+          name = "charSpacing",
+          description = ""
+        },
+        {
+          type = "int",
+          name = "lineSpacing",
+          description = ""
+        },
+        {
+          type = "int",
+          name = "alignmentH",
+          description = ""
+        },
+        {
+          type = "int",
+          name = "alignmentV",
+          description = ""
+        },
+        {
+          type = "int",
+          name = "padding",
           description = ""
         }
       }
@@ -498,26 +618,26 @@ return {
   },
   enums = {
     {
-      name = "GuiControlState",
+      name = "GuiState",
       description = "Gui control state",
       values = {
         {
-          name = "GUI_STATE_NORMAL",
+          name = "STATE_NORMAL",
           value = 0,
           description = ""
         },
         {
-          name = "GUI_STATE_FOCUSED",
+          name = "STATE_FOCUSED",
           value = 1,
           description = ""
         },
         {
-          name = "GUI_STATE_PRESSED",
+          name = "STATE_PRESSED",
           value = 2,
           description = ""
         },
         {
-          name = "GUI_STATE_DISABLED",
+          name = "STATE_DISABLED",
           value = 3,
           description = ""
         }
@@ -528,17 +648,59 @@ return {
       description = "Gui control text alignment",
       values = {
         {
-          name = "GUI_TEXT_ALIGN_LEFT",
+          name = "TEXT_ALIGN_LEFT",
           value = 0,
           description = ""
         },
         {
-          name = "GUI_TEXT_ALIGN_CENTER",
+          name = "TEXT_ALIGN_CENTER",
           value = 1,
           description = ""
         },
         {
-          name = "GUI_TEXT_ALIGN_RIGHT",
+          name = "TEXT_ALIGN_RIGHT",
+          value = 2,
+          description = ""
+        }
+      }
+    },
+    {
+      name = "GuiTextAlignmentVertical",
+      description = "Gui control text alignment vertical",
+      values = {
+        {
+          name = "TEXT_ALIGN_TOP",
+          value = 0,
+          description = ""
+        },
+        {
+          name = "TEXT_ALIGN_MIDDLE",
+          value = 1,
+          description = ""
+        },
+        {
+          name = "TEXT_ALIGN_BOTTOM",
+          value = 2,
+          description = ""
+        }
+      }
+    },
+    {
+      name = "GuiTextWrapMode",
+      description = "Gui control text wrap mode",
+      values = {
+        {
+          name = "TEXT_WRAP_NONE",
+          value = 0,
+          description = ""
+        },
+        {
+          name = "TEXT_WRAP_CHAR",
+          value = 1,
+          description = ""
+        },
+        {
+          name = "TEXT_WRAP_WORD",
           value = 2,
           description = ""
         }
@@ -571,7 +733,7 @@ return {
         {
           name = "SLIDER",
           value = 4,
-          description = "Used also for: SLIDERBAR"
+          description = "Used also for: SLIDERBAR, TOGGLESLIDER"
         },
         {
           name = "PROGRESSBAR",
@@ -637,82 +799,77 @@ return {
         {
           name = "BORDER_COLOR_NORMAL",
           value = 0,
-          description = ""
+          description = "Control border color in STATE_NORMAL"
         },
         {
           name = "BASE_COLOR_NORMAL",
           value = 1,
-          description = ""
+          description = "Control base color in STATE_NORMAL"
         },
         {
           name = "TEXT_COLOR_NORMAL",
           value = 2,
-          description = ""
+          description = "Control text color in STATE_NORMAL"
         },
         {
           name = "BORDER_COLOR_FOCUSED",
           value = 3,
-          description = ""
+          description = "Control border color in STATE_FOCUSED"
         },
         {
           name = "BASE_COLOR_FOCUSED",
           value = 4,
-          description = ""
+          description = "Control base color in STATE_FOCUSED"
         },
         {
           name = "TEXT_COLOR_FOCUSED",
           value = 5,
-          description = ""
+          description = "Control text color in STATE_FOCUSED"
         },
         {
           name = "BORDER_COLOR_PRESSED",
           value = 6,
-          description = ""
+          description = "Control border color in STATE_PRESSED"
         },
         {
           name = "BASE_COLOR_PRESSED",
           value = 7,
-          description = ""
+          description = "Control base color in STATE_PRESSED"
         },
         {
           name = "TEXT_COLOR_PRESSED",
           value = 8,
-          description = ""
+          description = "Control text color in STATE_PRESSED"
         },
         {
           name = "BORDER_COLOR_DISABLED",
           value = 9,
-          description = ""
+          description = "Control border color in STATE_DISABLED"
         },
         {
           name = "BASE_COLOR_DISABLED",
           value = 10,
-          description = ""
+          description = "Control base color in STATE_DISABLED"
         },
         {
           name = "TEXT_COLOR_DISABLED",
           value = 11,
-          description = ""
+          description = "Control text color in STATE_DISABLED"
         },
         {
           name = "BORDER_WIDTH",
           value = 12,
-          description = ""
+          description = "Control border size, 0 for no border"
         },
         {
           name = "TEXT_PADDING",
           value = 13,
-          description = ""
+          description = "Control text padding, not considering border"
         },
         {
           name = "TEXT_ALIGNMENT",
           value = 14,
-          description = ""
-        },
-        {
-          name = "RESERVED",
-          value = 15,
-          description = ""
+          description = "Control text horizontal alignment inside control text bound (after border and padding)"
         }
       }
     },
@@ -739,6 +896,21 @@ return {
           name = "BACKGROUND_COLOR",
           value = 19,
           description = "Background color"
+        },
+        {
+          name = "TEXT_LINE_SPACING",
+          value = 20,
+          description = "Text spacing between lines"
+        },
+        {
+          name = "TEXT_ALIGNMENT_VERTICAL",
+          value = 21,
+          description = "Text vertical alignment inside text bounds (after border and padding)"
+        },
+        {
+          name = "TEXT_WRAP_MODE",
+          value = 22,
+          description = "Text wrap-mode inside text bounds"
         }
       }
     },
@@ -787,32 +959,32 @@ return {
         {
           name = "ARROWS_SIZE",
           value = 16,
-          description = ""
+          description = "ScrollBar arrows size"
         },
         {
           name = "ARROWS_VISIBLE",
           value = 17,
-          description = ""
+          description = "ScrollBar arrows visible"
         },
         {
           name = "SCROLL_SLIDER_PADDING",
           value = 18,
-          description = "(SLIDERBAR, SLIDER_PADDING)"
+          description = "ScrollBar slider internal padding"
         },
         {
           name = "SCROLL_SLIDER_SIZE",
           value = 19,
-          description = ""
+          description = "ScrollBar slider size"
         },
         {
           name = "SCROLL_PADDING",
           value = 20,
-          description = ""
+          description = "ScrollBar scroll padding from arrows"
         },
         {
           name = "SCROLL_SPEED",
           value = 21,
-          description = ""
+          description = "ScrollBar scrolling speed"
         }
       }
     },
@@ -864,14 +1036,9 @@ return {
       description = "TextBox/TextBoxMulti/ValueBox/Spinner",
       values = {
         {
-          name = "TEXT_INNER_PADDING",
+          name = "TEXT_READONLY",
           value = 16,
-          description = "TextBox/TextBoxMulti/ValueBox/Spinner inner text padding"
-        },
-        {
-          name = "TEXT_LINES_SPACING",
-          value = 17,
-          description = "TextBoxMulti lines separation"
+          description = "TextBox in read-only mode: 0-text editable, 1-text no-editable"
         }
       }
     },
@@ -913,7 +1080,7 @@ return {
         {
           name = "SCROLLBAR_SIDE",
           value = 19,
-          description = "ListView scrollbar side (0-left, 1-right)"
+          description = "ListView scrollbar side (0-SCROLLBAR_LEFT_SIDE, 1-SCROLLBAR_RIGHT_SIDE)"
         }
       }
     },
@@ -949,1286 +1116,1286 @@ return {
       }
     },
     {
-      name = "guiIconName",
+      name = "GuiIconName",
       description = "",
       values = {
         {
-          name = "RAYGUI_ICON_NONE",
+          name = "ICON_NONE",
           value = 0,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_FOLDER_FILE_OPEN",
+          name = "ICON_FOLDER_FILE_OPEN",
           value = 1,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_FILE_SAVE_CLASSIC",
+          name = "ICON_FILE_SAVE_CLASSIC",
           value = 2,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_FOLDER_OPEN",
+          name = "ICON_FOLDER_OPEN",
           value = 3,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_FOLDER_SAVE",
+          name = "ICON_FOLDER_SAVE",
           value = 4,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_FILE_OPEN",
+          name = "ICON_FILE_OPEN",
           value = 5,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_FILE_SAVE",
+          name = "ICON_FILE_SAVE",
           value = 6,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_FILE_EXPORT",
+          name = "ICON_FILE_EXPORT",
           value = 7,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_FILE_ADD",
+          name = "ICON_FILE_ADD",
           value = 8,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_FILE_DELETE",
+          name = "ICON_FILE_DELETE",
           value = 9,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_FILETYPE_TEXT",
+          name = "ICON_FILETYPE_TEXT",
           value = 10,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_FILETYPE_AUDIO",
+          name = "ICON_FILETYPE_AUDIO",
           value = 11,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_FILETYPE_IMAGE",
+          name = "ICON_FILETYPE_IMAGE",
           value = 12,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_FILETYPE_PLAY",
+          name = "ICON_FILETYPE_PLAY",
           value = 13,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_FILETYPE_VIDEO",
+          name = "ICON_FILETYPE_VIDEO",
           value = 14,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_FILETYPE_INFO",
+          name = "ICON_FILETYPE_INFO",
           value = 15,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_FILE_COPY",
+          name = "ICON_FILE_COPY",
           value = 16,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_FILE_CUT",
+          name = "ICON_FILE_CUT",
           value = 17,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_FILE_PASTE",
+          name = "ICON_FILE_PASTE",
           value = 18,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_CURSOR_HAND",
+          name = "ICON_CURSOR_HAND",
           value = 19,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_CURSOR_POINTER",
+          name = "ICON_CURSOR_POINTER",
           value = 20,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_CURSOR_CLASSIC",
+          name = "ICON_CURSOR_CLASSIC",
           value = 21,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_PENCIL",
+          name = "ICON_PENCIL",
           value = 22,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_PENCIL_BIG",
+          name = "ICON_PENCIL_BIG",
           value = 23,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_BRUSH_CLASSIC",
+          name = "ICON_BRUSH_CLASSIC",
           value = 24,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_BRUSH_PAINTER",
+          name = "ICON_BRUSH_PAINTER",
           value = 25,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_WATER_DROP",
+          name = "ICON_WATER_DROP",
           value = 26,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_COLOR_PICKER",
+          name = "ICON_COLOR_PICKER",
           value = 27,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_RUBBER",
+          name = "ICON_RUBBER",
           value = 28,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_COLOR_BUCKET",
+          name = "ICON_COLOR_BUCKET",
           value = 29,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_TEXT_T",
+          name = "ICON_TEXT_T",
           value = 30,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_TEXT_A",
+          name = "ICON_TEXT_A",
           value = 31,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_SCALE",
+          name = "ICON_SCALE",
           value = 32,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_RESIZE",
+          name = "ICON_RESIZE",
           value = 33,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_FILTER_POINT",
+          name = "ICON_FILTER_POINT",
           value = 34,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_FILTER_BILINEAR",
+          name = "ICON_FILTER_BILINEAR",
           value = 35,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_CROP",
+          name = "ICON_CROP",
           value = 36,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_CROP_ALPHA",
+          name = "ICON_CROP_ALPHA",
           value = 37,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_SQUARE_TOGGLE",
+          name = "ICON_SQUARE_TOGGLE",
           value = 38,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_SYMMETRY",
+          name = "ICON_SYMMETRY",
           value = 39,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_SYMMETRY_HORIZONTAL",
+          name = "ICON_SYMMETRY_HORIZONTAL",
           value = 40,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_SYMMETRY_VERTICAL",
+          name = "ICON_SYMMETRY_VERTICAL",
           value = 41,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_LENS",
+          name = "ICON_LENS",
           value = 42,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_LENS_BIG",
+          name = "ICON_LENS_BIG",
           value = 43,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_EYE_ON",
+          name = "ICON_EYE_ON",
           value = 44,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_EYE_OFF",
+          name = "ICON_EYE_OFF",
           value = 45,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_FILTER_TOP",
+          name = "ICON_FILTER_TOP",
           value = 46,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_FILTER",
+          name = "ICON_FILTER",
           value = 47,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_TARGET_POINT",
+          name = "ICON_TARGET_POINT",
           value = 48,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_TARGET_SMALL",
+          name = "ICON_TARGET_SMALL",
           value = 49,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_TARGET_BIG",
+          name = "ICON_TARGET_BIG",
           value = 50,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_TARGET_MOVE",
+          name = "ICON_TARGET_MOVE",
           value = 51,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_CURSOR_MOVE",
+          name = "ICON_CURSOR_MOVE",
           value = 52,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_CURSOR_SCALE",
+          name = "ICON_CURSOR_SCALE",
           value = 53,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_CURSOR_SCALE_RIGHT",
+          name = "ICON_CURSOR_SCALE_RIGHT",
           value = 54,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_CURSOR_SCALE_LEFT",
+          name = "ICON_CURSOR_SCALE_LEFT",
           value = 55,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_UNDO",
+          name = "ICON_UNDO",
           value = 56,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_REDO",
+          name = "ICON_REDO",
           value = 57,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_REREDO",
+          name = "ICON_REREDO",
           value = 58,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_MUTATE",
+          name = "ICON_MUTATE",
           value = 59,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_ROTATE",
+          name = "ICON_ROTATE",
           value = 60,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_REPEAT",
+          name = "ICON_REPEAT",
           value = 61,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_SHUFFLE",
+          name = "ICON_SHUFFLE",
           value = 62,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_EMPTYBOX",
+          name = "ICON_EMPTYBOX",
           value = 63,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_TARGET",
+          name = "ICON_TARGET",
           value = 64,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_TARGET_SMALL_FILL",
+          name = "ICON_TARGET_SMALL_FILL",
           value = 65,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_TARGET_BIG_FILL",
+          name = "ICON_TARGET_BIG_FILL",
           value = 66,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_TARGET_MOVE_FILL",
+          name = "ICON_TARGET_MOVE_FILL",
           value = 67,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_CURSOR_MOVE_FILL",
+          name = "ICON_CURSOR_MOVE_FILL",
           value = 68,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_CURSOR_SCALE_FILL",
+          name = "ICON_CURSOR_SCALE_FILL",
           value = 69,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_CURSOR_SCALE_RIGHT_FILL",
+          name = "ICON_CURSOR_SCALE_RIGHT_FILL",
           value = 70,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_CURSOR_SCALE_LEFT_FILL",
+          name = "ICON_CURSOR_SCALE_LEFT_FILL",
           value = 71,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_UNDO_FILL",
+          name = "ICON_UNDO_FILL",
           value = 72,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_REDO_FILL",
+          name = "ICON_REDO_FILL",
           value = 73,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_REREDO_FILL",
+          name = "ICON_REREDO_FILL",
           value = 74,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_MUTATE_FILL",
+          name = "ICON_MUTATE_FILL",
           value = 75,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_ROTATE_FILL",
+          name = "ICON_ROTATE_FILL",
           value = 76,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_REPEAT_FILL",
+          name = "ICON_REPEAT_FILL",
           value = 77,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_SHUFFLE_FILL",
+          name = "ICON_SHUFFLE_FILL",
           value = 78,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_EMPTYBOX_SMALL",
+          name = "ICON_EMPTYBOX_SMALL",
           value = 79,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_BOX",
+          name = "ICON_BOX",
           value = 80,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_BOX_TOP",
+          name = "ICON_BOX_TOP",
           value = 81,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_BOX_TOP_RIGHT",
+          name = "ICON_BOX_TOP_RIGHT",
           value = 82,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_BOX_RIGHT",
+          name = "ICON_BOX_RIGHT",
           value = 83,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_BOX_BOTTOM_RIGHT",
+          name = "ICON_BOX_BOTTOM_RIGHT",
           value = 84,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_BOX_BOTTOM",
+          name = "ICON_BOX_BOTTOM",
           value = 85,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_BOX_BOTTOM_LEFT",
+          name = "ICON_BOX_BOTTOM_LEFT",
           value = 86,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_BOX_LEFT",
+          name = "ICON_BOX_LEFT",
           value = 87,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_BOX_TOP_LEFT",
+          name = "ICON_BOX_TOP_LEFT",
           value = 88,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_BOX_CENTER",
+          name = "ICON_BOX_CENTER",
           value = 89,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_BOX_CIRCLE_MASK",
+          name = "ICON_BOX_CIRCLE_MASK",
           value = 90,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_POT",
+          name = "ICON_POT",
           value = 91,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_ALPHA_MULTIPLY",
+          name = "ICON_ALPHA_MULTIPLY",
           value = 92,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_ALPHA_CLEAR",
+          name = "ICON_ALPHA_CLEAR",
           value = 93,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_DITHERING",
+          name = "ICON_DITHERING",
           value = 94,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_MIPMAPS",
+          name = "ICON_MIPMAPS",
           value = 95,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_BOX_GRID",
+          name = "ICON_BOX_GRID",
           value = 96,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_GRID",
+          name = "ICON_GRID",
           value = 97,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_BOX_CORNERS_SMALL",
+          name = "ICON_BOX_CORNERS_SMALL",
           value = 98,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_BOX_CORNERS_BIG",
+          name = "ICON_BOX_CORNERS_BIG",
           value = 99,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_FOUR_BOXES",
+          name = "ICON_FOUR_BOXES",
           value = 100,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_GRID_FILL",
+          name = "ICON_GRID_FILL",
           value = 101,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_BOX_MULTISIZE",
+          name = "ICON_BOX_MULTISIZE",
           value = 102,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_ZOOM_SMALL",
+          name = "ICON_ZOOM_SMALL",
           value = 103,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_ZOOM_MEDIUM",
+          name = "ICON_ZOOM_MEDIUM",
           value = 104,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_ZOOM_BIG",
+          name = "ICON_ZOOM_BIG",
           value = 105,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_ZOOM_ALL",
+          name = "ICON_ZOOM_ALL",
           value = 106,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_ZOOM_CENTER",
+          name = "ICON_ZOOM_CENTER",
           value = 107,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_BOX_DOTS_SMALL",
+          name = "ICON_BOX_DOTS_SMALL",
           value = 108,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_BOX_DOTS_BIG",
+          name = "ICON_BOX_DOTS_BIG",
           value = 109,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_BOX_CONCENTRIC",
+          name = "ICON_BOX_CONCENTRIC",
           value = 110,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_BOX_GRID_BIG",
+          name = "ICON_BOX_GRID_BIG",
           value = 111,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_OK_TICK",
+          name = "ICON_OK_TICK",
           value = 112,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_CROSS",
+          name = "ICON_CROSS",
           value = 113,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_ARROW_LEFT",
+          name = "ICON_ARROW_LEFT",
           value = 114,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_ARROW_RIGHT",
+          name = "ICON_ARROW_RIGHT",
           value = 115,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_ARROW_DOWN",
+          name = "ICON_ARROW_DOWN",
           value = 116,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_ARROW_UP",
+          name = "ICON_ARROW_UP",
           value = 117,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_ARROW_LEFT_FILL",
+          name = "ICON_ARROW_LEFT_FILL",
           value = 118,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_ARROW_RIGHT_FILL",
+          name = "ICON_ARROW_RIGHT_FILL",
           value = 119,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_ARROW_DOWN_FILL",
+          name = "ICON_ARROW_DOWN_FILL",
           value = 120,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_ARROW_UP_FILL",
+          name = "ICON_ARROW_UP_FILL",
           value = 121,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_AUDIO",
+          name = "ICON_AUDIO",
           value = 122,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_FX",
+          name = "ICON_FX",
           value = 123,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_WAVE",
+          name = "ICON_WAVE",
           value = 124,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_WAVE_SINUS",
+          name = "ICON_WAVE_SINUS",
           value = 125,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_WAVE_SQUARE",
+          name = "ICON_WAVE_SQUARE",
           value = 126,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_WAVE_TRIANGULAR",
+          name = "ICON_WAVE_TRIANGULAR",
           value = 127,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_CROSS_SMALL",
+          name = "ICON_CROSS_SMALL",
           value = 128,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_PLAYER_PREVIOUS",
+          name = "ICON_PLAYER_PREVIOUS",
           value = 129,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_PLAYER_PLAY_BACK",
+          name = "ICON_PLAYER_PLAY_BACK",
           value = 130,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_PLAYER_PLAY",
+          name = "ICON_PLAYER_PLAY",
           value = 131,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_PLAYER_PAUSE",
+          name = "ICON_PLAYER_PAUSE",
           value = 132,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_PLAYER_STOP",
+          name = "ICON_PLAYER_STOP",
           value = 133,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_PLAYER_NEXT",
+          name = "ICON_PLAYER_NEXT",
           value = 134,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_PLAYER_RECORD",
+          name = "ICON_PLAYER_RECORD",
           value = 135,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_MAGNET",
+          name = "ICON_MAGNET",
           value = 136,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_LOCK_CLOSE",
+          name = "ICON_LOCK_CLOSE",
           value = 137,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_LOCK_OPEN",
+          name = "ICON_LOCK_OPEN",
           value = 138,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_CLOCK",
+          name = "ICON_CLOCK",
           value = 139,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_TOOLS",
+          name = "ICON_TOOLS",
           value = 140,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_GEAR",
+          name = "ICON_GEAR",
           value = 141,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_GEAR_BIG",
+          name = "ICON_GEAR_BIG",
           value = 142,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_BIN",
+          name = "ICON_BIN",
           value = 143,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_HAND_POINTER",
+          name = "ICON_HAND_POINTER",
           value = 144,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_LASER",
+          name = "ICON_LASER",
           value = 145,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_COIN",
+          name = "ICON_COIN",
           value = 146,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_EXPLOSION",
+          name = "ICON_EXPLOSION",
           value = 147,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_1UP",
+          name = "ICON_1UP",
           value = 148,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_PLAYER",
+          name = "ICON_PLAYER",
           value = 149,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_PLAYER_JUMP",
+          name = "ICON_PLAYER_JUMP",
           value = 150,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_KEY",
+          name = "ICON_KEY",
           value = 151,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_DEMON",
+          name = "ICON_DEMON",
           value = 152,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_TEXT_POPUP",
+          name = "ICON_TEXT_POPUP",
           value = 153,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_GEAR_EX",
+          name = "ICON_GEAR_EX",
           value = 154,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_CRACK",
+          name = "ICON_CRACK",
           value = 155,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_CRACK_POINTS",
+          name = "ICON_CRACK_POINTS",
           value = 156,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_STAR",
+          name = "ICON_STAR",
           value = 157,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_DOOR",
+          name = "ICON_DOOR",
           value = 158,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_EXIT",
+          name = "ICON_EXIT",
           value = 159,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_MODE_2D",
+          name = "ICON_MODE_2D",
           value = 160,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_MODE_3D",
+          name = "ICON_MODE_3D",
           value = 161,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_CUBE",
+          name = "ICON_CUBE",
           value = 162,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_CUBE_FACE_TOP",
+          name = "ICON_CUBE_FACE_TOP",
           value = 163,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_CUBE_FACE_LEFT",
+          name = "ICON_CUBE_FACE_LEFT",
           value = 164,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_CUBE_FACE_FRONT",
+          name = "ICON_CUBE_FACE_FRONT",
           value = 165,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_CUBE_FACE_BOTTOM",
+          name = "ICON_CUBE_FACE_BOTTOM",
           value = 166,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_CUBE_FACE_RIGHT",
+          name = "ICON_CUBE_FACE_RIGHT",
           value = 167,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_CUBE_FACE_BACK",
+          name = "ICON_CUBE_FACE_BACK",
           value = 168,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_CAMERA",
+          name = "ICON_CAMERA",
           value = 169,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_SPECIAL",
+          name = "ICON_SPECIAL",
           value = 170,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_LINK_NET",
+          name = "ICON_LINK_NET",
           value = 171,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_LINK_BOXES",
+          name = "ICON_LINK_BOXES",
           value = 172,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_LINK_MULTI",
+          name = "ICON_LINK_MULTI",
           value = 173,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_LINK",
+          name = "ICON_LINK",
           value = 174,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_LINK_BROKE",
+          name = "ICON_LINK_BROKE",
           value = 175,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_TEXT_NOTES",
+          name = "ICON_TEXT_NOTES",
           value = 176,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_NOTEBOOK",
+          name = "ICON_NOTEBOOK",
           value = 177,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_SUITCASE",
+          name = "ICON_SUITCASE",
           value = 178,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_SUITCASE_ZIP",
+          name = "ICON_SUITCASE_ZIP",
           value = 179,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_MAILBOX",
+          name = "ICON_MAILBOX",
           value = 180,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_MONITOR",
+          name = "ICON_MONITOR",
           value = 181,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_PRINTER",
+          name = "ICON_PRINTER",
           value = 182,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_PHOTO_CAMERA",
+          name = "ICON_PHOTO_CAMERA",
           value = 183,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_PHOTO_CAMERA_FLASH",
+          name = "ICON_PHOTO_CAMERA_FLASH",
           value = 184,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_HOUSE",
+          name = "ICON_HOUSE",
           value = 185,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_HEART",
+          name = "ICON_HEART",
           value = 186,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_CORNER",
+          name = "ICON_CORNER",
           value = 187,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_VERTICAL_BARS",
+          name = "ICON_VERTICAL_BARS",
           value = 188,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_VERTICAL_BARS_FILL",
+          name = "ICON_VERTICAL_BARS_FILL",
           value = 189,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_LIFE_BARS",
+          name = "ICON_LIFE_BARS",
           value = 190,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_INFO",
+          name = "ICON_INFO",
           value = 191,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_CROSSLINE",
+          name = "ICON_CROSSLINE",
           value = 192,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_HELP",
+          name = "ICON_HELP",
           value = 193,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_FILETYPE_ALPHA",
+          name = "ICON_FILETYPE_ALPHA",
           value = 194,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_FILETYPE_HOME",
+          name = "ICON_FILETYPE_HOME",
           value = 195,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_LAYERS_VISIBLE",
+          name = "ICON_LAYERS_VISIBLE",
           value = 196,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_LAYERS",
+          name = "ICON_LAYERS",
           value = 197,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_WINDOW",
+          name = "ICON_WINDOW",
           value = 198,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_HIDPI",
+          name = "ICON_HIDPI",
           value = 199,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_FILETYPE_BINARY",
+          name = "ICON_FILETYPE_BINARY",
           value = 200,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_HEX",
+          name = "ICON_HEX",
           value = 201,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_SHIELD",
+          name = "ICON_SHIELD",
           value = 202,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_FILE_NEW",
+          name = "ICON_FILE_NEW",
           value = 203,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_FOLDER_ADD",
+          name = "ICON_FOLDER_ADD",
           value = 204,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_205",
+          name = "ICON_ALARM",
           value = 205,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_206",
+          name = "ICON_CPU",
           value = 206,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_207",
+          name = "ICON_ROM",
           value = 207,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_208",
+          name = "ICON_STEP_OVER",
           value = 208,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_209",
+          name = "ICON_STEP_INTO",
           value = 209,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_210",
+          name = "ICON_STEP_OUT",
           value = 210,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_211",
+          name = "ICON_RESTART",
           value = 211,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_212",
+          name = "ICON_BREAKPOINT_ON",
           value = 212,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_213",
+          name = "ICON_BREAKPOINT_OFF",
           value = 213,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_214",
+          name = "ICON_BURGER_MENU",
           value = 214,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_215",
+          name = "ICON_CASE_SENSITIVE",
           value = 215,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_216",
+          name = "ICON_REG_EXP",
           value = 216,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_217",
+          name = "ICON_FOLDER",
           value = 217,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_218",
+          name = "ICON_FILE",
           value = 218,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_219",
+          name = "ICON_SAND_TIMER",
           value = 219,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_220",
+          name = "ICON_220",
           value = 220,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_221",
+          name = "ICON_221",
           value = 221,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_222",
+          name = "ICON_222",
           value = 222,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_223",
+          name = "ICON_223",
           value = 223,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_224",
+          name = "ICON_224",
           value = 224,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_225",
+          name = "ICON_225",
           value = 225,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_226",
+          name = "ICON_226",
           value = 226,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_227",
+          name = "ICON_227",
           value = 227,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_228",
+          name = "ICON_228",
           value = 228,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_229",
+          name = "ICON_229",
           value = 229,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_230",
+          name = "ICON_230",
           value = 230,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_231",
+          name = "ICON_231",
           value = 231,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_232",
+          name = "ICON_232",
           value = 232,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_233",
+          name = "ICON_233",
           value = 233,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_234",
+          name = "ICON_234",
           value = 234,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_235",
+          name = "ICON_235",
           value = 235,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_236",
+          name = "ICON_236",
           value = 236,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_237",
+          name = "ICON_237",
           value = 237,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_238",
+          name = "ICON_238",
           value = 238,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_239",
+          name = "ICON_239",
           value = 239,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_240",
+          name = "ICON_240",
           value = 240,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_241",
+          name = "ICON_241",
           value = 241,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_242",
+          name = "ICON_242",
           value = 242,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_243",
+          name = "ICON_243",
           value = 243,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_244",
+          name = "ICON_244",
           value = 244,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_245",
+          name = "ICON_245",
           value = 245,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_246",
+          name = "ICON_246",
           value = 246,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_247",
+          name = "ICON_247",
           value = 247,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_248",
+          name = "ICON_248",
           value = 248,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_249",
+          name = "ICON_249",
           value = 249,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_250",
+          name = "ICON_250",
           value = 250,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_251",
+          name = "ICON_251",
           value = 251,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_252",
+          name = "ICON_252",
           value = 252,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_253",
+          name = "ICON_253",
           value = 253,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_254",
+          name = "ICON_254",
           value = 254,
           description = ""
         },
         {
-          name = "RAYGUI_ICON_255",
+          name = "ICON_255",
           value = 255,
           description = ""
         }
@@ -2241,32 +2408,32 @@ return {
     {
       name = "GuiEnable",
       description = "Enable gui controls (global state)",
-      returnType = "PI void"
+      returnType = "void"
     },
     {
       name = "GuiDisable",
       description = "Disable gui controls (global state)",
-      returnType = "PI void"
+      returnType = "void"
     },
     {
       name = "GuiLock",
       description = "Lock gui controls (global state)",
-      returnType = "PI void"
+      returnType = "void"
     },
     {
       name = "GuiUnlock",
       description = "Unlock gui controls (global state)",
-      returnType = "PI void"
+      returnType = "void"
     },
     {
       name = "GuiIsLocked",
       description = "Check if gui is locked (global state)",
-      returnType = "PI bool"
+      returnType = "bool"
     },
     {
-      name = "GuiFade",
+      name = "GuiSetAlpha",
       description = "Set gui controls alpha (global state), alpha goes from 0.0f to 1.0f",
-      returnType = "PI void",
+      returnType = "void",
       params = {
         {type = "float", name = "alpha"}
       }
@@ -2274,7 +2441,7 @@ return {
     {
       name = "GuiSetState",
       description = "Set gui state (global state)",
-      returnType = "PI void",
+      returnType = "void",
       params = {
         {type = "int", name = "state"}
       }
@@ -2282,12 +2449,12 @@ return {
     {
       name = "GuiGetState",
       description = "Get gui state (global state)",
-      returnType = "PI int"
+      returnType = "int"
     },
     {
       name = "GuiSetFont",
       description = "Set gui custom font (global state)",
-      returnType = "PI void",
+      returnType = "void",
       params = {
         {type = "Font", name = "font"}
       }
@@ -2295,12 +2462,12 @@ return {
     {
       name = "GuiGetFont",
       description = "Get gui custom font (global state)",
-      returnType = "PI Font"
+      returnType = "Font"
     },
     {
       name = "GuiSetStyle",
       description = "Set one style property",
-      returnType = "PI void",
+      returnType = "void",
       params = {
         {type = "int", name = "control"},
         {type = "int", name = "property"},
@@ -2310,16 +2477,90 @@ return {
     {
       name = "GuiGetStyle",
       description = "Get one style property",
-      returnType = "PI int",
+      returnType = "int",
       params = {
         {type = "int", name = "control"},
         {type = "int", name = "property"}
       }
     },
     {
+      name = "GuiLoadStyle",
+      description = "Load style file over global style variable (.rgs)",
+      returnType = "void",
+      params = {
+        {type = "const char *", name = "fileName"}
+      }
+    },
+    {
+      name = "GuiLoadStyleDefault",
+      description = "Load style default over global style",
+      returnType = "void"
+    },
+    {
+      name = "GuiEnableTooltip",
+      description = "Enable gui tooltips (global state)",
+      returnType = "void"
+    },
+    {
+      name = "GuiDisableTooltip",
+      description = "Disable gui tooltips (global state)",
+      returnType = "void"
+    },
+    {
+      name = "GuiSetTooltip",
+      description = "Set tooltip string",
+      returnType = "void",
+      params = {
+        {type = "const char *", name = "tooltip"}
+      }
+    },
+    {
+      name = "GuiIconText",
+      description = "Get text with icon id prepended (if supported)",
+      returnType = "const char *",
+      params = {
+        {type = "int", name = "iconId"},
+        {type = "const char *", name = "text"}
+      }
+    },
+    {
+      name = "GuiSetIconScale",
+      description = "Set default icon drawing size",
+      returnType = "void",
+      params = {
+        {type = "int", name = "scale"}
+      }
+    },
+    {
+      name = "GuiGetIcons",
+      description = "Get raygui icons data pointer",
+      returnType = "unsigned int *"
+    },
+    {
+      name = "GuiLoadIcons",
+      description = "Load raygui icons file (.rgi) into internal icons data",
+      returnType = "char **",
+      params = {
+        {type = "const char *", name = "fileName"},
+        {type = "bool", name = "loadIconsName"}
+      }
+    },
+    {
+      name = "GuiDrawIcon",
+      description = "Draw icon using pixel size at specified position",
+      returnType = "void",
+      params = {
+        {type = "int", name = "iconId"},
+        {type = "int", name = "posX"},
+        {type = "int", name = "posY"},
+        {type = "int", name = "pixelSize"},
+        {type = "Color", name = "color"}
+      }
+    },
+    {
       name = "GuiWindowBox",
       description = "Window Box control, shows a window that can be closed",
-      returnType = "PI bool",
+      returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
         {type = "const char *", name = "title"}
@@ -2328,7 +2569,7 @@ return {
     {
       name = "GuiGroupBox",
       description = "Group Box control with text name",
-      returnType = "PI void",
+      returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
         {type = "const char *", name = "text"}
@@ -2337,7 +2578,7 @@ return {
     {
       name = "GuiLine",
       description = "Line separator control, could contain text",
-      returnType = "PI void",
+      returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
         {type = "const char *", name = "text"}
@@ -2346,27 +2587,39 @@ return {
     {
       name = "GuiPanel",
       description = "Panel control, useful to group controls",
-      returnType = "PI void",
+      returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
         {type = "const char *", name = "text"}
       }
     },
     {
+      name = "GuiTabBar",
+      description = "Tab Bar control, returns TAB to be closed or -1",
+      returnType = "int",
+      params = {
+        {type = "Rectangle", name = "bounds"},
+        {type = "const char **", name = "text"},
+        {type = "int", name = "count"},
+        {type = "int *", name = "active"}
+      }
+    },
+    {
       name = "GuiScrollPanel",
       description = "Scroll Panel control",
-      returnType = "PI Rectangle",
+      returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
         {type = "const char *", name = "text"},
         {type = "Rectangle", name = "content"},
-        {type = "Vector2 *", name = "scroll"}
+        {type = "Vector2 *", name = "scroll"},
+        {type = "Rectangle *", name = "view"}
       }
     },
     {
       name = "GuiLabel",
       description = "Label control, shows text",
-      returnType = "PI void",
+      returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
         {type = "const char *", name = "text"}
@@ -2375,7 +2628,7 @@ return {
     {
       name = "GuiButton",
       description = "Button control, returns true when clicked",
-      returnType = "PI bool",
+      returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
         {type = "const char *", name = "text"}
@@ -2384,7 +2637,7 @@ return {
     {
       name = "GuiLabelButton",
       description = "Label button control, show true when clicked",
-      returnType = "PI bool",
+      returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
         {type = "const char *", name = "text"}
@@ -2393,47 +2646,57 @@ return {
     {
       name = "GuiToggle",
       description = "Toggle Button control, returns true when active",
-      returnType = "PI bool",
+      returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
         {type = "const char *", name = "text"},
-        {type = "bool", name = "active"}
+        {type = "bool *", name = "active"}
       }
     },
     {
       name = "GuiToggleGroup",
       description = "Toggle Group control, returns active toggle index",
-      returnType = "PI int",
+      returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
         {type = "const char *", name = "text"},
-        {type = "int", name = "active"}
+        {type = "int *", name = "active"}
+      }
+    },
+    {
+      name = "GuiToggleSlider",
+      description = "Toggle Slider control, returns true when clicked",
+      returnType = "int",
+      params = {
+        {type = "Rectangle", name = "bounds"},
+        {type = "const char *", name = "text"},
+        {type = "int *", name = "active"}
       }
     },
     {
       name = "GuiCheckBox",
       description = "Check Box control, returns true when active",
-      returnType = "PI bool",
+      returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
         {type = "const char *", name = "text"},
-        {type = "bool", name = "checked"}
+        {type = "bool *", name = "checked"}
       }
     },
     {
       name = "GuiComboBox",
       description = "Combo Box control, returns selected item index",
-      returnType = "PI int",
+      returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
         {type = "const char *", name = "text"},
-        {type = "int", name = "active"}
+        {type = "int *", name = "active"}
       }
     },
     {
       name = "GuiDropdownBox",
       description = "Dropdown Box control, returns selected item",
-      returnType = "PI bool",
+      returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
         {type = "const char *", name = "text"},
@@ -2444,7 +2707,7 @@ return {
     {
       name = "GuiSpinner",
       description = "Spinner control, returns selected value",
-      returnType = "PI bool",
+      returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
         {type = "const char *", name = "text"},
@@ -2457,7 +2720,7 @@ return {
     {
       name = "GuiValueBox",
       description = "Value Box control, updates input text with numbers",
-      returnType = "PI bool",
+      returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
         {type = "const char *", name = "text"},
@@ -2470,18 +2733,7 @@ return {
     {
       name = "GuiTextBox",
       description = "Text Box control, updates input text",
-      returnType = "PI bool",
-      params = {
-        {type = "Rectangle", name = "bounds"},
-        {type = "char *", name = "text"},
-        {type = "int", name = "textSize"},
-        {type = "bool", name = "editMode"}
-      }
-    },
-    {
-      name = "GuiTextBoxMulti",
-      description = "Text Box control with multiple lines",
-      returnType = "PI bool",
+      returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
         {type = "char *", name = "text"},
@@ -2492,12 +2744,12 @@ return {
     {
       name = "GuiSlider",
       description = "Slider control, returns selected value",
-      returnType = "PI float",
+      returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
         {type = "const char *", name = "textLeft"},
         {type = "const char *", name = "textRight"},
-        {type = "float", name = "value"},
+        {type = "float *", name = "value"},
         {type = "float", name = "minValue"},
         {type = "float", name = "maxValue"}
       }
@@ -2505,12 +2757,12 @@ return {
     {
       name = "GuiSliderBar",
       description = "Slider Bar control, returns selected value",
-      returnType = "PI float",
+      returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
         {type = "const char *", name = "textLeft"},
         {type = "const char *", name = "textRight"},
-        {type = "float", name = "value"},
+        {type = "float *", name = "value"},
         {type = "float", name = "minValue"},
         {type = "float", name = "maxValue"}
       }
@@ -2518,12 +2770,12 @@ return {
     {
       name = "GuiProgressBar",
       description = "Progress Bar control, shows current progress value",
-      returnType = "PI float",
+      returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
         {type = "const char *", name = "textLeft"},
         {type = "const char *", name = "textRight"},
-        {type = "float", name = "value"},
+        {type = "float *", name = "value"},
         {type = "float", name = "minValue"},
         {type = "float", name = "maxValue"}
       }
@@ -2531,7 +2783,7 @@ return {
     {
       name = "GuiStatusBar",
       description = "Status Bar control, shows info text",
-      returnType = "PI void",
+      returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
         {type = "const char *", name = "text"}
@@ -2540,7 +2792,7 @@ return {
     {
       name = "GuiDummyRec",
       description = "Dummy control for placeholders",
-      returnType = "PI void",
+      returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
         {type = "const char *", name = "text"}
@@ -2549,42 +2801,43 @@ return {
     {
       name = "GuiGrid",
       description = "Grid control, returns mouse cell position",
-      returnType = "PI Vector2",
+      returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
         {type = "const char *", name = "text"},
         {type = "float", name = "spacing"},
-        {type = "int", name = "subdivs"}
+        {type = "int", name = "subdivs"},
+        {type = "Vector2 *", name = "mouseCell"}
       }
     },
     {
       name = "GuiListView",
       description = "List View control, returns selected list item index",
-      returnType = "PI int",
+      returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
         {type = "const char *", name = "text"},
         {type = "int *", name = "scrollIndex"},
-        {type = "int", name = "active"}
+        {type = "int *", name = "active"}
       }
     },
     {
       name = "GuiListViewEx",
       description = "List View with extended parameters",
-      returnType = "PI int",
+      returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
         {type = "const char **", name = "text"},
         {type = "int", name = "count"},
-        {type = "int *", name = "focus"},
         {type = "int *", name = "scrollIndex"},
-        {type = "int", name = "active"}
+        {type = "int *", name = "active"},
+        {type = "int *", name = "focus"}
       }
     },
     {
       name = "GuiMessageBox",
       description = "Message Box control, displays a message",
-      returnType = "PI int",
+      returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
         {type = "const char *", name = "title"},
@@ -2595,7 +2848,7 @@ return {
     {
       name = "GuiTextInputBox",
       description = "Text Input Box control, ask for text, supports secret",
-      returnType = "PI int",
+      returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
         {type = "const char *", name = "title"},
@@ -2603,2229 +2856,67 @@ return {
         {type = "const char *", name = "buttons"},
         {type = "char *", name = "text"},
         {type = "int", name = "textMaxSize"},
-        {type = "int *", name = "secretViewActive"}
+        {type = "bool *", name = "secretViewActive"}
       }
     },
     {
       name = "GuiColorPicker",
       description = "Color Picker control (multiple color controls)",
-      returnType = "PI Color",
+      returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
         {type = "const char *", name = "text"},
-        {type = "Color", name = "color"}
+        {type = "Color *", name = "color"}
       }
     },
     {
       name = "GuiColorPanel",
       description = "Color Panel control",
-      returnType = "PI Color",
+      returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
         {type = "const char *", name = "text"},
-        {type = "Color", name = "color"}
+        {type = "Color *", name = "color"}
       }
     },
     {
       name = "GuiColorBarAlpha",
       description = "Color Bar Alpha control",
-      returnType = "PI float",
+      returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
         {type = "const char *", name = "text"},
-        {type = "float", name = "alpha"}
+        {type = "float *", name = "alpha"}
       }
     },
     {
       name = "GuiColorBarHue",
       description = "Color Bar Hue control",
-      returnType = "PI float",
+      returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
         {type = "const char *", name = "text"},
-        {type = "float", name = "value"}
+        {type = "float *", name = "value"}
       }
     },
     {
-      name = "GuiLoadStyle",
-      description = "Load style file over global style variable (.rgs)",
-      returnType = "PI void",
+      name = "GuiColorPickerHSV",
+      description = "Color Picker control that avoids conversion to RGB on each call (multiple color controls)",
+      returnType = "int",
       params = {
-        {type = "const char *", name = "fileName"}
+        {type = "Rectangle", name = "bounds"},
+        {type = "const char *", name = "text"},
+        {type = "Vector3 *", name = "colorHsv"}
       }
     },
     {
-      name = "GuiLoadStyleDefault",
-      description = "Load style default over global style",
-      returnType = "PI void"
-    },
-    {
-      name = "GuiIconText",
-      description = "Get text with icon id prepended (if supported)",
-      returnType = "PI const char *",
-      params = {
-        {type = "int", name = "iconId"},
-        {type = "const char *", name = "text"}
-      }
-    },
-    {
-      name = "GuiDrawIcon",
-      description = "",
-      returnType = "PI void",
-      params = {
-        {type = "int", name = "iconId"},
-        {type = "int", name = "posX"},
-        {type = "int", name = "posY"},
-        {type = "int", name = "pixelSize"},
-        {type = "Color", name = "color"}
-      }
-    },
-    {
-      name = "GuiGetIcons",
-      description = "Get full icons data pointer",
-      returnType = "PI unsigned int *"
-    },
-    {
-      name = "GuiGetIconData",
-      description = "Get icon bit data",
-      returnType = "PI unsigned int *",
-      params = {
-        {type = "int", name = "iconId"}
-      }
-    },
-    {
-      name = "GuiSetIconData",
-      description = "Set icon bit data",
-      returnType = "PI void",
-      params = {
-        {type = "int", name = "iconId"},
-        {type = "unsigned int *", name = "data"}
-      }
-    },
-    {
-      name = "GuiSetIconScale",
-      description = "Set icon scale (1 by default)",
-      returnType = "PI void",
-      params = {
-        {type = "unsigned int", name = "scale"}
-      }
-    },
-    {
-      name = "GuiSetIconPixel",
-      description = "Set icon pixel value",
-      returnType = "PI void",
-      params = {
-        {type = "int", name = "iconId"},
-        {type = "int", name = "x"},
-        {type = "int", name = "y"}
-      }
-    },
-    {
-      name = "GuiClearIconPixel",
-      description = "Clear icon pixel value",
-      returnType = "PI void",
-      params = {
-        {type = "int", name = "iconId"},
-        {type = "int", name = "x"},
-        {type = "int", name = "y"}
-      }
-    },
-    {
-      name = "GuiCheckIconPixel",
-      description = "Check icon pixel value",
-      returnType = "PI bool",
-      params = {
-        {type = "int", name = "iconId"},
-        {type = "int", name = "x"},
-        {type = "int", name = "y"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_NONE                     =", name = "0"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_FOLDER_FILE_OPEN         =", name = "1"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_FILE_SAVE_CLASSIC        =", name = "2"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_FOLDER_OPEN              =", name = "3"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_FOLDER_SAVE              =", name = "4"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_FILE_OPEN                =", name = "5"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_FILE_SAVE                =", name = "6"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_FILE_EXPORT              =", name = "7"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_FILE_ADD                 =", name = "8"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_FILE_DELETE              =", name = "9"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_FILETYPE_TEXT            =", name = "10"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_FILETYPE_AUDIO           =", name = "11"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_FILETYPE_IMAGE           =", name = "12"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_FILETYPE_PLAY            =", name = "13"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_FILETYPE_VIDEO           =", name = "14"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_FILETYPE_INFO            =", name = "15"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_FILE_COPY                =", name = "16"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_FILE_CUT                 =", name = "17"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_FILE_PASTE               =", name = "18"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_CURSOR_HAND              =", name = "19"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_CURSOR_POINTER           =", name = "20"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_CURSOR_CLASSIC           =", name = "21"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_PENCIL                   =", name = "22"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_PENCIL_BIG               =", name = "23"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_BRUSH_CLASSIC            =", name = "24"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_BRUSH_PAINTER            =", name = "25"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_WATER_DROP               =", name = "26"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_COLOR_PICKER             =", name = "27"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_RUBBER                   =", name = "28"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_COLOR_BUCKET             =", name = "29"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_TEXT_T                   =", name = "30"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_TEXT_A                   =", name = "31"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_SCALE                    =", name = "32"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_RESIZE                   =", name = "33"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_FILTER_POINT             =", name = "34"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_FILTER_BILINEAR          =", name = "35"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_CROP                     =", name = "36"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_CROP_ALPHA               =", name = "37"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_SQUARE_TOGGLE            =", name = "38"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_SYMMETRY                 =", name = "39"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_SYMMETRY_HORIZONTAL      =", name = "40"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_SYMMETRY_VERTICAL        =", name = "41"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_LENS                     =", name = "42"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_LENS_BIG                 =", name = "43"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_EYE_ON                   =", name = "44"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_EYE_OFF                  =", name = "45"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_FILTER_TOP               =", name = "46"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_FILTER                   =", name = "47"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_TARGET_POINT             =", name = "48"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_TARGET_SMALL             =", name = "49"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_TARGET_BIG               =", name = "50"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_TARGET_MOVE              =", name = "51"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_CURSOR_MOVE              =", name = "52"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_CURSOR_SCALE             =", name = "53"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_CURSOR_SCALE_RIGHT       =", name = "54"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_CURSOR_SCALE_LEFT        =", name = "55"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_UNDO                     =", name = "56"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_REDO                     =", name = "57"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_REREDO                   =", name = "58"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_MUTATE                   =", name = "59"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_ROTATE                   =", name = "60"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_REPEAT                   =", name = "61"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_SHUFFLE                  =", name = "62"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_EMPTYBOX                 =", name = "63"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_TARGET                   =", name = "64"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_TARGET_SMALL_FILL        =", name = "65"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_TARGET_BIG_FILL          =", name = "66"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_TARGET_MOVE_FILL         =", name = "67"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_CURSOR_MOVE_FILL         =", name = "68"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_CURSOR_SCALE_FILL        =", name = "69"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_CURSOR_SCALE_RIGHT_FILL  =", name = "70"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_CURSOR_SCALE_LEFT_FILL   =", name = "71"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_UNDO_FILL                =", name = "72"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_REDO_FILL                =", name = "73"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_REREDO_FILL              =", name = "74"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_MUTATE_FILL              =", name = "75"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_ROTATE_FILL              =", name = "76"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_REPEAT_FILL              =", name = "77"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_SHUFFLE_FILL             =", name = "78"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_EMPTYBOX_SMALL           =", name = "79"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_BOX                      =", name = "80"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_BOX_TOP                  =", name = "81"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_BOX_TOP_RIGHT            =", name = "82"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_BOX_RIGHT                =", name = "83"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_BOX_BOTTOM_RIGHT         =", name = "84"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_BOX_BOTTOM               =", name = "85"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_BOX_BOTTOM_LEFT          =", name = "86"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_BOX_LEFT                 =", name = "87"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_BOX_TOP_LEFT             =", name = "88"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_BOX_CENTER               =", name = "89"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_BOX_CIRCLE_MASK          =", name = "90"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_POT                      =", name = "91"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_ALPHA_MULTIPLY           =", name = "92"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_ALPHA_CLEAR              =", name = "93"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_DITHERING                =", name = "94"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_MIPMAPS                  =", name = "95"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_BOX_GRID                 =", name = "96"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_GRID                     =", name = "97"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_BOX_CORNERS_SMALL        =", name = "98"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_BOX_CORNERS_BIG          =", name = "99"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_FOUR_BOXES               =", name = "100"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_GRID_FILL                =", name = "101"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_BOX_MULTISIZE            =", name = "102"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_ZOOM_SMALL               =", name = "103"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_ZOOM_MEDIUM              =", name = "104"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_ZOOM_BIG                 =", name = "105"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_ZOOM_ALL                 =", name = "106"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_ZOOM_CENTER              =", name = "107"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_BOX_DOTS_SMALL           =", name = "108"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_BOX_DOTS_BIG             =", name = "109"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_BOX_CONCENTRIC           =", name = "110"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_BOX_GRID_BIG             =", name = "111"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_OK_TICK                  =", name = "112"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_CROSS                    =", name = "113"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_ARROW_LEFT               =", name = "114"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_ARROW_RIGHT              =", name = "115"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_ARROW_DOWN               =", name = "116"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_ARROW_UP                 =", name = "117"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_ARROW_LEFT_FILL          =", name = "118"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_ARROW_RIGHT_FILL         =", name = "119"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_ARROW_DOWN_FILL          =", name = "120"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_ARROW_UP_FILL            =", name = "121"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_AUDIO                    =", name = "122"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_FX                       =", name = "123"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_WAVE                     =", name = "124"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_WAVE_SINUS               =", name = "125"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_WAVE_SQUARE              =", name = "126"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_WAVE_TRIANGULAR          =", name = "127"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_CROSS_SMALL              =", name = "128"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_PLAYER_PREVIOUS          =", name = "129"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_PLAYER_PLAY_BACK         =", name = "130"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_PLAYER_PLAY              =", name = "131"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_PLAYER_PAUSE             =", name = "132"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_PLAYER_STOP              =", name = "133"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_PLAYER_NEXT              =", name = "134"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_PLAYER_RECORD            =", name = "135"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_MAGNET                   =", name = "136"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_LOCK_CLOSE               =", name = "137"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_LOCK_OPEN                =", name = "138"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_CLOCK                    =", name = "139"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_TOOLS                    =", name = "140"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_GEAR                     =", name = "141"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_GEAR_BIG                 =", name = "142"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_BIN                      =", name = "143"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_HAND_POINTER             =", name = "144"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_LASER                    =", name = "145"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_COIN                     =", name = "146"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_EXPLOSION                =", name = "147"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_1UP                      =", name = "148"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_PLAYER                   =", name = "149"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_PLAYER_JUMP              =", name = "150"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_KEY                      =", name = "151"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_DEMON                    =", name = "152"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_TEXT_POPUP               =", name = "153"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_GEAR_EX                  =", name = "154"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_CRACK                    =", name = "155"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_CRACK_POINTS             =", name = "156"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_STAR                     =", name = "157"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_DOOR                     =", name = "158"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_EXIT                     =", name = "159"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_MODE_2D                  =", name = "160"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_MODE_3D                  =", name = "161"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_CUBE                     =", name = "162"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_CUBE_FACE_TOP            =", name = "163"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_CUBE_FACE_LEFT           =", name = "164"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_CUBE_FACE_FRONT          =", name = "165"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_CUBE_FACE_BOTTOM         =", name = "166"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_CUBE_FACE_RIGHT          =", name = "167"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_CUBE_FACE_BACK           =", name = "168"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_CAMERA                   =", name = "169"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_SPECIAL                  =", name = "170"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_LINK_NET                 =", name = "171"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_LINK_BOXES               =", name = "172"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_LINK_MULTI               =", name = "173"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_LINK                     =", name = "174"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_LINK_BROKE               =", name = "175"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_TEXT_NOTES               =", name = "176"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_NOTEBOOK                 =", name = "177"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_SUITCASE                 =", name = "178"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_SUITCASE_ZIP             =", name = "179"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_MAILBOX                  =", name = "180"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_MONITOR                  =", name = "181"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_PRINTER                  =", name = "182"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_PHOTO_CAMERA             =", name = "183"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_PHOTO_CAMERA_FLASH       =", name = "184"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_HOUSE                    =", name = "185"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_HEART                    =", name = "186"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_CORNER                   =", name = "187"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_VERTICAL_BARS            =", name = "188"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_VERTICAL_BARS_FILL       =", name = "189"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_LIFE_BARS                =", name = "190"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_INFO                     =", name = "191"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_CROSSLINE                =", name = "192"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_HELP                     =", name = "193"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_FILETYPE_ALPHA           =", name = "194"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_FILETYPE_HOME            =", name = "195"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_LAYERS_VISIBLE           =", name = "196"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_LAYERS                   =", name = "197"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_WINDOW                   =", name = "198"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_HIDPI                    =", name = "199"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_FILETYPE_BINARY          =", name = "200"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_HEX                      =", name = "201"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_SHIELD                   =", name = "202"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_FILE_NEW                 =", name = "203"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_FOLDER_ADD               =", name = "204"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_205                      =", name = "205"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_206                      =", name = "206"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_207                      =", name = "207"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_208                      =", name = "208"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_209                      =", name = "209"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_210                      =", name = "210"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_211                      =", name = "211"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_212                      =", name = "212"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_213                      =", name = "213"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_214                      =", name = "214"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_215                      =", name = "215"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_216                      =", name = "216"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_217                      =", name = "217"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_218                      =", name = "218"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_219                      =", name = "219"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_220                      =", name = "220"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_221                      =", name = "221"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_222                      =", name = "222"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_223                      =", name = "223"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_224                      =", name = "224"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_225                      =", name = "225"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_226                      =", name = "226"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_227                      =", name = "227"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_228                      =", name = "228"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_229                      =", name = "229"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_230                      =", name = "230"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_231                      =", name = "231"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_232                      =", name = "232"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_233                      =", name = "233"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_234                      =", name = "234"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_235                      =", name = "235"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_236                      =", name = "236"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_237                      =", name = "237"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_238                      =", name = "238"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_239                      =", name = "239"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_240                      =", name = "240"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_241                      =", name = "241"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_242                      =", name = "242"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_243                      =", name = "243"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_244                      =", name = "244"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_245                      =", name = "245"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_246                      =", name = "246"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_247                      =", name = "247"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_248                      =", name = "248"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_249                      =", name = "249"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_250                      =", name = "250"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_251                      =", name = "251"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_252                      =", name = "252"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_253                      =", name = "253"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_254                      =", name = "254"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "RAYGUI_ICON_255                      =", name = "255"}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "", name = ""}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "", name = ""}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "", name = ""}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
-      params = {
-        {type = "", name = ""}
-      }
-    },
-    {
-      name = "",
-      description = "",
-      returnType = "",
+      name = "GuiColorPanelHSV",
+      description = "Color Panel control that returns HSV color value, used by GuiColorPickerHSV()",
+      returnType = "int",
       params = {
-        {type = "", name = ""}
+        {type = "Rectangle", name = "bounds"},
+        {type = "const char *", name = "text"},
+        {type = "Vector3 *", name = "colorHsv"}
       }
     }
   }

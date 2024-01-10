@@ -7,10 +7,16 @@ return {
       description = ""
     },
     {
+      name = "__declspec(x)",
+      type = "MACRO",
+      value = "__attribute__((x))",
+      description = ""
+    },
+    {
       name = "RLAPI",
-      type = "GUARD",
-      value = "",
-      description = "Functions defined as 'extern' by default (implicit specifiers)"
+      type = "UNKNOWN",
+      value = "__declspec(dllexport)",
+      description = "We are building the library as a Win32 shared library (.dll)"
     },
     {
       name = "CAMERA_CULL_DISTANCE_NEAR",
@@ -34,6 +40,12 @@ return {
       name = "CAMERA_ROTATION_SPEED",
       type = "FLOAT",
       value = 0.03,
+      description = ""
+    },
+    {
+      name = "CAMERA_PAN_SPEED",
+      type = "FLOAT",
+      value = 0.2,
       description = ""
     },
     {
@@ -114,6 +126,92 @@ return {
           type = "float",
           name = "z",
           description = "Vector z component"
+        }
+      }
+    },
+    {
+      name = "Matrix",
+      description = "Matrix, 4x4 components, column major, OpenGL style, right-handed",
+      fields = {
+        {
+          type = "float",
+          name = "m0",
+          description = "Matrix first row (4 components)"
+        },
+        {
+          type = "float",
+          name = "m4",
+          description = "Matrix first row (4 components)"
+        },
+        {
+          type = "float",
+          name = "m8",
+          description = "Matrix first row (4 components)"
+        },
+        {
+          type = "float",
+          name = "m12",
+          description = "Matrix first row (4 components)"
+        },
+        {
+          type = "float",
+          name = "m1",
+          description = "Matrix second row (4 components)"
+        },
+        {
+          type = "float",
+          name = "m5",
+          description = "Matrix second row (4 components)"
+        },
+        {
+          type = "float",
+          name = "m9",
+          description = "Matrix second row (4 components)"
+        },
+        {
+          type = "float",
+          name = "m13",
+          description = "Matrix second row (4 components)"
+        },
+        {
+          type = "float",
+          name = "m2",
+          description = "Matrix third row (4 components)"
+        },
+        {
+          type = "float",
+          name = "m6",
+          description = "Matrix third row (4 components)"
+        },
+        {
+          type = "float",
+          name = "m10",
+          description = "Matrix third row (4 components)"
+        },
+        {
+          type = "float",
+          name = "m14",
+          description = "Matrix third row (4 components)"
+        },
+        {
+          type = "float",
+          name = "m3",
+          description = "Matrix fourth row (4 components)"
+        },
+        {
+          type = "float",
+          name = "m7",
+          description = "Matrix fourth row (4 components)"
+        },
+        {
+          type = "float",
+          name = "m11",
+          description = "Matrix fourth row (4 components)"
+        },
+        {
+          type = "float",
+          name = "m15",
+          description = "Matrix fourth row (4 components)"
         }
       }
     },

@@ -359,26 +359,44 @@ function rl.GetPhysicsShapeVerticesCount(index) end
 ---@return Vector2
 ---Returns transformed position of a body shape (body position + vertex transformed position)
 function rl.GetPhysicsShapeVertex(body,vertex) end
----@alias GuiControlState
----| 'GUI_STATE_NORMAL'
----| 'GUI_STATE_FOCUSED'
----| 'GUI_STATE_PRESSED'
----| 'GUI_STATE_DISABLED'
+---@alias GuiState
+---| 'STATE_NORMAL'
+---| 'STATE_FOCUSED'
+---| 'STATE_PRESSED'
+---| 'STATE_DISABLED'
 ---Gui control state
 
-rl.GUI_STATE_NORMAL = 0
-rl.GUI_STATE_FOCUSED = 1
-rl.GUI_STATE_PRESSED = 2
-rl.GUI_STATE_DISABLED = 3
+rl.STATE_NORMAL = 0
+rl.STATE_FOCUSED = 1
+rl.STATE_PRESSED = 2
+rl.STATE_DISABLED = 3
 ---@alias GuiTextAlignment
----| 'GUI_TEXT_ALIGN_LEFT'
----| 'GUI_TEXT_ALIGN_CENTER'
----| 'GUI_TEXT_ALIGN_RIGHT'
+---| 'TEXT_ALIGN_LEFT'
+---| 'TEXT_ALIGN_CENTER'
+---| 'TEXT_ALIGN_RIGHT'
 ---Gui control text alignment
 
-rl.GUI_TEXT_ALIGN_LEFT = 0
-rl.GUI_TEXT_ALIGN_CENTER = 1
-rl.GUI_TEXT_ALIGN_RIGHT = 2
+rl.TEXT_ALIGN_LEFT = 0
+rl.TEXT_ALIGN_CENTER = 1
+rl.TEXT_ALIGN_RIGHT = 2
+---@alias GuiTextAlignmentVertical
+---| 'TEXT_ALIGN_TOP'
+---| 'TEXT_ALIGN_MIDDLE'
+---| 'TEXT_ALIGN_BOTTOM'
+---Gui control text alignment vertical
+
+rl.TEXT_ALIGN_TOP = 0
+rl.TEXT_ALIGN_MIDDLE = 1
+rl.TEXT_ALIGN_BOTTOM = 2
+---@alias GuiTextWrapMode
+---| 'TEXT_WRAP_NONE'
+---| 'TEXT_WRAP_CHAR'
+---| 'TEXT_WRAP_WORD'
+---Gui control text wrap mode
+
+rl.TEXT_WRAP_NONE = 0
+rl.TEXT_WRAP_CHAR = 1
+rl.TEXT_WRAP_WORD = 2
 ---@alias GuiControl
 ---| 'DEFAULT'
 ---| 'LABEL'
@@ -404,7 +422,7 @@ rl.LABEL = 1
 rl.BUTTON = 2
 ---Used also for: TOGGLEGROUP
 rl.TOGGLE = 3
----Used also for: SLIDERBAR
+---Used also for: SLIDERBAR, TOGGLESLIDER
 rl.SLIDER = 4
 rl.PROGRESSBAR = 5
 rl.CHECKBOX = 6
@@ -435,30 +453,46 @@ rl.STATUSBAR = 15
 ---| 'BORDER_WIDTH'
 ---| 'TEXT_PADDING'
 ---| 'TEXT_ALIGNMENT'
----| 'RESERVED'
 ---Gui base properties for every control
 
+---Control border color in STATE_NORMAL
 rl.BORDER_COLOR_NORMAL = 0
+---Control base color in STATE_NORMAL
 rl.BASE_COLOR_NORMAL = 1
+---Control text color in STATE_NORMAL
 rl.TEXT_COLOR_NORMAL = 2
+---Control border color in STATE_FOCUSED
 rl.BORDER_COLOR_FOCUSED = 3
+---Control base color in STATE_FOCUSED
 rl.BASE_COLOR_FOCUSED = 4
+---Control text color in STATE_FOCUSED
 rl.TEXT_COLOR_FOCUSED = 5
+---Control border color in STATE_PRESSED
 rl.BORDER_COLOR_PRESSED = 6
+---Control base color in STATE_PRESSED
 rl.BASE_COLOR_PRESSED = 7
+---Control text color in STATE_PRESSED
 rl.TEXT_COLOR_PRESSED = 8
+---Control border color in STATE_DISABLED
 rl.BORDER_COLOR_DISABLED = 9
+---Control base color in STATE_DISABLED
 rl.BASE_COLOR_DISABLED = 10
+---Control text color in STATE_DISABLED
 rl.TEXT_COLOR_DISABLED = 11
+---Control border size, 0 for no border
 rl.BORDER_WIDTH = 12
+---Control text padding, not considering border
 rl.TEXT_PADDING = 13
+---Control text horizontal alignment inside control text bound (after border and padding)
 rl.TEXT_ALIGNMENT = 14
-rl.RESERVED = 15
 ---@alias GuiDefaultProperty
 ---| 'TEXT_SIZE'
 ---| 'TEXT_SPACING'
 ---| 'LINE_COLOR'
 ---| 'BACKGROUND_COLOR'
+---| 'TEXT_LINE_SPACING'
+---| 'TEXT_ALIGNMENT_VERTICAL'
+---| 'TEXT_WRAP_MODE'
 ---DEFAULT extended properties
 
 ---Text size (glyphs max height)
@@ -469,6 +503,12 @@ rl.TEXT_SPACING = 17
 rl.LINE_COLOR = 18
 ---Background color
 rl.BACKGROUND_COLOR = 19
+---Text spacing between lines
+rl.TEXT_LINE_SPACING = 20
+---Text vertical alignment inside text bounds (after border and padding)
+rl.TEXT_ALIGNMENT_VERTICAL = 21
+---Text wrap-mode inside text bounds
+rl.TEXT_WRAP_MODE = 22
 ---@alias GuiToggleProperty
 ---| 'GROUP_PADDING'
 ---Toggle/ToggleGroup
@@ -499,12 +539,17 @@ rl.PROGRESS_PADDING = 16
 ---| 'SCROLL_SPEED'
 ---ScrollBar
 
+---ScrollBar arrows size
 rl.ARROWS_SIZE = 16
+---ScrollBar arrows visible
 rl.ARROWS_VISIBLE = 17
----(SLIDERBAR, SLIDER_PADDING)
+---ScrollBar slider internal padding
 rl.SCROLL_SLIDER_PADDING = 18
+---ScrollBar slider size
 rl.SCROLL_SLIDER_SIZE = 19
+---ScrollBar scroll padding from arrows
 rl.SCROLL_PADDING = 20
+---ScrollBar scrolling speed
 rl.SCROLL_SPEED = 21
 ---@alias GuiCheckBoxProperty
 ---| 'CHECK_PADDING'
@@ -531,14 +576,11 @@ rl.ARROW_PADDING = 16
 ---DropdownBox items separation
 rl.DROPDOWN_ITEMS_SPACING = 17
 ---@alias GuiTextBoxProperty
----| 'TEXT_INNER_PADDING'
----| 'TEXT_LINES_SPACING'
+---| 'TEXT_READONLY'
 ---TextBox/TextBoxMulti/ValueBox/Spinner
 
----TextBox/TextBoxMulti/ValueBox/Spinner inner text padding
-rl.TEXT_INNER_PADDING = 16
----TextBoxMulti lines separation
-rl.TEXT_LINES_SPACING = 17
+---TextBox in read-only mode: 0-text editable, 1-text no-editable
+rl.TEXT_READONLY = 16
 ---@alias GuiSpinnerProperty
 ---| 'SPIN_BUTTON_WIDTH'
 ---| 'SPIN_BUTTON_SPACING'
@@ -561,7 +603,7 @@ rl.LIST_ITEMS_HEIGHT = 16
 rl.LIST_ITEMS_SPACING = 17
 ---ListView scrollbar size (usually width)
 rl.SCROLLBAR_WIDTH = 18
----ListView scrollbar side (0-left, 1-right)
+---ListView scrollbar side (0-SCROLLBAR_LEFT_SIDE, 1-SCROLLBAR_RIGHT_SIDE)
 rl.SCROLLBAR_SIDE = 19
 ---@alias GuiColorPickerProperty
 ---| 'COLOR_SELECTOR_SIZE'
@@ -580,520 +622,520 @@ rl.HUEBAR_PADDING = 18
 rl.HUEBAR_SELECTOR_HEIGHT = 19
 ---ColorPicker right hue bar selector overflow
 rl.HUEBAR_SELECTOR_OVERFLOW = 20
----@alias guiIconName
----| 'RAYGUI_ICON_NONE'
----| 'RAYGUI_ICON_FOLDER_FILE_OPEN'
----| 'RAYGUI_ICON_FILE_SAVE_CLASSIC'
----| 'RAYGUI_ICON_FOLDER_OPEN'
----| 'RAYGUI_ICON_FOLDER_SAVE'
----| 'RAYGUI_ICON_FILE_OPEN'
----| 'RAYGUI_ICON_FILE_SAVE'
----| 'RAYGUI_ICON_FILE_EXPORT'
----| 'RAYGUI_ICON_FILE_ADD'
----| 'RAYGUI_ICON_FILE_DELETE'
----| 'RAYGUI_ICON_FILETYPE_TEXT'
----| 'RAYGUI_ICON_FILETYPE_AUDIO'
----| 'RAYGUI_ICON_FILETYPE_IMAGE'
----| 'RAYGUI_ICON_FILETYPE_PLAY'
----| 'RAYGUI_ICON_FILETYPE_VIDEO'
----| 'RAYGUI_ICON_FILETYPE_INFO'
----| 'RAYGUI_ICON_FILE_COPY'
----| 'RAYGUI_ICON_FILE_CUT'
----| 'RAYGUI_ICON_FILE_PASTE'
----| 'RAYGUI_ICON_CURSOR_HAND'
----| 'RAYGUI_ICON_CURSOR_POINTER'
----| 'RAYGUI_ICON_CURSOR_CLASSIC'
----| 'RAYGUI_ICON_PENCIL'
----| 'RAYGUI_ICON_PENCIL_BIG'
----| 'RAYGUI_ICON_BRUSH_CLASSIC'
----| 'RAYGUI_ICON_BRUSH_PAINTER'
----| 'RAYGUI_ICON_WATER_DROP'
----| 'RAYGUI_ICON_COLOR_PICKER'
----| 'RAYGUI_ICON_RUBBER'
----| 'RAYGUI_ICON_COLOR_BUCKET'
----| 'RAYGUI_ICON_TEXT_T'
----| 'RAYGUI_ICON_TEXT_A'
----| 'RAYGUI_ICON_SCALE'
----| 'RAYGUI_ICON_RESIZE'
----| 'RAYGUI_ICON_FILTER_POINT'
----| 'RAYGUI_ICON_FILTER_BILINEAR'
----| 'RAYGUI_ICON_CROP'
----| 'RAYGUI_ICON_CROP_ALPHA'
----| 'RAYGUI_ICON_SQUARE_TOGGLE'
----| 'RAYGUI_ICON_SYMMETRY'
----| 'RAYGUI_ICON_SYMMETRY_HORIZONTAL'
----| 'RAYGUI_ICON_SYMMETRY_VERTICAL'
----| 'RAYGUI_ICON_LENS'
----| 'RAYGUI_ICON_LENS_BIG'
----| 'RAYGUI_ICON_EYE_ON'
----| 'RAYGUI_ICON_EYE_OFF'
----| 'RAYGUI_ICON_FILTER_TOP'
----| 'RAYGUI_ICON_FILTER'
----| 'RAYGUI_ICON_TARGET_POINT'
----| 'RAYGUI_ICON_TARGET_SMALL'
----| 'RAYGUI_ICON_TARGET_BIG'
----| 'RAYGUI_ICON_TARGET_MOVE'
----| 'RAYGUI_ICON_CURSOR_MOVE'
----| 'RAYGUI_ICON_CURSOR_SCALE'
----| 'RAYGUI_ICON_CURSOR_SCALE_RIGHT'
----| 'RAYGUI_ICON_CURSOR_SCALE_LEFT'
----| 'RAYGUI_ICON_UNDO'
----| 'RAYGUI_ICON_REDO'
----| 'RAYGUI_ICON_REREDO'
----| 'RAYGUI_ICON_MUTATE'
----| 'RAYGUI_ICON_ROTATE'
----| 'RAYGUI_ICON_REPEAT'
----| 'RAYGUI_ICON_SHUFFLE'
----| 'RAYGUI_ICON_EMPTYBOX'
----| 'RAYGUI_ICON_TARGET'
----| 'RAYGUI_ICON_TARGET_SMALL_FILL'
----| 'RAYGUI_ICON_TARGET_BIG_FILL'
----| 'RAYGUI_ICON_TARGET_MOVE_FILL'
----| 'RAYGUI_ICON_CURSOR_MOVE_FILL'
----| 'RAYGUI_ICON_CURSOR_SCALE_FILL'
----| 'RAYGUI_ICON_CURSOR_SCALE_RIGHT_FILL'
----| 'RAYGUI_ICON_CURSOR_SCALE_LEFT_FILL'
----| 'RAYGUI_ICON_UNDO_FILL'
----| 'RAYGUI_ICON_REDO_FILL'
----| 'RAYGUI_ICON_REREDO_FILL'
----| 'RAYGUI_ICON_MUTATE_FILL'
----| 'RAYGUI_ICON_ROTATE_FILL'
----| 'RAYGUI_ICON_REPEAT_FILL'
----| 'RAYGUI_ICON_SHUFFLE_FILL'
----| 'RAYGUI_ICON_EMPTYBOX_SMALL'
----| 'RAYGUI_ICON_BOX'
----| 'RAYGUI_ICON_BOX_TOP'
----| 'RAYGUI_ICON_BOX_TOP_RIGHT'
----| 'RAYGUI_ICON_BOX_RIGHT'
----| 'RAYGUI_ICON_BOX_BOTTOM_RIGHT'
----| 'RAYGUI_ICON_BOX_BOTTOM'
----| 'RAYGUI_ICON_BOX_BOTTOM_LEFT'
----| 'RAYGUI_ICON_BOX_LEFT'
----| 'RAYGUI_ICON_BOX_TOP_LEFT'
----| 'RAYGUI_ICON_BOX_CENTER'
----| 'RAYGUI_ICON_BOX_CIRCLE_MASK'
----| 'RAYGUI_ICON_POT'
----| 'RAYGUI_ICON_ALPHA_MULTIPLY'
----| 'RAYGUI_ICON_ALPHA_CLEAR'
----| 'RAYGUI_ICON_DITHERING'
----| 'RAYGUI_ICON_MIPMAPS'
----| 'RAYGUI_ICON_BOX_GRID'
----| 'RAYGUI_ICON_GRID'
----| 'RAYGUI_ICON_BOX_CORNERS_SMALL'
----| 'RAYGUI_ICON_BOX_CORNERS_BIG'
----| 'RAYGUI_ICON_FOUR_BOXES'
----| 'RAYGUI_ICON_GRID_FILL'
----| 'RAYGUI_ICON_BOX_MULTISIZE'
----| 'RAYGUI_ICON_ZOOM_SMALL'
----| 'RAYGUI_ICON_ZOOM_MEDIUM'
----| 'RAYGUI_ICON_ZOOM_BIG'
----| 'RAYGUI_ICON_ZOOM_ALL'
----| 'RAYGUI_ICON_ZOOM_CENTER'
----| 'RAYGUI_ICON_BOX_DOTS_SMALL'
----| 'RAYGUI_ICON_BOX_DOTS_BIG'
----| 'RAYGUI_ICON_BOX_CONCENTRIC'
----| 'RAYGUI_ICON_BOX_GRID_BIG'
----| 'RAYGUI_ICON_OK_TICK'
----| 'RAYGUI_ICON_CROSS'
----| 'RAYGUI_ICON_ARROW_LEFT'
----| 'RAYGUI_ICON_ARROW_RIGHT'
----| 'RAYGUI_ICON_ARROW_DOWN'
----| 'RAYGUI_ICON_ARROW_UP'
----| 'RAYGUI_ICON_ARROW_LEFT_FILL'
----| 'RAYGUI_ICON_ARROW_RIGHT_FILL'
----| 'RAYGUI_ICON_ARROW_DOWN_FILL'
----| 'RAYGUI_ICON_ARROW_UP_FILL'
----| 'RAYGUI_ICON_AUDIO'
----| 'RAYGUI_ICON_FX'
----| 'RAYGUI_ICON_WAVE'
----| 'RAYGUI_ICON_WAVE_SINUS'
----| 'RAYGUI_ICON_WAVE_SQUARE'
----| 'RAYGUI_ICON_WAVE_TRIANGULAR'
----| 'RAYGUI_ICON_CROSS_SMALL'
----| 'RAYGUI_ICON_PLAYER_PREVIOUS'
----| 'RAYGUI_ICON_PLAYER_PLAY_BACK'
----| 'RAYGUI_ICON_PLAYER_PLAY'
----| 'RAYGUI_ICON_PLAYER_PAUSE'
----| 'RAYGUI_ICON_PLAYER_STOP'
----| 'RAYGUI_ICON_PLAYER_NEXT'
----| 'RAYGUI_ICON_PLAYER_RECORD'
----| 'RAYGUI_ICON_MAGNET'
----| 'RAYGUI_ICON_LOCK_CLOSE'
----| 'RAYGUI_ICON_LOCK_OPEN'
----| 'RAYGUI_ICON_CLOCK'
----| 'RAYGUI_ICON_TOOLS'
----| 'RAYGUI_ICON_GEAR'
----| 'RAYGUI_ICON_GEAR_BIG'
----| 'RAYGUI_ICON_BIN'
----| 'RAYGUI_ICON_HAND_POINTER'
----| 'RAYGUI_ICON_LASER'
----| 'RAYGUI_ICON_COIN'
----| 'RAYGUI_ICON_EXPLOSION'
----| 'RAYGUI_ICON_1UP'
----| 'RAYGUI_ICON_PLAYER'
----| 'RAYGUI_ICON_PLAYER_JUMP'
----| 'RAYGUI_ICON_KEY'
----| 'RAYGUI_ICON_DEMON'
----| 'RAYGUI_ICON_TEXT_POPUP'
----| 'RAYGUI_ICON_GEAR_EX'
----| 'RAYGUI_ICON_CRACK'
----| 'RAYGUI_ICON_CRACK_POINTS'
----| 'RAYGUI_ICON_STAR'
----| 'RAYGUI_ICON_DOOR'
----| 'RAYGUI_ICON_EXIT'
----| 'RAYGUI_ICON_MODE_2D'
----| 'RAYGUI_ICON_MODE_3D'
----| 'RAYGUI_ICON_CUBE'
----| 'RAYGUI_ICON_CUBE_FACE_TOP'
----| 'RAYGUI_ICON_CUBE_FACE_LEFT'
----| 'RAYGUI_ICON_CUBE_FACE_FRONT'
----| 'RAYGUI_ICON_CUBE_FACE_BOTTOM'
----| 'RAYGUI_ICON_CUBE_FACE_RIGHT'
----| 'RAYGUI_ICON_CUBE_FACE_BACK'
----| 'RAYGUI_ICON_CAMERA'
----| 'RAYGUI_ICON_SPECIAL'
----| 'RAYGUI_ICON_LINK_NET'
----| 'RAYGUI_ICON_LINK_BOXES'
----| 'RAYGUI_ICON_LINK_MULTI'
----| 'RAYGUI_ICON_LINK'
----| 'RAYGUI_ICON_LINK_BROKE'
----| 'RAYGUI_ICON_TEXT_NOTES'
----| 'RAYGUI_ICON_NOTEBOOK'
----| 'RAYGUI_ICON_SUITCASE'
----| 'RAYGUI_ICON_SUITCASE_ZIP'
----| 'RAYGUI_ICON_MAILBOX'
----| 'RAYGUI_ICON_MONITOR'
----| 'RAYGUI_ICON_PRINTER'
----| 'RAYGUI_ICON_PHOTO_CAMERA'
----| 'RAYGUI_ICON_PHOTO_CAMERA_FLASH'
----| 'RAYGUI_ICON_HOUSE'
----| 'RAYGUI_ICON_HEART'
----| 'RAYGUI_ICON_CORNER'
----| 'RAYGUI_ICON_VERTICAL_BARS'
----| 'RAYGUI_ICON_VERTICAL_BARS_FILL'
----| 'RAYGUI_ICON_LIFE_BARS'
----| 'RAYGUI_ICON_INFO'
----| 'RAYGUI_ICON_CROSSLINE'
----| 'RAYGUI_ICON_HELP'
----| 'RAYGUI_ICON_FILETYPE_ALPHA'
----| 'RAYGUI_ICON_FILETYPE_HOME'
----| 'RAYGUI_ICON_LAYERS_VISIBLE'
----| 'RAYGUI_ICON_LAYERS'
----| 'RAYGUI_ICON_WINDOW'
----| 'RAYGUI_ICON_HIDPI'
----| 'RAYGUI_ICON_FILETYPE_BINARY'
----| 'RAYGUI_ICON_HEX'
----| 'RAYGUI_ICON_SHIELD'
----| 'RAYGUI_ICON_FILE_NEW'
----| 'RAYGUI_ICON_FOLDER_ADD'
----| 'RAYGUI_ICON_205'
----| 'RAYGUI_ICON_206'
----| 'RAYGUI_ICON_207'
----| 'RAYGUI_ICON_208'
----| 'RAYGUI_ICON_209'
----| 'RAYGUI_ICON_210'
----| 'RAYGUI_ICON_211'
----| 'RAYGUI_ICON_212'
----| 'RAYGUI_ICON_213'
----| 'RAYGUI_ICON_214'
----| 'RAYGUI_ICON_215'
----| 'RAYGUI_ICON_216'
----| 'RAYGUI_ICON_217'
----| 'RAYGUI_ICON_218'
----| 'RAYGUI_ICON_219'
----| 'RAYGUI_ICON_220'
----| 'RAYGUI_ICON_221'
----| 'RAYGUI_ICON_222'
----| 'RAYGUI_ICON_223'
----| 'RAYGUI_ICON_224'
----| 'RAYGUI_ICON_225'
----| 'RAYGUI_ICON_226'
----| 'RAYGUI_ICON_227'
----| 'RAYGUI_ICON_228'
----| 'RAYGUI_ICON_229'
----| 'RAYGUI_ICON_230'
----| 'RAYGUI_ICON_231'
----| 'RAYGUI_ICON_232'
----| 'RAYGUI_ICON_233'
----| 'RAYGUI_ICON_234'
----| 'RAYGUI_ICON_235'
----| 'RAYGUI_ICON_236'
----| 'RAYGUI_ICON_237'
----| 'RAYGUI_ICON_238'
----| 'RAYGUI_ICON_239'
----| 'RAYGUI_ICON_240'
----| 'RAYGUI_ICON_241'
----| 'RAYGUI_ICON_242'
----| 'RAYGUI_ICON_243'
----| 'RAYGUI_ICON_244'
----| 'RAYGUI_ICON_245'
----| 'RAYGUI_ICON_246'
----| 'RAYGUI_ICON_247'
----| 'RAYGUI_ICON_248'
----| 'RAYGUI_ICON_249'
----| 'RAYGUI_ICON_250'
----| 'RAYGUI_ICON_251'
----| 'RAYGUI_ICON_252'
----| 'RAYGUI_ICON_253'
----| 'RAYGUI_ICON_254'
----| 'RAYGUI_ICON_255'
+---@alias GuiIconName
+---| 'ICON_NONE'
+---| 'ICON_FOLDER_FILE_OPEN'
+---| 'ICON_FILE_SAVE_CLASSIC'
+---| 'ICON_FOLDER_OPEN'
+---| 'ICON_FOLDER_SAVE'
+---| 'ICON_FILE_OPEN'
+---| 'ICON_FILE_SAVE'
+---| 'ICON_FILE_EXPORT'
+---| 'ICON_FILE_ADD'
+---| 'ICON_FILE_DELETE'
+---| 'ICON_FILETYPE_TEXT'
+---| 'ICON_FILETYPE_AUDIO'
+---| 'ICON_FILETYPE_IMAGE'
+---| 'ICON_FILETYPE_PLAY'
+---| 'ICON_FILETYPE_VIDEO'
+---| 'ICON_FILETYPE_INFO'
+---| 'ICON_FILE_COPY'
+---| 'ICON_FILE_CUT'
+---| 'ICON_FILE_PASTE'
+---| 'ICON_CURSOR_HAND'
+---| 'ICON_CURSOR_POINTER'
+---| 'ICON_CURSOR_CLASSIC'
+---| 'ICON_PENCIL'
+---| 'ICON_PENCIL_BIG'
+---| 'ICON_BRUSH_CLASSIC'
+---| 'ICON_BRUSH_PAINTER'
+---| 'ICON_WATER_DROP'
+---| 'ICON_COLOR_PICKER'
+---| 'ICON_RUBBER'
+---| 'ICON_COLOR_BUCKET'
+---| 'ICON_TEXT_T'
+---| 'ICON_TEXT_A'
+---| 'ICON_SCALE'
+---| 'ICON_RESIZE'
+---| 'ICON_FILTER_POINT'
+---| 'ICON_FILTER_BILINEAR'
+---| 'ICON_CROP'
+---| 'ICON_CROP_ALPHA'
+---| 'ICON_SQUARE_TOGGLE'
+---| 'ICON_SYMMETRY'
+---| 'ICON_SYMMETRY_HORIZONTAL'
+---| 'ICON_SYMMETRY_VERTICAL'
+---| 'ICON_LENS'
+---| 'ICON_LENS_BIG'
+---| 'ICON_EYE_ON'
+---| 'ICON_EYE_OFF'
+---| 'ICON_FILTER_TOP'
+---| 'ICON_FILTER'
+---| 'ICON_TARGET_POINT'
+---| 'ICON_TARGET_SMALL'
+---| 'ICON_TARGET_BIG'
+---| 'ICON_TARGET_MOVE'
+---| 'ICON_CURSOR_MOVE'
+---| 'ICON_CURSOR_SCALE'
+---| 'ICON_CURSOR_SCALE_RIGHT'
+---| 'ICON_CURSOR_SCALE_LEFT'
+---| 'ICON_UNDO'
+---| 'ICON_REDO'
+---| 'ICON_REREDO'
+---| 'ICON_MUTATE'
+---| 'ICON_ROTATE'
+---| 'ICON_REPEAT'
+---| 'ICON_SHUFFLE'
+---| 'ICON_EMPTYBOX'
+---| 'ICON_TARGET'
+---| 'ICON_TARGET_SMALL_FILL'
+---| 'ICON_TARGET_BIG_FILL'
+---| 'ICON_TARGET_MOVE_FILL'
+---| 'ICON_CURSOR_MOVE_FILL'
+---| 'ICON_CURSOR_SCALE_FILL'
+---| 'ICON_CURSOR_SCALE_RIGHT_FILL'
+---| 'ICON_CURSOR_SCALE_LEFT_FILL'
+---| 'ICON_UNDO_FILL'
+---| 'ICON_REDO_FILL'
+---| 'ICON_REREDO_FILL'
+---| 'ICON_MUTATE_FILL'
+---| 'ICON_ROTATE_FILL'
+---| 'ICON_REPEAT_FILL'
+---| 'ICON_SHUFFLE_FILL'
+---| 'ICON_EMPTYBOX_SMALL'
+---| 'ICON_BOX'
+---| 'ICON_BOX_TOP'
+---| 'ICON_BOX_TOP_RIGHT'
+---| 'ICON_BOX_RIGHT'
+---| 'ICON_BOX_BOTTOM_RIGHT'
+---| 'ICON_BOX_BOTTOM'
+---| 'ICON_BOX_BOTTOM_LEFT'
+---| 'ICON_BOX_LEFT'
+---| 'ICON_BOX_TOP_LEFT'
+---| 'ICON_BOX_CENTER'
+---| 'ICON_BOX_CIRCLE_MASK'
+---| 'ICON_POT'
+---| 'ICON_ALPHA_MULTIPLY'
+---| 'ICON_ALPHA_CLEAR'
+---| 'ICON_DITHERING'
+---| 'ICON_MIPMAPS'
+---| 'ICON_BOX_GRID'
+---| 'ICON_GRID'
+---| 'ICON_BOX_CORNERS_SMALL'
+---| 'ICON_BOX_CORNERS_BIG'
+---| 'ICON_FOUR_BOXES'
+---| 'ICON_GRID_FILL'
+---| 'ICON_BOX_MULTISIZE'
+---| 'ICON_ZOOM_SMALL'
+---| 'ICON_ZOOM_MEDIUM'
+---| 'ICON_ZOOM_BIG'
+---| 'ICON_ZOOM_ALL'
+---| 'ICON_ZOOM_CENTER'
+---| 'ICON_BOX_DOTS_SMALL'
+---| 'ICON_BOX_DOTS_BIG'
+---| 'ICON_BOX_CONCENTRIC'
+---| 'ICON_BOX_GRID_BIG'
+---| 'ICON_OK_TICK'
+---| 'ICON_CROSS'
+---| 'ICON_ARROW_LEFT'
+---| 'ICON_ARROW_RIGHT'
+---| 'ICON_ARROW_DOWN'
+---| 'ICON_ARROW_UP'
+---| 'ICON_ARROW_LEFT_FILL'
+---| 'ICON_ARROW_RIGHT_FILL'
+---| 'ICON_ARROW_DOWN_FILL'
+---| 'ICON_ARROW_UP_FILL'
+---| 'ICON_AUDIO'
+---| 'ICON_FX'
+---| 'ICON_WAVE'
+---| 'ICON_WAVE_SINUS'
+---| 'ICON_WAVE_SQUARE'
+---| 'ICON_WAVE_TRIANGULAR'
+---| 'ICON_CROSS_SMALL'
+---| 'ICON_PLAYER_PREVIOUS'
+---| 'ICON_PLAYER_PLAY_BACK'
+---| 'ICON_PLAYER_PLAY'
+---| 'ICON_PLAYER_PAUSE'
+---| 'ICON_PLAYER_STOP'
+---| 'ICON_PLAYER_NEXT'
+---| 'ICON_PLAYER_RECORD'
+---| 'ICON_MAGNET'
+---| 'ICON_LOCK_CLOSE'
+---| 'ICON_LOCK_OPEN'
+---| 'ICON_CLOCK'
+---| 'ICON_TOOLS'
+---| 'ICON_GEAR'
+---| 'ICON_GEAR_BIG'
+---| 'ICON_BIN'
+---| 'ICON_HAND_POINTER'
+---| 'ICON_LASER'
+---| 'ICON_COIN'
+---| 'ICON_EXPLOSION'
+---| 'ICON_1UP'
+---| 'ICON_PLAYER'
+---| 'ICON_PLAYER_JUMP'
+---| 'ICON_KEY'
+---| 'ICON_DEMON'
+---| 'ICON_TEXT_POPUP'
+---| 'ICON_GEAR_EX'
+---| 'ICON_CRACK'
+---| 'ICON_CRACK_POINTS'
+---| 'ICON_STAR'
+---| 'ICON_DOOR'
+---| 'ICON_EXIT'
+---| 'ICON_MODE_2D'
+---| 'ICON_MODE_3D'
+---| 'ICON_CUBE'
+---| 'ICON_CUBE_FACE_TOP'
+---| 'ICON_CUBE_FACE_LEFT'
+---| 'ICON_CUBE_FACE_FRONT'
+---| 'ICON_CUBE_FACE_BOTTOM'
+---| 'ICON_CUBE_FACE_RIGHT'
+---| 'ICON_CUBE_FACE_BACK'
+---| 'ICON_CAMERA'
+---| 'ICON_SPECIAL'
+---| 'ICON_LINK_NET'
+---| 'ICON_LINK_BOXES'
+---| 'ICON_LINK_MULTI'
+---| 'ICON_LINK'
+---| 'ICON_LINK_BROKE'
+---| 'ICON_TEXT_NOTES'
+---| 'ICON_NOTEBOOK'
+---| 'ICON_SUITCASE'
+---| 'ICON_SUITCASE_ZIP'
+---| 'ICON_MAILBOX'
+---| 'ICON_MONITOR'
+---| 'ICON_PRINTER'
+---| 'ICON_PHOTO_CAMERA'
+---| 'ICON_PHOTO_CAMERA_FLASH'
+---| 'ICON_HOUSE'
+---| 'ICON_HEART'
+---| 'ICON_CORNER'
+---| 'ICON_VERTICAL_BARS'
+---| 'ICON_VERTICAL_BARS_FILL'
+---| 'ICON_LIFE_BARS'
+---| 'ICON_INFO'
+---| 'ICON_CROSSLINE'
+---| 'ICON_HELP'
+---| 'ICON_FILETYPE_ALPHA'
+---| 'ICON_FILETYPE_HOME'
+---| 'ICON_LAYERS_VISIBLE'
+---| 'ICON_LAYERS'
+---| 'ICON_WINDOW'
+---| 'ICON_HIDPI'
+---| 'ICON_FILETYPE_BINARY'
+---| 'ICON_HEX'
+---| 'ICON_SHIELD'
+---| 'ICON_FILE_NEW'
+---| 'ICON_FOLDER_ADD'
+---| 'ICON_ALARM'
+---| 'ICON_CPU'
+---| 'ICON_ROM'
+---| 'ICON_STEP_OVER'
+---| 'ICON_STEP_INTO'
+---| 'ICON_STEP_OUT'
+---| 'ICON_RESTART'
+---| 'ICON_BREAKPOINT_ON'
+---| 'ICON_BREAKPOINT_OFF'
+---| 'ICON_BURGER_MENU'
+---| 'ICON_CASE_SENSITIVE'
+---| 'ICON_REG_EXP'
+---| 'ICON_FOLDER'
+---| 'ICON_FILE'
+---| 'ICON_SAND_TIMER'
+---| 'ICON_220'
+---| 'ICON_221'
+---| 'ICON_222'
+---| 'ICON_223'
+---| 'ICON_224'
+---| 'ICON_225'
+---| 'ICON_226'
+---| 'ICON_227'
+---| 'ICON_228'
+---| 'ICON_229'
+---| 'ICON_230'
+---| 'ICON_231'
+---| 'ICON_232'
+---| 'ICON_233'
+---| 'ICON_234'
+---| 'ICON_235'
+---| 'ICON_236'
+---| 'ICON_237'
+---| 'ICON_238'
+---| 'ICON_239'
+---| 'ICON_240'
+---| 'ICON_241'
+---| 'ICON_242'
+---| 'ICON_243'
+---| 'ICON_244'
+---| 'ICON_245'
+---| 'ICON_246'
+---| 'ICON_247'
+---| 'ICON_248'
+---| 'ICON_249'
+---| 'ICON_250'
+---| 'ICON_251'
+---| 'ICON_252'
+---| 'ICON_253'
+---| 'ICON_254'
+---| 'ICON_255'
 
-rl.RAYGUI_ICON_NONE = 0
-rl.RAYGUI_ICON_FOLDER_FILE_OPEN = 1
-rl.RAYGUI_ICON_FILE_SAVE_CLASSIC = 2
-rl.RAYGUI_ICON_FOLDER_OPEN = 3
-rl.RAYGUI_ICON_FOLDER_SAVE = 4
-rl.RAYGUI_ICON_FILE_OPEN = 5
-rl.RAYGUI_ICON_FILE_SAVE = 6
-rl.RAYGUI_ICON_FILE_EXPORT = 7
-rl.RAYGUI_ICON_FILE_ADD = 8
-rl.RAYGUI_ICON_FILE_DELETE = 9
-rl.RAYGUI_ICON_FILETYPE_TEXT = 10
-rl.RAYGUI_ICON_FILETYPE_AUDIO = 11
-rl.RAYGUI_ICON_FILETYPE_IMAGE = 12
-rl.RAYGUI_ICON_FILETYPE_PLAY = 13
-rl.RAYGUI_ICON_FILETYPE_VIDEO = 14
-rl.RAYGUI_ICON_FILETYPE_INFO = 15
-rl.RAYGUI_ICON_FILE_COPY = 16
-rl.RAYGUI_ICON_FILE_CUT = 17
-rl.RAYGUI_ICON_FILE_PASTE = 18
-rl.RAYGUI_ICON_CURSOR_HAND = 19
-rl.RAYGUI_ICON_CURSOR_POINTER = 20
-rl.RAYGUI_ICON_CURSOR_CLASSIC = 21
-rl.RAYGUI_ICON_PENCIL = 22
-rl.RAYGUI_ICON_PENCIL_BIG = 23
-rl.RAYGUI_ICON_BRUSH_CLASSIC = 24
-rl.RAYGUI_ICON_BRUSH_PAINTER = 25
-rl.RAYGUI_ICON_WATER_DROP = 26
-rl.RAYGUI_ICON_COLOR_PICKER = 27
-rl.RAYGUI_ICON_RUBBER = 28
-rl.RAYGUI_ICON_COLOR_BUCKET = 29
-rl.RAYGUI_ICON_TEXT_T = 30
-rl.RAYGUI_ICON_TEXT_A = 31
-rl.RAYGUI_ICON_SCALE = 32
-rl.RAYGUI_ICON_RESIZE = 33
-rl.RAYGUI_ICON_FILTER_POINT = 34
-rl.RAYGUI_ICON_FILTER_BILINEAR = 35
-rl.RAYGUI_ICON_CROP = 36
-rl.RAYGUI_ICON_CROP_ALPHA = 37
-rl.RAYGUI_ICON_SQUARE_TOGGLE = 38
-rl.RAYGUI_ICON_SYMMETRY = 39
-rl.RAYGUI_ICON_SYMMETRY_HORIZONTAL = 40
-rl.RAYGUI_ICON_SYMMETRY_VERTICAL = 41
-rl.RAYGUI_ICON_LENS = 42
-rl.RAYGUI_ICON_LENS_BIG = 43
-rl.RAYGUI_ICON_EYE_ON = 44
-rl.RAYGUI_ICON_EYE_OFF = 45
-rl.RAYGUI_ICON_FILTER_TOP = 46
-rl.RAYGUI_ICON_FILTER = 47
-rl.RAYGUI_ICON_TARGET_POINT = 48
-rl.RAYGUI_ICON_TARGET_SMALL = 49
-rl.RAYGUI_ICON_TARGET_BIG = 50
-rl.RAYGUI_ICON_TARGET_MOVE = 51
-rl.RAYGUI_ICON_CURSOR_MOVE = 52
-rl.RAYGUI_ICON_CURSOR_SCALE = 53
-rl.RAYGUI_ICON_CURSOR_SCALE_RIGHT = 54
-rl.RAYGUI_ICON_CURSOR_SCALE_LEFT = 55
-rl.RAYGUI_ICON_UNDO = 56
-rl.RAYGUI_ICON_REDO = 57
-rl.RAYGUI_ICON_REREDO = 58
-rl.RAYGUI_ICON_MUTATE = 59
-rl.RAYGUI_ICON_ROTATE = 60
-rl.RAYGUI_ICON_REPEAT = 61
-rl.RAYGUI_ICON_SHUFFLE = 62
-rl.RAYGUI_ICON_EMPTYBOX = 63
-rl.RAYGUI_ICON_TARGET = 64
-rl.RAYGUI_ICON_TARGET_SMALL_FILL = 65
-rl.RAYGUI_ICON_TARGET_BIG_FILL = 66
-rl.RAYGUI_ICON_TARGET_MOVE_FILL = 67
-rl.RAYGUI_ICON_CURSOR_MOVE_FILL = 68
-rl.RAYGUI_ICON_CURSOR_SCALE_FILL = 69
-rl.RAYGUI_ICON_CURSOR_SCALE_RIGHT_FILL = 70
-rl.RAYGUI_ICON_CURSOR_SCALE_LEFT_FILL = 71
-rl.RAYGUI_ICON_UNDO_FILL = 72
-rl.RAYGUI_ICON_REDO_FILL = 73
-rl.RAYGUI_ICON_REREDO_FILL = 74
-rl.RAYGUI_ICON_MUTATE_FILL = 75
-rl.RAYGUI_ICON_ROTATE_FILL = 76
-rl.RAYGUI_ICON_REPEAT_FILL = 77
-rl.RAYGUI_ICON_SHUFFLE_FILL = 78
-rl.RAYGUI_ICON_EMPTYBOX_SMALL = 79
-rl.RAYGUI_ICON_BOX = 80
-rl.RAYGUI_ICON_BOX_TOP = 81
-rl.RAYGUI_ICON_BOX_TOP_RIGHT = 82
-rl.RAYGUI_ICON_BOX_RIGHT = 83
-rl.RAYGUI_ICON_BOX_BOTTOM_RIGHT = 84
-rl.RAYGUI_ICON_BOX_BOTTOM = 85
-rl.RAYGUI_ICON_BOX_BOTTOM_LEFT = 86
-rl.RAYGUI_ICON_BOX_LEFT = 87
-rl.RAYGUI_ICON_BOX_TOP_LEFT = 88
-rl.RAYGUI_ICON_BOX_CENTER = 89
-rl.RAYGUI_ICON_BOX_CIRCLE_MASK = 90
-rl.RAYGUI_ICON_POT = 91
-rl.RAYGUI_ICON_ALPHA_MULTIPLY = 92
-rl.RAYGUI_ICON_ALPHA_CLEAR = 93
-rl.RAYGUI_ICON_DITHERING = 94
-rl.RAYGUI_ICON_MIPMAPS = 95
-rl.RAYGUI_ICON_BOX_GRID = 96
-rl.RAYGUI_ICON_GRID = 97
-rl.RAYGUI_ICON_BOX_CORNERS_SMALL = 98
-rl.RAYGUI_ICON_BOX_CORNERS_BIG = 99
-rl.RAYGUI_ICON_FOUR_BOXES = 100
-rl.RAYGUI_ICON_GRID_FILL = 101
-rl.RAYGUI_ICON_BOX_MULTISIZE = 102
-rl.RAYGUI_ICON_ZOOM_SMALL = 103
-rl.RAYGUI_ICON_ZOOM_MEDIUM = 104
-rl.RAYGUI_ICON_ZOOM_BIG = 105
-rl.RAYGUI_ICON_ZOOM_ALL = 106
-rl.RAYGUI_ICON_ZOOM_CENTER = 107
-rl.RAYGUI_ICON_BOX_DOTS_SMALL = 108
-rl.RAYGUI_ICON_BOX_DOTS_BIG = 109
-rl.RAYGUI_ICON_BOX_CONCENTRIC = 110
-rl.RAYGUI_ICON_BOX_GRID_BIG = 111
-rl.RAYGUI_ICON_OK_TICK = 112
-rl.RAYGUI_ICON_CROSS = 113
-rl.RAYGUI_ICON_ARROW_LEFT = 114
-rl.RAYGUI_ICON_ARROW_RIGHT = 115
-rl.RAYGUI_ICON_ARROW_DOWN = 116
-rl.RAYGUI_ICON_ARROW_UP = 117
-rl.RAYGUI_ICON_ARROW_LEFT_FILL = 118
-rl.RAYGUI_ICON_ARROW_RIGHT_FILL = 119
-rl.RAYGUI_ICON_ARROW_DOWN_FILL = 120
-rl.RAYGUI_ICON_ARROW_UP_FILL = 121
-rl.RAYGUI_ICON_AUDIO = 122
-rl.RAYGUI_ICON_FX = 123
-rl.RAYGUI_ICON_WAVE = 124
-rl.RAYGUI_ICON_WAVE_SINUS = 125
-rl.RAYGUI_ICON_WAVE_SQUARE = 126
-rl.RAYGUI_ICON_WAVE_TRIANGULAR = 127
-rl.RAYGUI_ICON_CROSS_SMALL = 128
-rl.RAYGUI_ICON_PLAYER_PREVIOUS = 129
-rl.RAYGUI_ICON_PLAYER_PLAY_BACK = 130
-rl.RAYGUI_ICON_PLAYER_PLAY = 131
-rl.RAYGUI_ICON_PLAYER_PAUSE = 132
-rl.RAYGUI_ICON_PLAYER_STOP = 133
-rl.RAYGUI_ICON_PLAYER_NEXT = 134
-rl.RAYGUI_ICON_PLAYER_RECORD = 135
-rl.RAYGUI_ICON_MAGNET = 136
-rl.RAYGUI_ICON_LOCK_CLOSE = 137
-rl.RAYGUI_ICON_LOCK_OPEN = 138
-rl.RAYGUI_ICON_CLOCK = 139
-rl.RAYGUI_ICON_TOOLS = 140
-rl.RAYGUI_ICON_GEAR = 141
-rl.RAYGUI_ICON_GEAR_BIG = 142
-rl.RAYGUI_ICON_BIN = 143
-rl.RAYGUI_ICON_HAND_POINTER = 144
-rl.RAYGUI_ICON_LASER = 145
-rl.RAYGUI_ICON_COIN = 146
-rl.RAYGUI_ICON_EXPLOSION = 147
-rl.RAYGUI_ICON_1UP = 148
-rl.RAYGUI_ICON_PLAYER = 149
-rl.RAYGUI_ICON_PLAYER_JUMP = 150
-rl.RAYGUI_ICON_KEY = 151
-rl.RAYGUI_ICON_DEMON = 152
-rl.RAYGUI_ICON_TEXT_POPUP = 153
-rl.RAYGUI_ICON_GEAR_EX = 154
-rl.RAYGUI_ICON_CRACK = 155
-rl.RAYGUI_ICON_CRACK_POINTS = 156
-rl.RAYGUI_ICON_STAR = 157
-rl.RAYGUI_ICON_DOOR = 158
-rl.RAYGUI_ICON_EXIT = 159
-rl.RAYGUI_ICON_MODE_2D = 160
-rl.RAYGUI_ICON_MODE_3D = 161
-rl.RAYGUI_ICON_CUBE = 162
-rl.RAYGUI_ICON_CUBE_FACE_TOP = 163
-rl.RAYGUI_ICON_CUBE_FACE_LEFT = 164
-rl.RAYGUI_ICON_CUBE_FACE_FRONT = 165
-rl.RAYGUI_ICON_CUBE_FACE_BOTTOM = 166
-rl.RAYGUI_ICON_CUBE_FACE_RIGHT = 167
-rl.RAYGUI_ICON_CUBE_FACE_BACK = 168
-rl.RAYGUI_ICON_CAMERA = 169
-rl.RAYGUI_ICON_SPECIAL = 170
-rl.RAYGUI_ICON_LINK_NET = 171
-rl.RAYGUI_ICON_LINK_BOXES = 172
-rl.RAYGUI_ICON_LINK_MULTI = 173
-rl.RAYGUI_ICON_LINK = 174
-rl.RAYGUI_ICON_LINK_BROKE = 175
-rl.RAYGUI_ICON_TEXT_NOTES = 176
-rl.RAYGUI_ICON_NOTEBOOK = 177
-rl.RAYGUI_ICON_SUITCASE = 178
-rl.RAYGUI_ICON_SUITCASE_ZIP = 179
-rl.RAYGUI_ICON_MAILBOX = 180
-rl.RAYGUI_ICON_MONITOR = 181
-rl.RAYGUI_ICON_PRINTER = 182
-rl.RAYGUI_ICON_PHOTO_CAMERA = 183
-rl.RAYGUI_ICON_PHOTO_CAMERA_FLASH = 184
-rl.RAYGUI_ICON_HOUSE = 185
-rl.RAYGUI_ICON_HEART = 186
-rl.RAYGUI_ICON_CORNER = 187
-rl.RAYGUI_ICON_VERTICAL_BARS = 188
-rl.RAYGUI_ICON_VERTICAL_BARS_FILL = 189
-rl.RAYGUI_ICON_LIFE_BARS = 190
-rl.RAYGUI_ICON_INFO = 191
-rl.RAYGUI_ICON_CROSSLINE = 192
-rl.RAYGUI_ICON_HELP = 193
-rl.RAYGUI_ICON_FILETYPE_ALPHA = 194
-rl.RAYGUI_ICON_FILETYPE_HOME = 195
-rl.RAYGUI_ICON_LAYERS_VISIBLE = 196
-rl.RAYGUI_ICON_LAYERS = 197
-rl.RAYGUI_ICON_WINDOW = 198
-rl.RAYGUI_ICON_HIDPI = 199
-rl.RAYGUI_ICON_FILETYPE_BINARY = 200
-rl.RAYGUI_ICON_HEX = 201
-rl.RAYGUI_ICON_SHIELD = 202
-rl.RAYGUI_ICON_FILE_NEW = 203
-rl.RAYGUI_ICON_FOLDER_ADD = 204
-rl.RAYGUI_ICON_205 = 205
-rl.RAYGUI_ICON_206 = 206
-rl.RAYGUI_ICON_207 = 207
-rl.RAYGUI_ICON_208 = 208
-rl.RAYGUI_ICON_209 = 209
-rl.RAYGUI_ICON_210 = 210
-rl.RAYGUI_ICON_211 = 211
-rl.RAYGUI_ICON_212 = 212
-rl.RAYGUI_ICON_213 = 213
-rl.RAYGUI_ICON_214 = 214
-rl.RAYGUI_ICON_215 = 215
-rl.RAYGUI_ICON_216 = 216
-rl.RAYGUI_ICON_217 = 217
-rl.RAYGUI_ICON_218 = 218
-rl.RAYGUI_ICON_219 = 219
-rl.RAYGUI_ICON_220 = 220
-rl.RAYGUI_ICON_221 = 221
-rl.RAYGUI_ICON_222 = 222
-rl.RAYGUI_ICON_223 = 223
-rl.RAYGUI_ICON_224 = 224
-rl.RAYGUI_ICON_225 = 225
-rl.RAYGUI_ICON_226 = 226
-rl.RAYGUI_ICON_227 = 227
-rl.RAYGUI_ICON_228 = 228
-rl.RAYGUI_ICON_229 = 229
-rl.RAYGUI_ICON_230 = 230
-rl.RAYGUI_ICON_231 = 231
-rl.RAYGUI_ICON_232 = 232
-rl.RAYGUI_ICON_233 = 233
-rl.RAYGUI_ICON_234 = 234
-rl.RAYGUI_ICON_235 = 235
-rl.RAYGUI_ICON_236 = 236
-rl.RAYGUI_ICON_237 = 237
-rl.RAYGUI_ICON_238 = 238
-rl.RAYGUI_ICON_239 = 239
-rl.RAYGUI_ICON_240 = 240
-rl.RAYGUI_ICON_241 = 241
-rl.RAYGUI_ICON_242 = 242
-rl.RAYGUI_ICON_243 = 243
-rl.RAYGUI_ICON_244 = 244
-rl.RAYGUI_ICON_245 = 245
-rl.RAYGUI_ICON_246 = 246
-rl.RAYGUI_ICON_247 = 247
-rl.RAYGUI_ICON_248 = 248
-rl.RAYGUI_ICON_249 = 249
-rl.RAYGUI_ICON_250 = 250
-rl.RAYGUI_ICON_251 = 251
-rl.RAYGUI_ICON_252 = 252
-rl.RAYGUI_ICON_253 = 253
-rl.RAYGUI_ICON_254 = 254
-rl.RAYGUI_ICON_255 = 255
+rl.ICON_NONE = 0
+rl.ICON_FOLDER_FILE_OPEN = 1
+rl.ICON_FILE_SAVE_CLASSIC = 2
+rl.ICON_FOLDER_OPEN = 3
+rl.ICON_FOLDER_SAVE = 4
+rl.ICON_FILE_OPEN = 5
+rl.ICON_FILE_SAVE = 6
+rl.ICON_FILE_EXPORT = 7
+rl.ICON_FILE_ADD = 8
+rl.ICON_FILE_DELETE = 9
+rl.ICON_FILETYPE_TEXT = 10
+rl.ICON_FILETYPE_AUDIO = 11
+rl.ICON_FILETYPE_IMAGE = 12
+rl.ICON_FILETYPE_PLAY = 13
+rl.ICON_FILETYPE_VIDEO = 14
+rl.ICON_FILETYPE_INFO = 15
+rl.ICON_FILE_COPY = 16
+rl.ICON_FILE_CUT = 17
+rl.ICON_FILE_PASTE = 18
+rl.ICON_CURSOR_HAND = 19
+rl.ICON_CURSOR_POINTER = 20
+rl.ICON_CURSOR_CLASSIC = 21
+rl.ICON_PENCIL = 22
+rl.ICON_PENCIL_BIG = 23
+rl.ICON_BRUSH_CLASSIC = 24
+rl.ICON_BRUSH_PAINTER = 25
+rl.ICON_WATER_DROP = 26
+rl.ICON_COLOR_PICKER = 27
+rl.ICON_RUBBER = 28
+rl.ICON_COLOR_BUCKET = 29
+rl.ICON_TEXT_T = 30
+rl.ICON_TEXT_A = 31
+rl.ICON_SCALE = 32
+rl.ICON_RESIZE = 33
+rl.ICON_FILTER_POINT = 34
+rl.ICON_FILTER_BILINEAR = 35
+rl.ICON_CROP = 36
+rl.ICON_CROP_ALPHA = 37
+rl.ICON_SQUARE_TOGGLE = 38
+rl.ICON_SYMMETRY = 39
+rl.ICON_SYMMETRY_HORIZONTAL = 40
+rl.ICON_SYMMETRY_VERTICAL = 41
+rl.ICON_LENS = 42
+rl.ICON_LENS_BIG = 43
+rl.ICON_EYE_ON = 44
+rl.ICON_EYE_OFF = 45
+rl.ICON_FILTER_TOP = 46
+rl.ICON_FILTER = 47
+rl.ICON_TARGET_POINT = 48
+rl.ICON_TARGET_SMALL = 49
+rl.ICON_TARGET_BIG = 50
+rl.ICON_TARGET_MOVE = 51
+rl.ICON_CURSOR_MOVE = 52
+rl.ICON_CURSOR_SCALE = 53
+rl.ICON_CURSOR_SCALE_RIGHT = 54
+rl.ICON_CURSOR_SCALE_LEFT = 55
+rl.ICON_UNDO = 56
+rl.ICON_REDO = 57
+rl.ICON_REREDO = 58
+rl.ICON_MUTATE = 59
+rl.ICON_ROTATE = 60
+rl.ICON_REPEAT = 61
+rl.ICON_SHUFFLE = 62
+rl.ICON_EMPTYBOX = 63
+rl.ICON_TARGET = 64
+rl.ICON_TARGET_SMALL_FILL = 65
+rl.ICON_TARGET_BIG_FILL = 66
+rl.ICON_TARGET_MOVE_FILL = 67
+rl.ICON_CURSOR_MOVE_FILL = 68
+rl.ICON_CURSOR_SCALE_FILL = 69
+rl.ICON_CURSOR_SCALE_RIGHT_FILL = 70
+rl.ICON_CURSOR_SCALE_LEFT_FILL = 71
+rl.ICON_UNDO_FILL = 72
+rl.ICON_REDO_FILL = 73
+rl.ICON_REREDO_FILL = 74
+rl.ICON_MUTATE_FILL = 75
+rl.ICON_ROTATE_FILL = 76
+rl.ICON_REPEAT_FILL = 77
+rl.ICON_SHUFFLE_FILL = 78
+rl.ICON_EMPTYBOX_SMALL = 79
+rl.ICON_BOX = 80
+rl.ICON_BOX_TOP = 81
+rl.ICON_BOX_TOP_RIGHT = 82
+rl.ICON_BOX_RIGHT = 83
+rl.ICON_BOX_BOTTOM_RIGHT = 84
+rl.ICON_BOX_BOTTOM = 85
+rl.ICON_BOX_BOTTOM_LEFT = 86
+rl.ICON_BOX_LEFT = 87
+rl.ICON_BOX_TOP_LEFT = 88
+rl.ICON_BOX_CENTER = 89
+rl.ICON_BOX_CIRCLE_MASK = 90
+rl.ICON_POT = 91
+rl.ICON_ALPHA_MULTIPLY = 92
+rl.ICON_ALPHA_CLEAR = 93
+rl.ICON_DITHERING = 94
+rl.ICON_MIPMAPS = 95
+rl.ICON_BOX_GRID = 96
+rl.ICON_GRID = 97
+rl.ICON_BOX_CORNERS_SMALL = 98
+rl.ICON_BOX_CORNERS_BIG = 99
+rl.ICON_FOUR_BOXES = 100
+rl.ICON_GRID_FILL = 101
+rl.ICON_BOX_MULTISIZE = 102
+rl.ICON_ZOOM_SMALL = 103
+rl.ICON_ZOOM_MEDIUM = 104
+rl.ICON_ZOOM_BIG = 105
+rl.ICON_ZOOM_ALL = 106
+rl.ICON_ZOOM_CENTER = 107
+rl.ICON_BOX_DOTS_SMALL = 108
+rl.ICON_BOX_DOTS_BIG = 109
+rl.ICON_BOX_CONCENTRIC = 110
+rl.ICON_BOX_GRID_BIG = 111
+rl.ICON_OK_TICK = 112
+rl.ICON_CROSS = 113
+rl.ICON_ARROW_LEFT = 114
+rl.ICON_ARROW_RIGHT = 115
+rl.ICON_ARROW_DOWN = 116
+rl.ICON_ARROW_UP = 117
+rl.ICON_ARROW_LEFT_FILL = 118
+rl.ICON_ARROW_RIGHT_FILL = 119
+rl.ICON_ARROW_DOWN_FILL = 120
+rl.ICON_ARROW_UP_FILL = 121
+rl.ICON_AUDIO = 122
+rl.ICON_FX = 123
+rl.ICON_WAVE = 124
+rl.ICON_WAVE_SINUS = 125
+rl.ICON_WAVE_SQUARE = 126
+rl.ICON_WAVE_TRIANGULAR = 127
+rl.ICON_CROSS_SMALL = 128
+rl.ICON_PLAYER_PREVIOUS = 129
+rl.ICON_PLAYER_PLAY_BACK = 130
+rl.ICON_PLAYER_PLAY = 131
+rl.ICON_PLAYER_PAUSE = 132
+rl.ICON_PLAYER_STOP = 133
+rl.ICON_PLAYER_NEXT = 134
+rl.ICON_PLAYER_RECORD = 135
+rl.ICON_MAGNET = 136
+rl.ICON_LOCK_CLOSE = 137
+rl.ICON_LOCK_OPEN = 138
+rl.ICON_CLOCK = 139
+rl.ICON_TOOLS = 140
+rl.ICON_GEAR = 141
+rl.ICON_GEAR_BIG = 142
+rl.ICON_BIN = 143
+rl.ICON_HAND_POINTER = 144
+rl.ICON_LASER = 145
+rl.ICON_COIN = 146
+rl.ICON_EXPLOSION = 147
+rl.ICON_1UP = 148
+rl.ICON_PLAYER = 149
+rl.ICON_PLAYER_JUMP = 150
+rl.ICON_KEY = 151
+rl.ICON_DEMON = 152
+rl.ICON_TEXT_POPUP = 153
+rl.ICON_GEAR_EX = 154
+rl.ICON_CRACK = 155
+rl.ICON_CRACK_POINTS = 156
+rl.ICON_STAR = 157
+rl.ICON_DOOR = 158
+rl.ICON_EXIT = 159
+rl.ICON_MODE_2D = 160
+rl.ICON_MODE_3D = 161
+rl.ICON_CUBE = 162
+rl.ICON_CUBE_FACE_TOP = 163
+rl.ICON_CUBE_FACE_LEFT = 164
+rl.ICON_CUBE_FACE_FRONT = 165
+rl.ICON_CUBE_FACE_BOTTOM = 166
+rl.ICON_CUBE_FACE_RIGHT = 167
+rl.ICON_CUBE_FACE_BACK = 168
+rl.ICON_CAMERA = 169
+rl.ICON_SPECIAL = 170
+rl.ICON_LINK_NET = 171
+rl.ICON_LINK_BOXES = 172
+rl.ICON_LINK_MULTI = 173
+rl.ICON_LINK = 174
+rl.ICON_LINK_BROKE = 175
+rl.ICON_TEXT_NOTES = 176
+rl.ICON_NOTEBOOK = 177
+rl.ICON_SUITCASE = 178
+rl.ICON_SUITCASE_ZIP = 179
+rl.ICON_MAILBOX = 180
+rl.ICON_MONITOR = 181
+rl.ICON_PRINTER = 182
+rl.ICON_PHOTO_CAMERA = 183
+rl.ICON_PHOTO_CAMERA_FLASH = 184
+rl.ICON_HOUSE = 185
+rl.ICON_HEART = 186
+rl.ICON_CORNER = 187
+rl.ICON_VERTICAL_BARS = 188
+rl.ICON_VERTICAL_BARS_FILL = 189
+rl.ICON_LIFE_BARS = 190
+rl.ICON_INFO = 191
+rl.ICON_CROSSLINE = 192
+rl.ICON_HELP = 193
+rl.ICON_FILETYPE_ALPHA = 194
+rl.ICON_FILETYPE_HOME = 195
+rl.ICON_LAYERS_VISIBLE = 196
+rl.ICON_LAYERS = 197
+rl.ICON_WINDOW = 198
+rl.ICON_HIDPI = 199
+rl.ICON_FILETYPE_BINARY = 200
+rl.ICON_HEX = 201
+rl.ICON_SHIELD = 202
+rl.ICON_FILE_NEW = 203
+rl.ICON_FOLDER_ADD = 204
+rl.ICON_ALARM = 205
+rl.ICON_CPU = 206
+rl.ICON_ROM = 207
+rl.ICON_STEP_OVER = 208
+rl.ICON_STEP_INTO = 209
+rl.ICON_STEP_OUT = 210
+rl.ICON_RESTART = 211
+rl.ICON_BREAKPOINT_ON = 212
+rl.ICON_BREAKPOINT_OFF = 213
+rl.ICON_BURGER_MENU = 214
+rl.ICON_CASE_SENSITIVE = 215
+rl.ICON_REG_EXP = 216
+rl.ICON_FOLDER = 217
+rl.ICON_FILE = 218
+rl.ICON_SAND_TIMER = 219
+rl.ICON_220 = 220
+rl.ICON_221 = 221
+rl.ICON_222 = 222
+rl.ICON_223 = 223
+rl.ICON_224 = 224
+rl.ICON_225 = 225
+rl.ICON_226 = 226
+rl.ICON_227 = 227
+rl.ICON_228 = 228
+rl.ICON_229 = 229
+rl.ICON_230 = 230
+rl.ICON_231 = 231
+rl.ICON_232 = 232
+rl.ICON_233 = 233
+rl.ICON_234 = 234
+rl.ICON_235 = 235
+rl.ICON_236 = 236
+rl.ICON_237 = 237
+rl.ICON_238 = 238
+rl.ICON_239 = 239
+rl.ICON_240 = 240
+rl.ICON_241 = 241
+rl.ICON_242 = 242
+rl.ICON_243 = 243
+rl.ICON_244 = 244
+rl.ICON_245 = 245
+rl.ICON_246 = 246
+rl.ICON_247 = 247
+rl.ICON_248 = 248
+rl.ICON_249 = 249
+rl.ICON_250 = 250
+rl.ICON_251 = 251
+rl.ICON_252 = 252
+rl.ICON_253 = 253
+rl.ICON_254 = 254
+rl.ICON_255 = 255
 ---@class Vector2 @ Vector2 type
 ---@alias Vector2_ptr Vector2
 ---@alias Vector2_ptr_ptr Vector2
@@ -1137,6 +1179,16 @@ local Rectangle = {}
 ---@field format number # Data format (PixelFormat type)
 ---Constructed using `rl.new("Texture2D", ...)`
 local Texture2D = {}
+---@class Image @ Image, pixel data stored in CPU memory (RAM)
+---@alias Image_ptr Image
+---@alias Image_ptr_ptr Image
+---@field data string|lightuserdata # Image raw data
+---@field width number # Image base width
+---@field height number # Image base height
+---@field mipmaps number # Mipmap levels, 1 by default
+---@field format number # Data format (PixelFormat type)
+---Constructed using `rl.new("Image", ...)`
+local Image = {}
 ---@class GlyphInfo @ GlyphInfo, font characters glyphs info
 ---@alias GlyphInfo_ptr GlyphInfo
 ---@alias GlyphInfo_ptr_ptr GlyphInfo
@@ -1151,57 +1203,61 @@ local GlyphInfo = {}
 ---@alias Font_ptr Font
 ---@alias Font_ptr_ptr Font
 ---@field baseSize number # Base size (default chars height)
----@field glyphCount number # Number of characters
----@field texture Texture2D # Characters texture atlas
----@field recs Rectangle_ptr|lightuserdata # Characters rectangles in texture
----@field chars GlyphInfo_ptr|lightuserdata # Characters info data
+---@field glyphCount number # Number of glyph characters
+---@field glyphPadding number # Padding around the glyph characters
+---@field texture Texture2D # Texture atlas containing the glyphs
+---@field recs Rectangle_ptr|lightuserdata # Rectangles in texture for the glyphs
+---@field glyphs GlyphInfo_ptr|lightuserdata # Glyphs info data
 ---Constructed using `rl.new("Font", ...)`
 local Font = {}
----@class GuiStyleProp @ Style property
+---@class GuiStyleProp @ NOTE: Used when exporting style as code for convenience
 ---@alias GuiStyleProp_ptr GuiStyleProp
 ---@alias GuiStyleProp_ptr_ptr GuiStyleProp
----@field controlId unsigned_short
----@field propertyId unsigned_short
----@field propertyValue number
+---@field controlId unsigned_short # Control identifier
+---@field propertyId unsigned_short # Property identifier
+---@field propertyValue number # Property value
 ---Constructed using `rl.new("GuiStyleProp", ...)`
 local GuiStyleProp = {}
----@return PI_void
+---@class GuiTextStyle @ NOTE: Text style is defined by control
+---@alias GuiTextStyle_ptr GuiTextStyle
+---@alias GuiTextStyle_ptr_ptr GuiTextStyle
+---@field size number
+---@field charSpacing number
+---@field lineSpacing number
+---@field alignmentH number
+---@field alignmentV number
+---@field padding number
+---Constructed using `rl.new("GuiTextStyle", ...)`
+local GuiTextStyle = {}
 ---Enable gui controls (global state)
 function rl.GuiEnable() end
----@return PI_void
 ---Disable gui controls (global state)
 function rl.GuiDisable() end
----@return PI_void
 ---Lock gui controls (global state)
 function rl.GuiLock() end
----@return PI_void
 ---Unlock gui controls (global state)
 function rl.GuiUnlock() end
----@return PI_bool
+---@return bool
 ---Check if gui is locked (global state)
 function rl.GuiIsLocked() end
 ---@param alpha number
----@return PI_void
 ---Set gui controls alpha (global state), alpha goes from 0.0f to 1.0f
-function rl.GuiFade(alpha) end
+function rl.GuiSetAlpha(alpha) end
 ---@param state number
----@return PI_void
 ---Set gui state (global state)
 function rl.GuiSetState(state) end
 ---@return number
 ---Get gui state (global state)
 function rl.GuiGetState() end
 ---@param font Font
----@return PI_void
 ---Set gui custom font (global state)
 function rl.GuiSetFont(font) end
----@return PI_Font
+---@return Font
 ---Get gui custom font (global state)
 function rl.GuiGetFont() end
 ---@param control number
 ---@param property number
 ---@param value number
----@return PI_void
 ---Set one style property
 function rl.GuiSetStyle(control,property,value) end
 ---@param control number
@@ -1209,52 +1265,95 @@ function rl.GuiSetStyle(control,property,value) end
 ---@return number
 ---Get one style property
 function rl.GuiGetStyle(control,property) end
+---@param fileName string|lightuserdata
+---Load style file over global style variable (.rgs)
+function rl.GuiLoadStyle(fileName) end
+---Load style default over global style
+function rl.GuiLoadStyleDefault() end
+---Enable gui tooltips (global state)
+function rl.GuiEnableTooltip() end
+---Disable gui tooltips (global state)
+function rl.GuiDisableTooltip() end
+---@param tooltip string|lightuserdata
+---Set tooltip string
+function rl.GuiSetTooltip(tooltip) end
+---@param iconId number
+---@param text string|lightuserdata
+---@return string|lightuserdata
+---Get text with icon id prepended (if supported)
+function rl.GuiIconText(iconId,text) end
+---@param scale number
+---Set default icon drawing size
+function rl.GuiSetIconScale(scale) end
+---@return number
+---Get raygui icons data pointer
+function rl.GuiGetIcons() end
+---@param fileName string|lightuserdata
+---@param loadIconsName bool
+---@return string|lightuserdata
+---Load raygui icons file (.rgi) into internal icons data
+function rl.GuiLoadIcons(fileName,loadIconsName) end
+---@param iconId number
+---@param posX number
+---@param posY number
+---@param pixelSize number
+---@param color Color
+---Draw icon using pixel size at specified position
+function rl.GuiDrawIcon(iconId,posX,posY,pixelSize,color) end
 ---@param bounds Rectangle
 ---@param title string|lightuserdata
----@return PI_bool
+---@return number
 ---Window Box control, shows a window that can be closed
 function rl.GuiWindowBox(bounds,title) end
 ---@param bounds Rectangle
 ---@param text string|lightuserdata
----@return PI_void
+---@return number
 ---Group Box control with text name
 function rl.GuiGroupBox(bounds,text) end
 ---@param bounds Rectangle
 ---@param text string|lightuserdata
----@return PI_void
+---@return number
 ---Line separator control, could contain text
 function rl.GuiLine(bounds,text) end
 ---@param bounds Rectangle
 ---@param text string|lightuserdata
----@return PI_void
+---@return number
 ---Panel control, useful to group controls
 function rl.GuiPanel(bounds,text) end
 ---@param bounds Rectangle
 ---@param text string|lightuserdata
----@param content Rectangle
----@param scroll Vector2_ptr|lightuserdata
----@return PI_Rectangle
----Scroll Panel control
-function rl.GuiScrollPanel(bounds,text,content,scroll) end
+---@param count number
+---@param active number
+---@return number
+---Tab Bar control, returns TAB to be closed or -1
+function rl.GuiTabBar(bounds,text,count,active) end
 ---@param bounds Rectangle
 ---@param text string|lightuserdata
----@return PI_void
+---@param content Rectangle
+---@param scroll Vector2_ptr|lightuserdata
+---@param view Rectangle_ptr|lightuserdata
+---@return number
+---Scroll Panel control
+function rl.GuiScrollPanel(bounds,text,content,scroll,view) end
+---@param bounds Rectangle
+---@param text string|lightuserdata
+---@return number
 ---Label control, shows text
 function rl.GuiLabel(bounds,text) end
 ---@param bounds Rectangle
 ---@param text string|lightuserdata
----@return PI_bool
+---@return number
 ---Button control, returns true when clicked
 function rl.GuiButton(bounds,text) end
 ---@param bounds Rectangle
 ---@param text string|lightuserdata
----@return PI_bool
+---@return number
 ---Label button control, show true when clicked
 function rl.GuiLabelButton(bounds,text) end
 ---@param bounds Rectangle
 ---@param text string|lightuserdata
----@param active bool
----@return PI_bool
+---@param active bool_ptr|lightuserdata
+---@return number
 ---Toggle Button control, returns true when active
 function rl.GuiToggle(bounds,text,active) end
 ---@param bounds Rectangle
@@ -1265,8 +1364,14 @@ function rl.GuiToggle(bounds,text,active) end
 function rl.GuiToggleGroup(bounds,text,active) end
 ---@param bounds Rectangle
 ---@param text string|lightuserdata
----@param checked bool
----@return PI_bool
+---@param active number
+---@return number
+---Toggle Slider control, returns true when clicked
+function rl.GuiToggleSlider(bounds,text,active) end
+---@param bounds Rectangle
+---@param text string|lightuserdata
+---@param checked bool_ptr|lightuserdata
+---@return number
 ---Check Box control, returns true when active
 function rl.GuiCheckBox(bounds,text,checked) end
 ---@param bounds Rectangle
@@ -1279,7 +1384,7 @@ function rl.GuiComboBox(bounds,text,active) end
 ---@param text string|lightuserdata
 ---@param active number
 ---@param editMode bool
----@return PI_bool
+---@return number
 ---Dropdown Box control, returns selected item
 function rl.GuiDropdownBox(bounds,text,active,editMode) end
 ---@param bounds Rectangle
@@ -1288,7 +1393,7 @@ function rl.GuiDropdownBox(bounds,text,active,editMode) end
 ---@param minValue number
 ---@param maxValue number
 ---@param editMode bool
----@return PI_bool
+---@return number
 ---Spinner control, returns selected value
 function rl.GuiSpinner(bounds,text,value,minValue,maxValue,editMode) end
 ---@param bounds Rectangle
@@ -1297,23 +1402,16 @@ function rl.GuiSpinner(bounds,text,value,minValue,maxValue,editMode) end
 ---@param minValue number
 ---@param maxValue number
 ---@param editMode bool
----@return PI_bool
+---@return number
 ---Value Box control, updates input text with numbers
 function rl.GuiValueBox(bounds,text,value,minValue,maxValue,editMode) end
 ---@param bounds Rectangle
 ---@param text string|lightuserdata
 ---@param textSize number
 ---@param editMode bool
----@return PI_bool
+---@return number
 ---Text Box control, updates input text
 function rl.GuiTextBox(bounds,text,textSize,editMode) end
----@param bounds Rectangle
----@param text string|lightuserdata
----@param textSize number
----@param editMode bool
----@return PI_bool
----Text Box control with multiple lines
-function rl.GuiTextBoxMulti(bounds,text,textSize,editMode) end
 ---@param bounds Rectangle
 ---@param textLeft string|lightuserdata
 ---@param textRight string|lightuserdata
@@ -1343,21 +1441,22 @@ function rl.GuiSliderBar(bounds,textLeft,textRight,value,minValue,maxValue) end
 function rl.GuiProgressBar(bounds,textLeft,textRight,value,minValue,maxValue) end
 ---@param bounds Rectangle
 ---@param text string|lightuserdata
----@return PI_void
+---@return number
 ---Status Bar control, shows info text
 function rl.GuiStatusBar(bounds,text) end
 ---@param bounds Rectangle
 ---@param text string|lightuserdata
----@return PI_void
+---@return number
 ---Dummy control for placeholders
 function rl.GuiDummyRec(bounds,text) end
 ---@param bounds Rectangle
 ---@param text string|lightuserdata
 ---@param spacing number
 ---@param subdivs number
----@return PI_Vector2
+---@param mouseCell Vector2_ptr|lightuserdata
+---@return number
 ---Grid control, returns mouse cell position
-function rl.GuiGrid(bounds,text,spacing,subdivs) end
+function rl.GuiGrid(bounds,text,spacing,subdivs,mouseCell) end
 ---@param bounds Rectangle
 ---@param text string|lightuserdata
 ---@param scrollIndex number
@@ -1368,12 +1467,12 @@ function rl.GuiListView(bounds,text,scrollIndex,active) end
 ---@param bounds Rectangle
 ---@param text string|lightuserdata
 ---@param count number
----@param focus number
 ---@param scrollIndex number
 ---@param active number
+---@param focus number
 ---@return number
 ---List View with extended parameters
-function rl.GuiListViewEx(bounds,text,count,focus,scrollIndex,active) end
+function rl.GuiListViewEx(bounds,text,count,scrollIndex,active,focus) end
 ---@param bounds Rectangle
 ---@param title string|lightuserdata
 ---@param message string|lightuserdata
@@ -1387,20 +1486,20 @@ function rl.GuiMessageBox(bounds,title,message,buttons) end
 ---@param buttons string|lightuserdata
 ---@param text string|lightuserdata
 ---@param textMaxSize number
----@param secretViewActive number
+---@param secretViewActive bool_ptr|lightuserdata
 ---@return number
 ---Text Input Box control, ask for text, supports secret
 function rl.GuiTextInputBox(bounds,title,message,buttons,text,textMaxSize,secretViewActive) end
 ---@param bounds Rectangle
 ---@param text string|lightuserdata
----@param color Color
----@return PI_Color
+---@param color Color_ptr|lightuserdata
+---@return number
 ---Color Picker control (multiple color controls)
 function rl.GuiColorPicker(bounds,text,color) end
 ---@param bounds Rectangle
 ---@param text string|lightuserdata
----@param color Color
----@return PI_Color
+---@param color Color_ptr|lightuserdata
+---@return number
 ---Color Panel control
 function rl.GuiColorPanel(bounds,text,color) end
 ---@param bounds Rectangle
@@ -1415,59 +1514,18 @@ function rl.GuiColorBarAlpha(bounds,text,alpha) end
 ---@return number
 ---Color Bar Hue control
 function rl.GuiColorBarHue(bounds,text,value) end
----@param fileName string|lightuserdata
----@return PI_void
----Load style file over global style variable (.rgs)
-function rl.GuiLoadStyle(fileName) end
----@return PI_void
----Load style default over global style
-function rl.GuiLoadStyleDefault() end
----@param iconId number
+---@param bounds Rectangle
 ---@param text string|lightuserdata
----@return string|lightuserdata
----Get text with icon id prepended (if supported)
-function rl.GuiIconText(iconId,text) end
----@param iconId number
----@param posX number
----@param posY number
----@param pixelSize number
----@param color Color
----@return PI_void
-function rl.GuiDrawIcon(iconId,posX,posY,pixelSize,color) end
+---@param colorHsv Vector3_ptr|lightuserdata
 ---@return number
----Get full icons data pointer
-function rl.GuiGetIcons() end
----@param iconId number
+---Color Picker control that avoids conversion to RGB on each call (multiple color controls)
+function rl.GuiColorPickerHSV(bounds,text,colorHsv) end
+---@param bounds Rectangle
+---@param text string|lightuserdata
+---@param colorHsv Vector3_ptr|lightuserdata
 ---@return number
----Get icon bit data
-function rl.GuiGetIconData(iconId) end
----@param iconId number
----@param data number
----@return PI_void
----Set icon bit data
-function rl.GuiSetIconData(iconId,data) end
----@param scale number
----@return PI_void
----Set icon scale (1 by default)
-function rl.GuiSetIconScale(scale) end
----@param iconId number
----@param x number
----@param y number
----@return PI_void
----Set icon pixel value
-function rl.GuiSetIconPixel(iconId,x,y) end
----@param iconId number
----@param x number
----@param y number
----@return PI_void
----Clear icon pixel value
-function rl.GuiClearIconPixel(iconId,x,y) end
----@param iconId number
----@param x number
----@param y number
----@return PI_bool
----Check icon pixel value
-function rl.GuiCheckIconPixel(iconId,x,y) end
+---Color Panel control that returns HSV color value, used by GuiColorPickerHSV()
+function rl.GuiColorPanelHSV(bounds,text,colorHsv) end
 ---@alias ConfigFlags
 ---| 'FLAG_VSYNC_HINT'
 ---| 'FLAG_FULLSCREEN_MODE'
@@ -1482,6 +1540,7 @@ function rl.GuiCheckIconPixel(iconId,x,y) end
 ---| 'FLAG_WINDOW_TRANSPARENT'
 ---| 'FLAG_WINDOW_HIGHDPI'
 ---| 'FLAG_WINDOW_MOUSE_PASSTHROUGH'
+---| 'FLAG_BORDERLESS_WINDOWED_MODE'
 ---| 'FLAG_MSAA_4X_HINT'
 ---| 'FLAG_INTERLACED_HINT'
 ---System/Window config flags
@@ -1512,6 +1571,8 @@ rl.FLAG_WINDOW_TRANSPARENT = 16
 rl.FLAG_WINDOW_HIGHDPI = 8192
 ---Set to support mouse passthrough, only supported when FLAG_WINDOW_UNDECORATED
 rl.FLAG_WINDOW_MOUSE_PASSTHROUGH = 16384
+---Set to run program in borderless windowed mode
+rl.FLAG_BORDERLESS_WINDOWED_MODE = 32768
 ---Set to try enabling MSAA 4X
 rl.FLAG_MSAA_4X_HINT = 32
 ---Set to try enabling interlaced video format (for V3D)
@@ -2187,6 +2248,9 @@ rl.SHADER_ATTRIB_VEC4 = 3
 ---| 'PIXELFORMAT_UNCOMPRESSED_R32'
 ---| 'PIXELFORMAT_UNCOMPRESSED_R32G32B32'
 ---| 'PIXELFORMAT_UNCOMPRESSED_R32G32B32A32'
+---| 'PIXELFORMAT_UNCOMPRESSED_R16'
+---| 'PIXELFORMAT_UNCOMPRESSED_R16G16B16'
+---| 'PIXELFORMAT_UNCOMPRESSED_R16G16B16A16'
 ---| 'PIXELFORMAT_COMPRESSED_DXT1_RGB'
 ---| 'PIXELFORMAT_COMPRESSED_DXT1_RGBA'
 ---| 'PIXELFORMAT_COMPRESSED_DXT3_RGBA'
@@ -2220,28 +2284,34 @@ rl.PIXELFORMAT_UNCOMPRESSED_R32 = 8
 rl.PIXELFORMAT_UNCOMPRESSED_R32G32B32 = 9
 ---32*4 bpp (4 channels - float)
 rl.PIXELFORMAT_UNCOMPRESSED_R32G32B32A32 = 10
+---16 bpp (1 channel - half float)
+rl.PIXELFORMAT_UNCOMPRESSED_R16 = 11
+---16*3 bpp (3 channels - half float)
+rl.PIXELFORMAT_UNCOMPRESSED_R16G16B16 = 12
+---16*4 bpp (4 channels - half float)
+rl.PIXELFORMAT_UNCOMPRESSED_R16G16B16A16 = 13
 ---4 bpp (no alpha)
-rl.PIXELFORMAT_COMPRESSED_DXT1_RGB = 11
+rl.PIXELFORMAT_COMPRESSED_DXT1_RGB = 14
 ---4 bpp (1 bit alpha)
-rl.PIXELFORMAT_COMPRESSED_DXT1_RGBA = 12
+rl.PIXELFORMAT_COMPRESSED_DXT1_RGBA = 15
 ---8 bpp
-rl.PIXELFORMAT_COMPRESSED_DXT3_RGBA = 13
+rl.PIXELFORMAT_COMPRESSED_DXT3_RGBA = 16
 ---8 bpp
-rl.PIXELFORMAT_COMPRESSED_DXT5_RGBA = 14
+rl.PIXELFORMAT_COMPRESSED_DXT5_RGBA = 17
 ---4 bpp
-rl.PIXELFORMAT_COMPRESSED_ETC1_RGB = 15
+rl.PIXELFORMAT_COMPRESSED_ETC1_RGB = 18
 ---4 bpp
-rl.PIXELFORMAT_COMPRESSED_ETC2_RGB = 16
+rl.PIXELFORMAT_COMPRESSED_ETC2_RGB = 19
 ---8 bpp
-rl.PIXELFORMAT_COMPRESSED_ETC2_EAC_RGBA = 17
+rl.PIXELFORMAT_COMPRESSED_ETC2_EAC_RGBA = 20
 ---4 bpp
-rl.PIXELFORMAT_COMPRESSED_PVRT_RGB = 18
+rl.PIXELFORMAT_COMPRESSED_PVRT_RGB = 21
 ---4 bpp
-rl.PIXELFORMAT_COMPRESSED_PVRT_RGBA = 19
+rl.PIXELFORMAT_COMPRESSED_PVRT_RGBA = 22
 ---8 bpp
-rl.PIXELFORMAT_COMPRESSED_ASTC_4x4_RGBA = 20
+rl.PIXELFORMAT_COMPRESSED_ASTC_4x4_RGBA = 23
 ---2 bpp
-rl.PIXELFORMAT_COMPRESSED_ASTC_8x8_RGBA = 21
+rl.PIXELFORMAT_COMPRESSED_ASTC_8x8_RGBA = 24
 ---@alias TextureFilter
 ---| 'TEXTURE_FILTER_POINT'
 ---| 'TEXTURE_FILTER_BILINEAR'
@@ -2636,6 +2706,7 @@ local Model = {}
 ---@field frameCount number # Number of animation frames
 ---@field bones BoneInfo_ptr|lightuserdata # Bones information (skeleton)
 ---@field framePoses Transform_ptr_ptr|lightuserdata # Poses array by frame
+---@field name number|string[] # Animation name
 ---Constructed using `rl.new("ModelAnimation", ...)`
 local ModelAnimation = {}
 ---@class Ray @ Ray, ray for raycasting
@@ -2734,16 +2805,32 @@ local VrStereoConfig = {}
 ---@field paths string|lightuserdata # Filepaths entries
 ---Constructed using `rl.new("FilePathList", ...)`
 local FilePathList = {}
+---@class AutomationEvent @ Automation event
+---@alias AutomationEvent_ptr AutomationEvent
+---@alias AutomationEvent_ptr_ptr AutomationEvent
+---@field frame number # Event frame
+---@field type number # Event type (AutomationEventType)
+---@field params number # Event parameters (if required)
+---Constructed using `rl.new("AutomationEvent", ...)`
+local AutomationEvent = {}
+---@class AutomationEventList @ Automation event list
+---@alias AutomationEventList_ptr AutomationEventList
+---@alias AutomationEventList_ptr_ptr AutomationEventList
+---@field capacity number # Events max entries (MAX_AUTOMATION_EVENTS)
+---@field count number # Events entries count
+---@field events AutomationEvent_ptr|lightuserdata # Events entries
+---Constructed using `rl.new("AutomationEventList", ...)`
+local AutomationEventList = {}
 ---@param width number
 ---@param height number
 ---@param title string|lightuserdata
 ---Initialize window and OpenGL context
 function rl.InitWindow(width,height,title) end
----@return bool
----Check if KEY_ESCAPE pressed or Close icon pressed
-function rl.WindowShouldClose() end
 ---Close window and unload OpenGL context
 function rl.CloseWindow() end
+---@return bool
+---Check if application should close (KEY_ESCAPE pressed or windows close icon clicked)
+function rl.WindowShouldClose() end
 ---@return bool
 ---Check if window has been initialized successfully
 function rl.IsWindowReady() end
@@ -2777,6 +2864,8 @@ function rl.SetWindowState(flags) end
 function rl.ClearWindowState(flags) end
 ---Toggle window state: fullscreen/windowed (only PLATFORM_DESKTOP)
 function rl.ToggleFullscreen() end
+---Toggle window state: borderless windowed (only PLATFORM_DESKTOP)
+function rl.ToggleBorderlessWindowed() end
 ---Set window state: maximized, if resizable (only PLATFORM_DESKTOP)
 function rl.MaximizeWindow() end
 ---Set window state: minimized, if resizable (only PLATFORM_DESKTOP)
@@ -2791,14 +2880,14 @@ function rl.SetWindowIcon(image) end
 ---Set icon for window (multiple images, RGBA 32bit, only PLATFORM_DESKTOP)
 function rl.SetWindowIcons(images,count) end
 ---@param title string|lightuserdata
----Set title for window (only PLATFORM_DESKTOP)
+---Set title for window (only PLATFORM_DESKTOP and PLATFORM_WEB)
 function rl.SetWindowTitle(title) end
 ---@param x number
 ---@param y number
 ---Set window position on screen (only PLATFORM_DESKTOP)
 function rl.SetWindowPosition(x,y) end
 ---@param monitor number
----Set monitor for the current window (fullscreen mode)
+---Set monitor for the current window
 function rl.SetWindowMonitor(monitor) end
 ---@param width number
 ---@param height number
@@ -2806,11 +2895,17 @@ function rl.SetWindowMonitor(monitor) end
 function rl.SetWindowMinSize(width,height) end
 ---@param width number
 ---@param height number
+---Set window maximum dimensions (for FLAG_WINDOW_RESIZABLE)
+function rl.SetWindowMaxSize(width,height) end
+---@param width number
+---@param height number
 ---Set window dimensions
 function rl.SetWindowSize(width,height) end
 ---@param opacity number
 ---Set window opacity [0.0f..1.0f] (only PLATFORM_DESKTOP)
 function rl.SetWindowOpacity(opacity) end
+---Set window focused (only PLATFORM_DESKTOP)
+function rl.SetWindowFocused() end
 ---@return string|lightuserdata
 ---Get native window handle
 function rl.GetWindowHandle() end
@@ -2864,7 +2959,7 @@ function rl.GetWindowPosition() end
 function rl.GetWindowScaleDPI() end
 ---@param monitor number
 ---@return string|lightuserdata
----Get the human-readable, UTF-8 encoded name of the primary monitor
+---Get the human-readable, UTF-8 encoded name of the specified monitor
 function rl.GetMonitorName(monitor) end
 ---@param text string|lightuserdata
 ---Set clipboard text content
@@ -2876,13 +2971,6 @@ function rl.GetClipboardText() end
 function rl.EnableEventWaiting() end
 ---Disable waiting for events on EndDrawing(), automatic events polling
 function rl.DisableEventWaiting() end
----Swap back buffer with front buffer (screen drawing)
-function rl.SwapScreenBuffer() end
----Register all input events
-function rl.PollInputEvents() end
----@param seconds number
----Wait for some time (halt program execution)
-function rl.WaitTime(seconds) end
 ---Shows cursor
 function rl.ShowCursor() end
 ---Hides cursor
@@ -3038,28 +3126,47 @@ function rl.GetWorldToScreen2D(position,camera) end
 ---Set target FPS (maximum)
 function rl.SetTargetFPS(fps) end
 ---@return number
----Get current FPS
-function rl.GetFPS() end
----@return number
 ---Get time in seconds for last frame drawn (delta time)
 function rl.GetFrameTime() end
 ---@return number
 ---Get elapsed time in seconds since InitWindow()
 function rl.GetTime() end
+---@return number
+---Get current FPS
+function rl.GetFPS() end
+---Swap back buffer with front buffer (screen drawing)
+function rl.SwapScreenBuffer() end
+---Register all input events
+function rl.PollInputEvents() end
+---@param seconds number
+---Wait for some time (halt program execution)
+function rl.WaitTime(seconds) end
+---@param seed number
+---Set the seed for the random number generator
+function rl.SetRandomSeed(seed) end
 ---@param min number
 ---@param max number
 ---@return number
 ---Get a random value between min and max (both included)
 function rl.GetRandomValue(min,max) end
----@param seed number
----Set the seed for the random number generator
-function rl.SetRandomSeed(seed) end
+---@param count number
+---@param min number
+---@param max number
+---@return number
+---Load random values sequence, no values repeated
+function rl.LoadRandomSequence(count,min,max) end
+---@param sequence number
+---Unload random values sequence
+function rl.UnloadRandomSequence(sequence) end
 ---@param fileName string|lightuserdata
 ---Takes a screenshot of current screen (filename extension defines format)
 function rl.TakeScreenshot(fileName) end
 ---@param flags number
 ---Setup init configuration flags (view FLAGS)
 function rl.SetConfigFlags(flags) end
+---@param url string|lightuserdata
+---Open URL with default system browser (if available)
+function rl.OpenURL(url) end
 ---@param logLevel number
 ---@param text string|lightuserdata
 ---@param args ...
@@ -3080,9 +3187,6 @@ function rl.MemRealloc(ptr,size) end
 ---@param ptr string|lightuserdata
 ---Internal memory free
 function rl.MemFree(ptr) end
----@param url string|lightuserdata
----Open URL with default system browser (if available)
-function rl.OpenURL(url) end
 ---@param callback TraceLogCallback
 ---Set custom trace log
 function rl.SetTraceLogCallback(callback) end
@@ -3099,25 +3203,25 @@ function rl.SetLoadFileTextCallback(callback) end
 ---Set custom file text data saver
 function rl.SetSaveFileTextCallback(callback) end
 ---@param fileName string|lightuserdata
----@param bytesRead number
+---@param dataSize number
 ---@return string|lightuserdata
 ---Load file data as byte array (read)
-function rl.LoadFileData(fileName,bytesRead) end
+function rl.LoadFileData(fileName,dataSize) end
 ---@param data string|lightuserdata
 ---Unload file data allocated by LoadFileData()
 function rl.UnloadFileData(data) end
 ---@param fileName string|lightuserdata
 ---@param data string|lightuserdata
----@param bytesToWrite number
+---@param dataSize number
 ---@return bool
 ---Save data to file from byte array (write), returns true on success
-function rl.SaveFileData(fileName,data,bytesToWrite) end
+function rl.SaveFileData(fileName,data,dataSize) end
 ---@param data string|lightuserdata
----@param size number
+---@param dataSize number
 ---@param fileName string|lightuserdata
 ---@return bool
 ---Export data to code (.h), returns true on success
-function rl.ExportDataAsCode(data,size,fileName) end
+function rl.ExportDataAsCode(data,dataSize,fileName) end
 ---@param fileName string|lightuserdata
 ---@return string|lightuserdata
 ---Load text data from file (read), returns a '\0' terminated string
@@ -3171,7 +3275,7 @@ function rl.GetPrevDirectoryPath(dirPath) end
 ---Get current working directory (uses static string)
 function rl.GetWorkingDirectory() end
 ---@return string|lightuserdata
----Get the directory if the running application (uses static string)
+---Get the directory of the running application (uses static string)
 function rl.GetApplicationDirectory() end
 ---@param dir string|lightuserdata
 ---@return bool
@@ -3230,10 +3334,39 @@ function rl.EncodeDataBase64(data,dataSize,outputSize) end
 ---@return string|lightuserdata
 ---Decode Base64 string data, memory must be MemFree()
 function rl.DecodeDataBase64(data,outputSize) end
+---@param fileName string|lightuserdata
+---@return AutomationEventList
+---Load automation events list from file, NULL for empty list, capacity = MAX_AUTOMATION_EVENTS
+function rl.LoadAutomationEventList(fileName) end
+---@param list AutomationEventList_ptr|lightuserdata
+---Unload automation events list from file
+function rl.UnloadAutomationEventList(list) end
+---@param list AutomationEventList
+---@param fileName string|lightuserdata
+---@return bool
+---Export automation events list as text file
+function rl.ExportAutomationEventList(list,fileName) end
+---@param list AutomationEventList_ptr|lightuserdata
+---Set automation event list to record to
+function rl.SetAutomationEventList(list) end
+---@param frame number
+---Set automation event internal base frame to start recording
+function rl.SetAutomationEventBaseFrame(frame) end
+---Start recording automation events (AutomationEventList must be set)
+function rl.StartAutomationEventRecording() end
+---Stop recording automation events
+function rl.StopAutomationEventRecording() end
+---@param event AutomationEvent
+---Play a recorded automation event
+function rl.PlayAutomationEvent(event) end
 ---@param key number
 ---@return bool
 ---Check if a key has been pressed once
 function rl.IsKeyPressed(key) end
+---@param key number
+---@return bool
+---Check if a key has been pressed again (Only PLATFORM_DESKTOP)
+function rl.IsKeyPressedRepeat(key) end
 ---@param key number
 ---@return bool
 ---Check if a key is being pressed
@@ -3246,15 +3379,15 @@ function rl.IsKeyReleased(key) end
 ---@return bool
 ---Check if a key is NOT being pressed
 function rl.IsKeyUp(key) end
----@param key number
----Set a custom key to exit program (default is ESC)
-function rl.SetExitKey(key) end
 ---@return number
 ---Get key pressed (keycode), call it multiple times for keys queued, returns 0 when the queue is empty
 function rl.GetKeyPressed() end
 ---@return number
 ---Get char pressed (unicode), call it multiple times for chars queued, returns 0 when the queue is empty
 function rl.GetCharPressed() end
+---@param key number
+---Set a custom key to exit program (default is ESC)
+function rl.SetExitKey(key) end
 ---@param gamepad number
 ---@return bool
 ---Check if a gamepad is available
@@ -3423,40 +3556,25 @@ function rl.DrawLine(startPosX,startPosY,endPosX,endPosY,color) end
 ---@param startPos Vector2
 ---@param endPos Vector2
 ---@param color Color
----Draw a line (Vector version)
+---Draw a line (using gl lines)
 function rl.DrawLineV(startPos,endPos,color) end
 ---@param startPos Vector2
 ---@param endPos Vector2
 ---@param thick number
 ---@param color Color
----Draw a line defining thickness
+---Draw a line (using triangles/quads)
 function rl.DrawLineEx(startPos,endPos,thick,color) end
----@param startPos Vector2
----@param endPos Vector2
----@param thick number
----@param color Color
----Draw a line using cubic-bezier curves in-out
-function rl.DrawLineBezier(startPos,endPos,thick,color) end
----@param startPos Vector2
----@param endPos Vector2
----@param controlPos Vector2
----@param thick number
----@param color Color
----Draw line using quadratic bezier curves with a control point
-function rl.DrawLineBezierQuad(startPos,endPos,controlPos,thick,color) end
----@param startPos Vector2
----@param endPos Vector2
----@param startControlPos Vector2
----@param endControlPos Vector2
----@param thick number
----@param color Color
----Draw line using cubic bezier curves with 2 control points
-function rl.DrawLineBezierCubic(startPos,endPos,startControlPos,endControlPos,thick,color) end
 ---@param points Vector2_ptr|lightuserdata
 ---@param pointCount number
 ---@param color Color
----Draw lines sequence
+---Draw lines sequence (using gl lines)
 function rl.DrawLineStrip(points,pointCount,color) end
+---@param startPos Vector2
+---@param endPos Vector2
+---@param thick number
+---@param color Color
+---Draw line segment cubic-bezier in-out interpolation
+function rl.DrawLineBezier(startPos,endPos,thick,color) end
 ---@param centerX number
 ---@param centerY number
 ---@param radius number
@@ -3497,6 +3615,11 @@ function rl.DrawCircleV(center,radius,color) end
 ---@param color Color
 ---Draw circle outline
 function rl.DrawCircleLines(centerX,centerY,radius,color) end
+---@param center Vector2
+---@param radius number
+---@param color Color
+---Draw circle outline (Vector version)
+function rl.DrawCircleLinesV(center,radius,color) end
 ---@param centerX number
 ---@param centerY number
 ---@param radiusH number
@@ -3643,6 +3766,110 @@ function rl.DrawPolyLines(center,sides,radius,rotation,color) end
 ---@param color Color
 ---Draw a polygon outline of n sides with extended parameters
 function rl.DrawPolyLinesEx(center,sides,radius,rotation,lineThick,color) end
+---@param points Vector2_ptr|lightuserdata
+---@param pointCount number
+---@param thick number
+---@param color Color
+---Draw spline: Linear, minimum 2 points
+function rl.DrawSplineLinear(points,pointCount,thick,color) end
+---@param points Vector2_ptr|lightuserdata
+---@param pointCount number
+---@param thick number
+---@param color Color
+---Draw spline: B-Spline, minimum 4 points
+function rl.DrawSplineBasis(points,pointCount,thick,color) end
+---@param points Vector2_ptr|lightuserdata
+---@param pointCount number
+---@param thick number
+---@param color Color
+---Draw spline: Catmull-Rom, minimum 4 points
+function rl.DrawSplineCatmullRom(points,pointCount,thick,color) end
+---@param points Vector2_ptr|lightuserdata
+---@param pointCount number
+---@param thick number
+---@param color Color
+---Draw spline: Quadratic Bezier, minimum 3 points (1 control point): [p1, c2, p3, c4...]
+function rl.DrawSplineBezierQuadratic(points,pointCount,thick,color) end
+---@param points Vector2_ptr|lightuserdata
+---@param pointCount number
+---@param thick number
+---@param color Color
+---Draw spline: Cubic Bezier, minimum 4 points (2 control points): [p1, c2, c3, p4, c5, c6...]
+function rl.DrawSplineBezierCubic(points,pointCount,thick,color) end
+---@param p1 Vector2
+---@param p2 Vector2
+---@param thick number
+---@param color Color
+---Draw spline segment: Linear, 2 points
+function rl.DrawSplineSegmentLinear(p1,p2,thick,color) end
+---@param p1 Vector2
+---@param p2 Vector2
+---@param p3 Vector2
+---@param p4 Vector2
+---@param thick number
+---@param color Color
+---Draw spline segment: B-Spline, 4 points
+function rl.DrawSplineSegmentBasis(p1,p2,p3,p4,thick,color) end
+---@param p1 Vector2
+---@param p2 Vector2
+---@param p3 Vector2
+---@param p4 Vector2
+---@param thick number
+---@param color Color
+---Draw spline segment: Catmull-Rom, 4 points
+function rl.DrawSplineSegmentCatmullRom(p1,p2,p3,p4,thick,color) end
+---@param p1 Vector2
+---@param c2 Vector2
+---@param p3 Vector2
+---@param thick number
+---@param color Color
+---Draw spline segment: Quadratic Bezier, 2 points, 1 control point
+function rl.DrawSplineSegmentBezierQuadratic(p1,c2,p3,thick,color) end
+---@param p1 Vector2
+---@param c2 Vector2
+---@param c3 Vector2
+---@param p4 Vector2
+---@param thick number
+---@param color Color
+---Draw spline segment: Cubic Bezier, 2 points, 2 control points
+function rl.DrawSplineSegmentBezierCubic(p1,c2,c3,p4,thick,color) end
+---@param startPos Vector2
+---@param endPos Vector2
+---@param t number
+---@return Vector2
+---Get (evaluate) spline point: Linear
+function rl.GetSplinePointLinear(startPos,endPos,t) end
+---@param p1 Vector2
+---@param p2 Vector2
+---@param p3 Vector2
+---@param p4 Vector2
+---@param t number
+---@return Vector2
+---Get (evaluate) spline point: B-Spline
+function rl.GetSplinePointBasis(p1,p2,p3,p4,t) end
+---@param p1 Vector2
+---@param p2 Vector2
+---@param p3 Vector2
+---@param p4 Vector2
+---@param t number
+---@return Vector2
+---Get (evaluate) spline point: Catmull-Rom
+function rl.GetSplinePointCatmullRom(p1,p2,p3,p4,t) end
+---@param p1 Vector2
+---@param c2 Vector2
+---@param p3 Vector2
+---@param t number
+---@return Vector2
+---Get (evaluate) spline point: Quadratic Bezier
+function rl.GetSplinePointBezierQuad(p1,c2,p3,t) end
+---@param p1 Vector2
+---@param c2 Vector2
+---@param c3 Vector2
+---@param p4 Vector2
+---@param t number
+---@return Vector2
+---Get (evaluate) spline point: Cubic Bezier
+function rl.GetSplinePointBezierCubic(p1,c2,c3,p4,t) end
 ---@param rec1 Rectangle
 ---@param rec2 Rectangle
 ---@return bool
@@ -3717,6 +3944,12 @@ function rl.LoadImage(fileName) end
 ---@return Image
 ---Load image from RAW file data
 function rl.LoadImageRaw(fileName,width,height,format,headerSize) end
+---@param fileNameOrString string|lightuserdata
+---@param width number
+---@param height number
+---@return Image
+---Load image from SVG file data or string with specified size
+function rl.LoadImageSvg(fileNameOrString,width,height) end
 ---@param fileName string|lightuserdata
 ---@param frames number
 ---@return Image
@@ -3748,6 +3981,12 @@ function rl.UnloadImage(image) end
 ---Export image data to file, returns true on success
 function rl.ExportImage(image,fileName) end
 ---@param image Image
+---@param fileType string|lightuserdata
+---@param fileSize number
+---@return string|lightuserdata
+---Export image to memory buffer
+function rl.ExportImageToMemory(image,fileType,fileSize) end
+---@param image Image
 ---@param fileName string|lightuserdata
 ---@return bool
 ---Export image as code file defining an array of bytes, returns true on success
@@ -3760,18 +3999,12 @@ function rl.ExportImageAsCode(image,fileName) end
 function rl.GenImageColor(width,height,color) end
 ---@param width number
 ---@param height number
----@param top Color
----@param bottom Color
+---@param direction number
+---@param start Color
+---@param end_ Color
 ---@return Image
----Generate image: vertical gradient
-function rl.GenImageGradientV(width,height,top,bottom) end
----@param width number
----@param height number
----@param left Color
----@param right Color
----@return Image
----Generate image: horizontal gradient
-function rl.GenImageGradientH(width,height,left,right) end
+---Generate image: linear gradient, direction in degrees [0..360], 0=Vertical gradient
+function rl.GenImageGradientLinear(width,height,direction,start,end_) end
 ---@param width number
 ---@param height number
 ---@param density number
@@ -3780,6 +4013,14 @@ function rl.GenImageGradientH(width,height,left,right) end
 ---@return Image
 ---Generate image: radial gradient
 function rl.GenImageGradientRadial(width,height,density,inner,outer) end
+---@param width number
+---@param height number
+---@param density number
+---@param inner Color
+---@param outer Color
+---@return Image
+---Generate image: square gradient
+function rl.GenImageGradientSquare(width,height,density,inner,outer) end
 ---@param width number
 ---@param height number
 ---@param checksX number
@@ -3904,6 +4145,10 @@ function rl.ImageFlipVertical(image) end
 ---@param image Image_ptr|lightuserdata
 ---Flip image horizontally
 function rl.ImageFlipHorizontal(image) end
+---@param image Image_ptr|lightuserdata
+---@param degrees number
+---Rotate image by input angle in degrees (-359 to 359)
+function rl.ImageRotate(image,degrees) end
 ---@param image Image_ptr|lightuserdata
 ---Rotate image clockwise 90deg
 function rl.ImageRotateCW(image) end
@@ -4238,11 +4483,11 @@ function rl.GetFontDefault() end
 function rl.LoadFont(fileName) end
 ---@param fileName string|lightuserdata
 ---@param fontSize number
----@param fontChars number
----@param glyphCount number
+---@param codepoints number
+---@param codepointCount number
 ---@return Font
----Load font from file with extended parameters, use NULL for fontChars and 0 for glyphCount to load the default character set
-function rl.LoadFontEx(fileName,fontSize,fontChars,glyphCount) end
+---Load font from file with extended parameters, use NULL for codepoints and 0 for codepointCount to load the default character setFont
+function rl.LoadFontEx(fileName,fontSize,codepoints,codepointCount) end
 ---@param image Image
 ---@param key Color
 ---@param firstChar number
@@ -4253,11 +4498,11 @@ function rl.LoadFontFromImage(image,key,firstChar) end
 ---@param fileData string|lightuserdata
 ---@param dataSize number
 ---@param fontSize number
----@param fontChars number
----@param glyphCount number
+---@param codepoints number
+---@param codepointCount number
 ---@return Font
 ---Load font from memory buffer, fileType refers to extension: i.e. '.ttf'
-function rl.LoadFontFromMemory(fileType,fileData,dataSize,fontSize,fontChars,glyphCount) end
+function rl.LoadFontFromMemory(fileType,fileData,dataSize,fontSize,codepoints,codepointCount) end
 ---@param font Font
 ---@return bool
 ---Check if a font is ready
@@ -4265,25 +4510,25 @@ function rl.IsFontReady(font) end
 ---@param fileData string|lightuserdata
 ---@param dataSize number
 ---@param fontSize number
----@param fontChars number
----@param glyphCount number
+---@param codepoints number
+---@param codepointCount number
 ---@param type number
 ---@return GlyphInfo_ptr|lightuserdata
 ---Load font data for further use
-function rl.LoadFontData(fileData,dataSize,fontSize,fontChars,glyphCount,type) end
----@param chars const_GlyphInfo_ptr|lightuserdata
----@param recs Rectangle_ptr_ptr|lightuserdata
+function rl.LoadFontData(fileData,dataSize,fontSize,codepoints,codepointCount,type) end
+---@param glyphs const_GlyphInfo_ptr|lightuserdata
+---@param glyphRecs Rectangle_ptr_ptr|lightuserdata
 ---@param glyphCount number
 ---@param fontSize number
 ---@param padding number
 ---@param packMethod number
 ---@return Image
 ---Generate image font atlas using chars info
-function rl.GenImageFontAtlas(chars,recs,glyphCount,fontSize,padding,packMethod) end
----@param chars GlyphInfo_ptr|lightuserdata
+function rl.GenImageFontAtlas(glyphs,glyphRecs,glyphCount,fontSize,padding,packMethod) end
+---@param glyphs GlyphInfo_ptr|lightuserdata
 ---@param glyphCount number
 ---Unload font chars info data (RAM)
-function rl.UnloadFontData(chars,glyphCount) end
+function rl.UnloadFontData(glyphs,glyphCount) end
 ---@param font Font
 ---Unload font from GPU memory (VRAM)
 function rl.UnloadFont(font) end
@@ -4330,13 +4575,16 @@ function rl.DrawTextPro(font,text,position,origin,rotation,fontSize,spacing,tint
 function rl.DrawTextCodepoint(font,codepoint,position,fontSize,tint) end
 ---@param font Font
 ---@param codepoints number
----@param count number
+---@param codepointCount number
 ---@param position Vector2
 ---@param fontSize number
 ---@param spacing number
 ---@param tint Color
 ---Draw multiple character (codepoint)
-function rl.DrawTextCodepoints(font,codepoints,count,position,fontSize,spacing,tint) end
+function rl.DrawTextCodepoints(font,codepoints,codepointCount,position,fontSize,spacing,tint) end
+---@param spacing number
+---Set vertical line spacing when drawing with line-breaks
+function rl.SetTextLineSpacing(spacing) end
 ---@param text string|lightuserdata
 ---@param fontSize number
 ---@return number
@@ -4829,9 +5077,9 @@ function rl.UpdateModelAnimation(model,anim,frame) end
 ---Unload animation data
 function rl.UnloadModelAnimation(anim) end
 ---@param animations ModelAnimation_ptr|lightuserdata
----@param count number
+---@param animCount number
 ---Unload animation array data
-function rl.UnloadModelAnimations(animations,count) end
+function rl.UnloadModelAnimations(animations,animCount) end
 ---@param model Model
 ---@param anim ModelAnimation
 ---@return bool
@@ -4897,6 +5145,9 @@ function rl.IsAudioDeviceReady() end
 ---@param volume number
 ---Set master volume (listener)
 function rl.SetMasterVolume(volume) end
+---@return number
+---Get master volume (listener)
+function rl.GetMasterVolume() end
 ---@param fileName string|lightuserdata
 ---@return Wave
 ---Load wave data from file
@@ -4919,6 +5170,10 @@ function rl.LoadSound(fileName) end
 ---@return Sound
 ---Load sound from wave data
 function rl.LoadSoundFromWave(wave) end
+---@param source Sound
+---@return Sound
+---Create a new sound that shares the same sample data as the source sound, does not own the sound data
+function rl.LoadSoundAlias(source) end
 ---@param sound Sound
 ---@return bool
 ---Checks if a sound is ready
@@ -4934,6 +5189,9 @@ function rl.UnloadWave(wave) end
 ---@param sound Sound
 ---Unload sound
 function rl.UnloadSound(sound) end
+---@param alias Sound
+---Unload a sound alias (does not deallocate sample data)
+function rl.UnloadSoundAlias(alias) end
 ---@param wave Wave
 ---@param fileName string|lightuserdata
 ---@return bool
@@ -5113,14 +5371,14 @@ function rl.SetAudioStreamBufferSizeDefault(size) end
 function rl.SetAudioStreamCallback(stream,callback) end
 ---@param stream AudioStream
 ---@param processor AudioCallback
----Attach audio stream processor to stream
+---Attach audio stream processor to stream, receives the samples as <float>s
 function rl.AttachAudioStreamProcessor(stream,processor) end
 ---@param stream AudioStream
 ---@param processor AudioCallback
 ---Detach audio stream processor from stream
 function rl.DetachAudioStreamProcessor(stream,processor) end
 ---@param processor AudioCallback
----Attach audio stream processor to the entire audio pipeline
+---Attach audio stream processor to the entire audio pipeline, receives the samples as <float>s
 function rl.AttachAudioMixedProcessor(processor) end
 ---@param processor AudioCallback
 ---Detach audio stream processor from the entire audio pipeline
@@ -5167,6 +5425,27 @@ local Vector2 = {}
 ---@field z number # Vector z component
 ---Constructed using `rl.new("Vector3", ...)`
 local Vector3 = {}
+---@class Matrix @ Matrix, 4x4 components, column major, OpenGL style, right-handed
+---@alias Matrix_ptr Matrix
+---@alias Matrix_ptr_ptr Matrix
+---@field m0 number # Matrix first row (4 components)
+---@field m4 number # Matrix first row (4 components)
+---@field m8 number # Matrix first row (4 components)
+---@field m12 number # Matrix first row (4 components)
+---@field m1 number # Matrix second row (4 components)
+---@field m5 number # Matrix second row (4 components)
+---@field m9 number # Matrix second row (4 components)
+---@field m13 number # Matrix second row (4 components)
+---@field m2 number # Matrix third row (4 components)
+---@field m6 number # Matrix third row (4 components)
+---@field m10 number # Matrix third row (4 components)
+---@field m14 number # Matrix third row (4 components)
+---@field m3 number # Matrix fourth row (4 components)
+---@field m7 number # Matrix fourth row (4 components)
+---@field m11 number # Matrix fourth row (4 components)
+---@field m15 number # Matrix fourth row (4 components)
+---Constructed using `rl.new("Matrix", ...)`
+local Matrix = {}
 ---@class Camera3D @ Camera type, defines a camera position/orientation in 3d space
 ---@alias Camera3D_ptr Camera3D
 ---@alias Camera3D_ptr_ptr Camera3D
@@ -6202,9 +6481,11 @@ function rl.rlGetMatrixViewOffsetStereo(eye) end
 ---@overload fun(t: '"Color"', ...): Color
 ---@overload fun(t: '"Rectangle"', ...): Rectangle
 ---@overload fun(t: '"Texture2D"', ...): Texture2D
+---@overload fun(t: '"Image"', ...): Image
 ---@overload fun(t: '"GlyphInfo"', ...): GlyphInfo
 ---@overload fun(t: '"Font"', ...): Font
 ---@overload fun(t: '"GuiStyleProp"', ...): GuiStyleProp
+---@overload fun(t: '"GuiTextStyle"', ...): GuiTextStyle
 ---@overload fun(t: '"Vector2"', ...): Vector2
 ---@overload fun(t: '"Vector3"', ...): Vector3
 ---@overload fun(t: '"Vector4"', ...): Vector4
@@ -6237,8 +6518,11 @@ function rl.rlGetMatrixViewOffsetStereo(eye) end
 ---@overload fun(t: '"VrDeviceInfo"', ...): VrDeviceInfo
 ---@overload fun(t: '"VrStereoConfig"', ...): VrStereoConfig
 ---@overload fun(t: '"FilePathList"', ...): FilePathList
+---@overload fun(t: '"AutomationEvent"', ...): AutomationEvent
+---@overload fun(t: '"AutomationEventList"', ...): AutomationEventList
 ---@overload fun(t: '"Vector2"', ...): Vector2
 ---@overload fun(t: '"Vector3"', ...): Vector3
+---@overload fun(t: '"Matrix"', ...): Matrix
 ---@overload fun(t: '"Camera3D"', ...): Camera3D
 ---@overload fun(t: '"rlVertexBuffer"', ...): rlVertexBuffer
 ---@overload fun(t: '"rlDrawCall"', ...): rlDrawCall
