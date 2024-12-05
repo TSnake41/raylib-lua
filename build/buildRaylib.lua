@@ -17,8 +17,8 @@ if los.type() == "linux" then
 end
 
 local consts = {
-  RAYLIB_VERSION = "4.0.0",
-  RAYLIB_API_VERSION = "400",
+  RAYLIB_VERSION = "5.5.0",
+  RAYLIB_API_VERSION = "550",
 }
 
 local vars = saphire.map({
@@ -33,6 +33,13 @@ local vars = saphire.map({
 }, function (v)
   return { v[1], os.getenv(v[1]) or v[2] }
 end)
+
+if vars.USE_WAYLAND_DISPLAY == "TRUE" then
+  cflags = cflags .. " -D_GLFW_WAYLAND"
+else
+  -- Assume "FALSE"
+  cflags = cflags .. " -D_GLFW_X11"
+end
 
 for i,v in ipairs(vars) do
   vars[v[1]] = v[2]

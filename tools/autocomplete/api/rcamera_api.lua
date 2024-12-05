@@ -33,8 +33,8 @@ return {
     {
       name = "CAMERA_MOVE_SPEED",
       type = "FLOAT",
-      value = 0.09,
-      description = ""
+      value = 5.4,
+      description = "Units per second"
     },
     {
       name = "CAMERA_ROTATION_SPEED",
@@ -52,12 +52,6 @@ return {
       name = "CAMERA_MOUSE_MOVE_SENSITIVITY",
       type = "FLOAT",
       value = 0.003,
-      description = "TODO: it should be independant of framerate"
-    },
-    {
-      name = "CAMERA_MOUSE_SCROLL_SENSITIVITY",
-      type = "FLOAT",
-      value = 1.5,
       description = ""
     },
     {
@@ -65,30 +59,6 @@ return {
       type = "FLOAT",
       value = 0.5,
       description = "Radians per second"
-    },
-    {
-      name = "CAMERA_FIRST_PERSON_STEP_TRIGONOMETRIC_DIVIDER",
-      type = "FLOAT",
-      value = 8.0,
-      description = ""
-    },
-    {
-      name = "CAMERA_FIRST_PERSON_STEP_DIVIDER",
-      type = "FLOAT",
-      value = 30.0,
-      description = ""
-    },
-    {
-      name = "CAMERA_FIRST_PERSON_WAVING_DIVIDER",
-      type = "FLOAT",
-      value = 200.0,
-      description = ""
-    },
-    {
-      name = "PLAYER_MOVEMENT_SENSITIVITY",
-      type = "FLOAT",
-      value = 20.0,
-      description = ""
     }
   },
   structs = {

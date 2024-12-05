@@ -148,7 +148,7 @@ rl.CloseWindow()
 
 ### Compatibility
 
-raylib-lua (raylua) currently uses raylib 4.5 API. See [compat.lua](https://github.com/TSnake41/raylib-lua/blob/master/src/compat.lua) for more info.
+raylib-lua (raylua) currently uses raylib 5.5 API. See [compat.lua](https://github.com/TSnake41/raylib-lua/blob/master/src/compat.lua) for more info.
 
 [physac](https://github.com/victorfisac/Physac) and [rlgl](https://github.com/raysan5/raylib/blob/master/src/rlgl.h) modules are also built-in by default.
 [raygui](https://github.com/raysan5/raygui) is supported, but is minimally tested. 

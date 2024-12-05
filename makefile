@@ -39,6 +39,7 @@ else
 	ifeq ($(PLATFORM),PLATFORM_DRM)
 		LDFLAGS += -ldrm -lGLESv2 -lEGL -lgbm
 	else
+		CFLAGS += -D_GLFW_X11
 		LDFLAGS += -lX11
 	endif
 	EXTERNAL_FILES :=
