@@ -93,7 +93,7 @@ int raylua_listfiles(lua_State *L)
   return 1;
 }
 
-unsigned char *raylua_loadFileData(const char *path, unsigned int *out_size)
+unsigned char *raylua_loadFileData(const char *path, int *out_size)
 {
   int index = mz_zip_reader_locate_file(&zip_file, path, NULL, 0);
   if (index == -1) {
