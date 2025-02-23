@@ -195,7 +195,7 @@ int main(int argc, const char **argv)
     return 1;
   }
 
-  SetLoadFileDataCallback(raylua_loadFileData);
+  SetLoadFileDataCallback((unsigned char *(*)(const char *, int *)) raylua_loadFileData);
   SetLoadFileTextCallback(raylua_loadFileText);
 
   if (!raylua_init_payload(self)) {
