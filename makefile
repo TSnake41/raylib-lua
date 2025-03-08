@@ -22,11 +22,11 @@ USE_EXTERNAL_GLFW ?= FALSE
 
 ifeq ($(OS),Windows_NT)
 	LDFLAGS += -lopengl32 -lgdi32 -lwinmm -static
-	LDFLAGS_R += -mwindows 
+	LDFLAGS_R += -mwindows
 	EXTERNAL_FILES := src/res/icon.res
 else ifeq ($(shell uname),Darwin)
 	LDFLAGS += -framework CoreVideo -framework IOKit -framework Cocoa \
-		-framework GLUT -framework OpenGL 
+		-framework GLUT -framework OpenGL
 	ifeq ($(shell uname -m),arm64)
 		# Additional flags for ARM64 on macOS
 		CFLAGS += -target arm64-apple-macos11
@@ -45,7 +45,7 @@ else
 	EXTERNAL_FILES :=
 endif
 
-all: raylua_s raylua_e raylua_r luajit raylib
+all: luajit raylib raylua_s raylua_e raylua_r
 
 %.o: %.c
 	$(CC) -c -o $@ $< $(CFLAGS)
