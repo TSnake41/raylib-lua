@@ -93,9 +93,50 @@ along with `libluajit.a` is used. In case of cross-compiling, you may want to
 change which Lua interpreter is used to one your system supports.
 You can specify the interpreter with the `LUA` variable.
 
-If you need to update the raylib binding, there are a few tasks you will need to do:
- - Update the `tools/api.h` function signatures. Keep the file clean, with exactly one function per line.
- - Update the struct definitions in `src/raylib.lua`.
+### Updating raylib Bindings
+
+When updating to a new raylib version, there are a few tasks to complete:
+
+1. **Update submodules:**
+   ```shell
+   # Update raylib to latest master
+   cd raylib && git fetch origin master && git checkout origin/master && cd ..
+   # Update raygui to latest master
+   cd raygui && git fetch origin master && git checkout origin/master && cd ..
+   # Update other submodules as needed...
+   ```
+
+2. **Update API bindings:**
+   ```shell
+   # Requires LuaJIT (run: make luajit first)
+   luajit/src/luajit tools/update_bindings.lua all
+   
+   # Or update individual modules:
+   luajit/src/luajit tools/update_bindings.lua api       # raylib core API
+   luajit/src/luajit tools/update_bindings.lua raymath   # raymath functions
+   luajit/src/luajit tools/update_bindings.lua rlgl      # OpenGL wrapper
+   luajit/src/luajit tools/update_bindings.lua gestures  # gesture system
+   luajit/src/luajit tools/update_bindings.lua rcamera   # camera functions
+   luajit/src/luajit tools/update_bindings.lua physac    # physics library
+   luajit/src/luajit tools/update_bindings.lua raygui    # GUI library
+   ```
+
+3. **Rebuild bindings:**
+   ```shell
+   make clean
+   make
+   ```
+
+4. **Update struct definitions** in `src/raylib.lua` if needed (new types, etc.)
+
+The binding header files are in `tools/*.h`:
+ - `tools/api.h` - raylib core API (599 functions)
+ - `tools/raymath.h` - math library (152 functions)
+ - `tools/rlgl.h` - OpenGL wrapper (172 functions)
+ - `tools/gestures.h` - gesture system (13 functions)
+ - `tools/rcamera.h` - camera functions (18 functions)
+ - `tools/physac.h` - physics library (37 functions)
+ - `tools/raygui.h` - GUI library (72 functions)
 
 ### Loading embedded ressources
 

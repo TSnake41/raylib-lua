@@ -10,6 +10,7 @@ CFLAGS += -Iluajit/src -Iraylib/src -Iraygui/src -Iphysac/src
 LDFLAGS += luajit/src/libluajit.a raylib/src/libraylib.a
 
 MODULES := raymath rlgl gestures physac raygui rcamera
+OUT_DIR := ./raylua-out/
 
 # raylib settings
 PLATFORM ?= PLATFORM_DESKTOP
@@ -47,6 +48,9 @@ endif
 
 all: raylua_s raylua_e raylua_r luajit raylib
 
+$(OUT_DIR):
+	mkdir -p $@
+
 %.o: %.c
 	$(CC) -c -o $@ $< $(CFLAGS)
 
@@ -63,28 +67,28 @@ raylib:
 		PLATFORM="$(PLATFORM)" GRAPHICS="$(GRAPHICS)"
 
 
-raylua_s: src/raylua_s.o $(EXTERNAL_FILES) libraylua.a
-	$(CC) -o $@ $^ $(LDFLAGS) luajit/src/libluajit.a
+raylua_s: src/raylua_s.o $(EXTERNAL_FILES) $(OUT_DIR)libraylua.a | $(OUT_DIR)
+	$(CC) -o $(OUT_DIR)$@ $^ $(LDFLAGS) luajit/src/libluajit.a
 
 raylua_e: src/raylua_e.o src/raylua_self.o src/raylua_builder.o src/lib/miniz.o \
-		$(EXTERNAL_FILES) libraylua.a
-	$(CC) -o $@ $^ $(LDFLAGS) luajit/src/libluajit.a
+		$(EXTERNAL_FILES) $(OUT_DIR)libraylua.a | $(OUT_DIR)
+	$(CC) -o $(OUT_DIR)$@ $^ $(LDFLAGS) luajit/src/libluajit.a
 
 raylua_r: src/raylua_e.o src/raylua_self.o src/raylua_builder.o src/lib/miniz.o \
-		$(EXTERNAL_FILES) libraylua.a
-	$(CC) -o $@ $^ $(LDFLAGS) $(LDFLAGS_R) luajit/src/libluajit.a
+		$(EXTERNAL_FILES) $(OUT_DIR)libraylua.a | $(OUT_DIR)
+	$(CC) -o $(OUT_DIR)$@ $^ $(LDFLAGS) $(LDFLAGS_R) luajit/src/libluajit.a
 
 src/res/icon.res: src/res/icon.rc
 	$(WINDRES) $^ -O coff $@
 
-libraylua.a: src/raylua.o
-	$(AR) rcu $@ $^
+$(OUT_DIR)libraylua.a: src/raylua.o | $(OUT_DIR)
+	$(AR) rcu $@ src/raylua.o
 
-raylua.dll: src/raylua.o
-	$(CC) -shared -fPIE -o $@ $^ $(LDFLAGS) -llua5.1
+$(OUT_DIR)raylua.dll: src/raylua.o | $(OUT_DIR)
+	$(CC) -shared -fPIE -o $@ src/raylua.o $(LDFLAGS) -llua5.1
 
-raylua.so: src/raylua.o
-	$(CC) -shared -fPIE -o $@ $^ $(LDFLAGS) -llua5.1
+$(OUT_DIR)raylua.so: src/raylua.o | $(OUT_DIR)
+	$(CC) -shared -fPIE -o $@ src/raylua.o $(LDFLAGS) -llua5.1
 
 src/raylua.o: luajit raylib src/autogen/boot.c src/autogen/bind.c
 
@@ -100,7 +104,8 @@ src/autogen/builder.c: src/raylua_builder.lua
 	$(LUA) tools/lua2str.lua $@ raylua_builder_lua $^
 
 clean:
-	rm -rf raylua_s raylua_e libraylua.a src/raylua_e.o src/raylua_s.o \
+	rm -rf $(OUT_DIR)
+	rm -rf src/raylua_e.o src/raylua_s.o \
 		src/raylua.o src/raylua_self.o src/raylua_builder.o src/autogen/*.c \
 		src/lib/miniz.o src/res/icon.res
 	$(MAKE) -C luajit clean

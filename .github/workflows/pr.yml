@@ -1,0 +1,165 @@
+name: PR Build
+
+on:
+  pull_request:
+    branches: [master, main]
+  push:
+    branches: [master, main]
+
+env:
+  RAYLIB_VERSION: "6.0"
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential \
+            libasound2-dev \
+            libxcursor-dev \
+            libxinerama-dev \
+            libx11-dev \
+            libxrandr-dev \
+            libxi-dev \
+            libgl1-mesa-dev \
+            libglu1-mesa-dev
+
+      - name: Build
+        run: make
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: raylua-linux-pr-${{ github.event.pull_request.number }}
+          path: raylua-out/*
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Build
+        run: make
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: raylua-macos-pr-${{ github.event.pull_request.number }}
+          path: raylua-out/*
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Build
+        run: make
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: raylua-windows-pr-${{ github.event.pull_request.number }}
+          path: raylua-out/*
+
+  comment-pr:
+    needs: [build-linux, build-macos, build-windows]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Determine version
+        id: version
+        run: |
+          DATE=$(date +%Y%m%d)
+          WEEK=$(date +%V)
+          
+          # Get run number (increments with each run)
+          RUN_NUMBER=${{ github.run_number }}
+          
+          # Branch name sanitized
+          BRANCH_NAME="${{ github.head_ref }}"
+          BRANCH_NAME=${BRANCH_NAME//[^a-zA-Z0-9]/-}
+          BRANCH_NAME=${BRANCH_NAME:0:50}  # Limit length
+          
+          # For PRs, use PR number; for pushes, use hash
+          if [ -n "${{ github.event.pull_request.number }}" ]; then
+            IDENTIFIER="pr${{ github.event.pull_request.number }}.${RUN_NUMBER}"
+          else
+            COMMIT_HASH="${{ github.sha }}"
+            COMMIT_SHORT="${COMMIT_HASH:0:7}"
+            IDENTIFIER="push.${COMMIT_SHORT}.${RUN_NUMBER}"
+          fi
+          
+          VERSION="rlua-${DATE}W${WEEK}-experimental.${IDENTIFIER}"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Find comment
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const botComment = comments.find(c => c.user.type === 'Bot' && c.body.includes('### Raylua PR Build'));
+            if (botComment) {
+              console.log('::set-output name=comment_id::' + botComment.id);
+            }
+
+      - name: Delete old comment
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const commentId = '${{ needs.comment-pr.outputs.comment_id }}';
+            if (commentId && commentId !== 'comment_id') {
+              await github.rest.issues.deleteComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: parseInt(commentId),
+              });
+            }
+
+      - name: Post comment
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const VERSION = '${{ steps.version.outputs.version }}';
+            const PR_NUMBER = context.issue.number;
+            const RUN_URL = context.serverUrl + '/actions/runs/' + context.runId;
+            
+            const BODY = "### Raylua PR Build\n\n" +
+              "**Version:** " + VERSION + "\n\n" +
+              "#### Artifacts\n\n" +
+              "| Platform | Downloads |\n" +
+              "|----------|----------|\n" +
+              "| Linux | [raylua-linux-pr-" + PR_NUMBER + "](" + RUN_URL + "?redirect=true) |\n" +
+              "| macOS | [raylua-macos-pr-" + PR_NUMBER + "](" + RUN_URL + "?redirect=true) |\n" +
+              "| Windows | [raylua-windows-pr-" + PR_NUMBER + "](" + RUN_URL + "?redirect=true) |\n\n" +
+              "---";
+            //"*Built automatically on push to branch*";
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: PR_NUMBER,
+              body: BODY,
+            });

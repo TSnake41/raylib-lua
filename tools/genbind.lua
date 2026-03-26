@@ -103,15 +103,17 @@ for _,modname in ipairs(modules) do
             end
           end
 
-          functions[#functions + 1] = part
-          funcname = part
-          counter = counter + 1
-
-          if counter == 2 then
-            print("WARN: Multiple matches for: " .. line)
+          -- Only count the first match as the function name
+          -- Ignore subsequent matches (they're likely type names)
+          if counter == 0 then
+            functions[#functions + 1] = part
+            funcname = part
+            counter = counter + 1
+            return "(*)"
+          else
+            -- Keep subsequent matches unchanged in proto
+            return part
           end
-
-          return "(*)"
         end)
 
         -- Strip spaces

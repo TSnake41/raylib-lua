@@ -1,0 +1,180 @@
+name: Build and Release
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'  # Weekly on Sunday at midnight
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+  release:
+    types: [published]
+  workflow_dispatch:
+
+env:
+  RAYLIB_VERSION: "6.0"
+
+jobs:
+  check-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      has_changes: ${{ steps.check.outputs.has_changes }}
+      raylib_ver: ${{ steps.check.outputs.raylib_ver }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          fetch-depth: 2
+
+      - name: Check for changes
+        id: check
+        run: |
+          # Get raylib version
+          RAYLIB_VER=$(grep '#define RAYLIB_VERSION ' raylib/src/raylib.h | sed 's/.*"\(.*\)"/\1/')
+          echo "raylib_ver=$RAYLIB_VER" >> $GITHUB_OUTPUT
+          
+          # Check if there are submodule updates or code changes
+          if [ -n "${{ github.event.release.tag_name }}" ]; then
+            # This is a release tag - always build
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "Building release: ${{ github.event.release.tag_name }}"
+          elif git diff --name-only HEAD~1 HEAD | grep -q .; then
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "Code changes detected"
+          else
+            # Check submodule changes
+            if git submodule status | grep -q "^[+-]"; then
+              echo "has_changes=true" >> $GITHUB_OUTPUT
+              echo "Submodule changes detected"
+            else
+              echo "has_changes=false" >> $GITHUB_OUTPUT
+              echo "No changes detected, skipping build"
+            fi
+          fi
+
+  build-linux:
+    needs: check-changes
+    if: needs.check-changes.outputs.has_changes == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential \
+            libasound2-dev \
+            libxcursor-dev \
+            libxinerama-dev \
+            libx11-dev \
+            libxrandr-dev \
+            libxi-dev \
+            libgl1-mesa-dev \
+            libglu1-mesa-dev
+
+      - name: Build
+        run: make
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: raylua-linux
+          path: raylua-out/*
+
+  build-macos:
+    needs: check-changes
+    if: needs.check-changes.outputs.has_changes == 'true'
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Build
+        run: make
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: raylua-macos
+          path: raylua-out/*
+
+  build-windows:
+    needs: check-changes
+    if: needs.check-changes.outputs.has_changes == 'true'
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Build
+        run: make
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: raylua-windows
+          path: raylua-out/*
+
+  release:
+    needs: [check-changes, build-linux, build-macos, build-windows]
+    if: needs.check-changes.outputs.has_changes == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          fetch-depth: 0
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: builds
+
+      - name: Determine release version
+        id: version
+        run: |
+          RAYLIB_VER=$(grep '#define RAYLIB_VERSION ' raylib/src/raylib.h | sed 's/.*"\(.*\)"/\1/')
+          
+          if [ -n "${{ github.event.release.tag_name }}" ]; then
+            # Tagged release - use the tag name directly
+            TAG="${{ github.event.release.tag_name }}"
+            # Extract version from tag (remove v prefix if present)
+            RELEASE_NAME="rlua-${TAG#v}"
+            PRERELEASE=false
+          else
+            # Edge release - use CalVer
+            DATE=$(date +%Y%m%d)
+            WEEK=$(date +%V)
+            RELEASE_NAME="rlua-${DATE}W${WEEK}-edge"
+            PRERELEASE=true
+          fi
+          
+          echo "release_name=$RELEASE_NAME" >> $GITHUB_OUTPUT
+          echo "prerelease=$PRERELEASE" >> $GITHUB_OUTPUT
+          echo "raylib_version=$RAYLIB_VER" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ steps.version.outputs.release_name }}
+          draft: false
+          prerelease: ${{ steps.version.outputs.prerelease }}
+          generate_release_notes: true
+          files: |
+            builds/raylua-linux/*
+            builds/raylua-macos/*
+            builds/raylua-windows/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
