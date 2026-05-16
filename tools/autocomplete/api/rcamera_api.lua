@@ -16,18 +16,18 @@ return {
       name = "RLAPI",
       type = "UNKNOWN",
       value = "__declspec(dllexport)",
-      description = "We are building the library as a Win32 shared library (.dll)"
+      description = "Building the library as a Win32 shared library (.dll)"
     },
     {
       name = "CAMERA_CULL_DISTANCE_NEAR",
       type = "DOUBLE",
-      value = 0.01,
+      value = 0.05,
       description = ""
     },
     {
       name = "CAMERA_CULL_DISTANCE_FAR",
       type = "DOUBLE",
-      value = 1000.0,
+      value = 4000.0,
       description = ""
     },
     {
@@ -45,7 +45,7 @@ return {
     {
       name = "CAMERA_PAN_SPEED",
       type = "FLOAT",
-      value = 0.2,
+      value = 2.0,
       description = ""
     },
     {
@@ -64,7 +64,7 @@ return {
   structs = {
     {
       name = "Vector2",
-      description = "Vector2, 2 components",
+      description = [=[Vector2, 2 components]=],
       fields = {
         {
           type = "float",
@@ -80,7 +80,7 @@ return {
     },
     {
       name = "Vector3",
-      description = "Vector3, 3 components",
+      description = [=[Vector3, 3 components]=],
       fields = {
         {
           type = "float",
@@ -101,7 +101,7 @@ return {
     },
     {
       name = "Matrix",
-      description = "Matrix, 4x4 components, column major, OpenGL style, right-handed",
+      description = [=[Matrix, 4x4 components, column major, OpenGL style, right-handed]=],
       fields = {
         {
           type = "float",
@@ -187,7 +187,7 @@ return {
     },
     {
       name = "Camera3D",
-      description = "Camera type, defines a camera position/orientation in 3d space",
+      description = [=[Camera type, defines a camera position/orientation in 3d space]=],
       fields = {
         {
           type = "Vector3",
@@ -207,7 +207,7 @@ return {
         {
           type = "float",
           name = "fovy",
-          description = "Camera field-of-view apperture in Y (degrees) in perspective, used as near plane width in orthographic"
+          description = "Camera field-of-view aperture in Y (degrees) in perspective, used as near plane width in orthographic"
         },
         {
           type = "int",
@@ -227,7 +227,7 @@ return {
   enums = {
     {
       name = "CameraProjection",
-      description = "Camera projection",
+      description = [=[Camera projection]=],
       values = {
         {
           name = "CAMERA_PERSPECTIVE",
@@ -243,7 +243,7 @@ return {
     },
     {
       name = "CameraMode",
-      description = "Camera system modes",
+      description = [=[Camera system modes]=],
       values = {
         {
           name = "CAMERA_CUSTOM",
@@ -278,7 +278,7 @@ return {
   functions = {
     {
       name = "GetCameraForward",
-      description = "",
+      description = [=[]=],
       returnType = "Vector3",
       params = {
         {type = "Camera *", name = "camera"}
@@ -286,7 +286,7 @@ return {
     },
     {
       name = "GetCameraUp",
-      description = "",
+      description = [=[]=],
       returnType = "Vector3",
       params = {
         {type = "Camera *", name = "camera"}
@@ -294,7 +294,7 @@ return {
     },
     {
       name = "GetCameraRight",
-      description = "",
+      description = [=[]=],
       returnType = "Vector3",
       params = {
         {type = "Camera *", name = "camera"}
@@ -302,7 +302,7 @@ return {
     },
     {
       name = "CameraMoveForward",
-      description = "",
+      description = [=[]=],
       returnType = "void",
       params = {
         {type = "Camera *", name = "camera"},
@@ -312,7 +312,7 @@ return {
     },
     {
       name = "CameraMoveUp",
-      description = "",
+      description = [=[]=],
       returnType = "void",
       params = {
         {type = "Camera *", name = "camera"},
@@ -321,7 +321,7 @@ return {
     },
     {
       name = "CameraMoveRight",
-      description = "",
+      description = [=[]=],
       returnType = "void",
       params = {
         {type = "Camera *", name = "camera"},
@@ -331,7 +331,7 @@ return {
     },
     {
       name = "CameraMoveToTarget",
-      description = "",
+      description = [=[]=],
       returnType = "void",
       params = {
         {type = "Camera *", name = "camera"},
@@ -340,7 +340,7 @@ return {
     },
     {
       name = "CameraYaw",
-      description = "",
+      description = [=[]=],
       returnType = "void",
       params = {
         {type = "Camera *", name = "camera"},
@@ -350,7 +350,7 @@ return {
     },
     {
       name = "CameraPitch",
-      description = "",
+      description = [=[]=],
       returnType = "void",
       params = {
         {type = "Camera *", name = "camera"},
@@ -362,7 +362,7 @@ return {
     },
     {
       name = "CameraRoll",
-      description = "",
+      description = [=[]=],
       returnType = "void",
       params = {
         {type = "Camera *", name = "camera"},
@@ -371,7 +371,7 @@ return {
     },
     {
       name = "GetCameraViewMatrix",
-      description = "",
+      description = [=[]=],
       returnType = "Matrix",
       params = {
         {type = "Camera *", name = "camera"}
@@ -379,10 +379,10 @@ return {
     },
     {
       name = "GetCameraProjectionMatrix",
-      description = "",
+      description = [=[]=],
       returnType = "Matrix",
       params = {
-        {type = "Camera*", name = "camera"},
+        {type = "Camera *", name = "camera"},
         {type = "float", name = "aspect"}
       }
     }

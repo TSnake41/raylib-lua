@@ -6,10 +6,10 @@ LUA ?= luajit/src/luajit
 
 WINDRES ?= windres
 
-CFLAGS += -Iluajit/src -Iraylib/src -Iraygui/src -Iphysac/src
+CFLAGS += -Iluajit/src -Iraylib/src -Iraygui/src
 LDFLAGS += luajit/src/libluajit.a raylib/src/libraylib.a
 
-MODULES := raymath rlgl gestures physac raygui rcamera
+MODULES := raymath rlgl gestures raygui rcamera
 
 # raylib settings
 PLATFORM ?= PLATFORM_DESKTOP
@@ -19,12 +19,15 @@ CFLAGS += -D$(GRAPHICS) -D$(PLATFORM)
 
 USE_WAYLAND_DISPLAY ?= FALSE
 USE_EXTERNAL_GLFW ?= FALSE
+PLATFORM_SHELL ?= sh
 
 ifeq ($(OS),Windows_NT)
+	EXEEXT := .exe
 	LDFLAGS += -lopengl32 -lgdi32 -lwinmm -static
 	LDFLAGS_R += -mwindows 
 	EXTERNAL_FILES := src/res/icon.res
 else ifeq ($(shell uname),Darwin)
+	EXEEXT :=
 	LDFLAGS += -framework CoreVideo -framework IOKit -framework Cocoa \
 		-framework GLUT -framework OpenGL 
 	ifeq ($(shell uname -m),arm64)
@@ -35,6 +38,7 @@ else ifeq ($(shell uname),Darwin)
 	endif
 	EXTERNAL_FILES :=
 else
+	EXEEXT :=
 	LDFLAGS += -ldl -lpthread
 	ifeq ($(PLATFORM),PLATFORM_DRM)
 		LDFLAGS += -ldrm -lGLESv2 -lEGL -lgbm
@@ -53,6 +57,9 @@ all: raylua_s raylua_e raylua_r luajit raylib
 luajit:
 	$(MAKE) -C luajit amalg \
 		CC=$(CC) BUILDMODE=static \
+		HOST_MSYS=mingw \
+		HOST_LUA=./host/minilua$(EXEEXT) \
+		MINILUA_DEP=host/minilua$(EXEEXT) \
 		MACOSX_DEPLOYMENT_TARGET=10.13
 
 raylib:
@@ -60,7 +67,8 @@ raylib:
 		CC=$(CC) AR=$(AR) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" \
 		USE_WAYLAND_DISPLAY="$(USE_WAYLAND_DISPLAY)" \
 		USE_EXTERNAL_GLFW="$(USE_EXTERNAL_GLFW)" \
-		PLATFORM="$(PLATFORM)" GRAPHICS="$(GRAPHICS)"
+		PLATFORM="$(PLATFORM)" GRAPHICS="$(GRAPHICS)" \
+		PLATFORM_SHELL="$(PLATFORM_SHELL)"
 
 
 raylua_s: src/raylua_s.o $(EXTERNAL_FILES) libraylua.a
@@ -103,8 +111,8 @@ clean:
 	rm -rf raylua_s raylua_e libraylua.a src/raylua_e.o src/raylua_s.o \
 		src/raylua.o src/raylua_self.o src/raylua_builder.o src/autogen/*.c \
 		src/lib/miniz.o src/res/icon.res
-	$(MAKE) -C luajit clean
-	$(MAKE) -C raylib/src clean
+	$(MAKE) -C luajit clean HOST_MSYS=mingw
+	$(MAKE) -C raylib/src clean PLATFORM_SHELL="$(PLATFORM_SHELL)"
 	rm -f raylib/libraylib.a
 
 .PHONY: all src/autogen/bind.c src/autogen/boot.c raylua_s raylua_e luajit \

@@ -10,10 +10,12 @@ local structs = {
   "Matrix", "Color", "Rectangle", "Image", "Texture", "Texture2D",
   "RenderTexture", "NPatchInfo", "GlyphInfo", "Font",
   "Camera", "Camera2D", "Mesh", "Shader", "MaterialMap",
-  "Material", "Model", "Transform", "BoneInfo", "ModelAnimation",
+  "Material", "Model", "Transform", "ModelAnimPose", "BoneInfo",
+  "ModelSkeleton", "ModelAnimation",
   "Ray", "RayCollision", "BoundingBox", "Wave", "Sound", "Music",
   "AudioStream", "VrDeviceInfo", "Camera3D", "RenderTexture2D",
-  "TextureCubemap", "TraceLogCallback", "PhysicsBody",
+  "TextureCubemap", "TraceLogCallback", "LoadFileDataCallback",
+  "SaveFileDataCallback", "LoadFileTextCallback", "SaveFileTextCallback",
   "GestureEvent", "GuiStyle", "GuiTextBoxState",
   "TraceLogCallback", "VertexBuffer", "DrawCall", "RenderBatch",
   "ShaderAttributeDataType", "MaterialMapIndex", "VrStereoConfig",
@@ -68,6 +70,7 @@ struct raylua_bind_entry raylua_entries[] = {
 
 for _,modname in ipairs(modules) do
   for line in io.lines("tools/" .. modname .. ".h") do
+    line = line:gsub("\r$", "")
     if line:sub(1, 2) ~= "//" then
       if line:sub(1, 1) == "#" then
         file:write("  " .. line .. "\n")

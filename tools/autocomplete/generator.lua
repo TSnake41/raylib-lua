@@ -11,8 +11,25 @@ end
 
 local ffi_type_list = {}
 
+local function load_api(path)
+  local loaded = loadfile(path)
+  if loaded then
+    return loaded()
+  end
+
+  local f = assert(io.open(path, "rb"))
+  local content = f:read("*a")
+  f:close()
+
+  content = content:gsub("([%s\n]description%s*=%s*)\"(.-)\",", function (prefix, desc)
+    return prefix .. "[=[" .. desc .. "]=],"
+  end)
+
+  return assert(loadstring(content, path))()
+end
+
 for i=1,#arg do
-  local content = loadfile(arg[i])()
+  local content = load_api(arg[i])
 
   local function luaify(t)
     -- strings
@@ -42,7 +59,7 @@ for i=1,#arg do
     return t
   end
 
-  for _,enum in ipairs(content.enums) do
+  for _,enum in ipairs(content.enums or {}) do
     print("---@alias " .. enum.name)
     for _,v in pairs(enum.values) do
       print(string.format("---| '%s'", v.name))
@@ -62,7 +79,7 @@ for i=1,#arg do
     end
   end
 
-  for _,struct in ipairs(content.structs) do
+  for _,struct in ipairs(content.structs or {}) do
     print(string.format("---@class %s%s", struct.name,
       (struct.description ~= "") and string.format(" @ %s", struct.description) or ""))
 
@@ -94,7 +111,7 @@ for i=1,#arg do
     print(string.format("local %s = {}", struct.name))
   end
 
-  for _,func in ipairs(content.functions) do
+  for _,func in ipairs(content.functions or {}) do
     if func.name ~= "" then
       local arraySize
 

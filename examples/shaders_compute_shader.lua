@@ -30,8 +30,8 @@ local brushSize = 8
 
 -- Game of Life logic compute shader
 local golLogicCode = rl.LoadFileText("resources/glsl430/gol.glsl")
-local golLogicShader = rl.rlCompileShader(golLogicCode, rl.RL_COMPUTE_SHADER);
-local golLogicProgram = rl.rlLoadComputeShaderProgram(golLogicShader);
+local golLogicShader = rl.rlLoadShader(golLogicCode, rl.RL_COMPUTE_SHADER);
+local golLogicProgram = rl.rlLoadShaderProgramCompute(golLogicShader);
 rl.UnloadFileText(golLogicCode);
 
 -- Game of Life rendering compute shader
@@ -39,8 +39,8 @@ local golRenderShader = rl.LoadShader(nil, "resources/glsl430/gol_render.glsl")
 local resUniformLoc = rl.GetShaderLocation(golRenderShader, "resolution")
 
 local golTransfertCode = rl.LoadFileText("resources/glsl430/gol_transfert.glsl");
-local golTransfertShader = rl.rlCompileShader(golTransfertCode, rl.RL_COMPUTE_SHADER);
-local golTransfertProgram = rl.rlLoadComputeShaderProgram(golTransfertShader);
+local golTransfertShader = rl.rlLoadShader(golTransfertCode, rl.RL_COMPUTE_SHADER);
+local golTransfertProgram = rl.rlLoadShaderProgramCompute(golTransfertShader);
 rl.UnloadFileText(golTransfertCode);
 
 local ssboSize = ffi.sizeof("int[?]", GOL_WIDTH * GOL_WIDTH)

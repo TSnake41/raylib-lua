@@ -9,13 +9,13 @@ return {
     {
       name = "RAYLIB_VERSION_MAJOR",
       type = "INT",
-      value = 5,
+      value = 6,
       description = ""
     },
     {
       name = "RAYLIB_VERSION_MINOR",
       type = "INT",
-      value = 5,
+      value = 0,
       description = ""
     },
     {
@@ -27,7 +27,7 @@ return {
     {
       name = "RAYLIB_VERSION",
       type = "STRING",
-      value = "5.5",
+      value = "6.0",
       description = ""
     },
     {
@@ -40,7 +40,7 @@ return {
       name = "RLAPI",
       type = "UNKNOWN",
       value = "__declspec(dllexport)",
-      description = "We are building the library as a Win32 shared library (.dll)"
+      description = "Building the library as a Win32 shared library (.dll)"
     },
     {
       name = "PI",
@@ -346,7 +346,7 @@ return {
   structs = {
     {
       name = "Vector2",
-      description = "Vector2, 2 components",
+      description = [=[Vector2, 2 components]=],
       fields = {
         {
           type = "float",
@@ -362,7 +362,7 @@ return {
     },
     {
       name = "Vector3",
-      description = "Vector3, 3 components",
+      description = [=[Vector3, 3 components]=],
       fields = {
         {
           type = "float",
@@ -383,7 +383,7 @@ return {
     },
     {
       name = "Vector4",
-      description = "Vector4, 4 components",
+      description = [=[Vector4, 4 components]=],
       fields = {
         {
           type = "float",
@@ -409,7 +409,7 @@ return {
     },
     {
       name = "Matrix",
-      description = "Matrix, 4x4 components, column major, OpenGL style, right-handed",
+      description = [=[Matrix, 4x4 components, column major, OpenGL style, right-handed]=],
       fields = {
         {
           type = "float",
@@ -495,7 +495,7 @@ return {
     },
     {
       name = "Color",
-      description = "Color, 4 components, R8G8B8A8 (32bit)",
+      description = [=[Color, 4 components, R8G8B8A8 (32bit)]=],
       fields = {
         {
           type = "unsigned char",
@@ -521,7 +521,7 @@ return {
     },
     {
       name = "Rectangle",
-      description = "Rectangle, 4 components",
+      description = [=[Rectangle, 4 components]=],
       fields = {
         {
           type = "float",
@@ -547,7 +547,7 @@ return {
     },
     {
       name = "Image",
-      description = "Image, pixel data stored in CPU memory (RAM)",
+      description = [=[Image, pixel data stored in CPU memory (RAM)]=],
       fields = {
         {
           type = "void *",
@@ -578,7 +578,7 @@ return {
     },
     {
       name = "Texture",
-      description = "Texture, tex data stored in GPU memory (VRAM)",
+      description = [=[Texture, tex data stored in GPU memory (VRAM)]=],
       fields = {
         {
           type = "unsigned int",
@@ -609,7 +609,7 @@ return {
     },
     {
       name = "RenderTexture",
-      description = "RenderTexture, fbo for texture rendering",
+      description = [=[RenderTexture, fbo for texture rendering]=],
       fields = {
         {
           type = "unsigned int",
@@ -630,7 +630,7 @@ return {
     },
     {
       name = "NPatchInfo",
-      description = "NPatchInfo, n-patch layout info",
+      description = [=[NPatchInfo, n-patch layout info]=],
       fields = {
         {
           type = "Rectangle",
@@ -666,7 +666,7 @@ return {
     },
     {
       name = "GlyphInfo",
-      description = "GlyphInfo, font characters glyphs info",
+      description = [=[GlyphInfo, font characters glyphs info]=],
       fields = {
         {
           type = "int",
@@ -697,7 +697,7 @@ return {
     },
     {
       name = "Font",
-      description = "Font, font texture and GlyphInfo array data",
+      description = [=[Font, font texture and GlyphInfo array data]=],
       fields = {
         {
           type = "int",
@@ -733,7 +733,7 @@ return {
     },
     {
       name = "Camera3D",
-      description = "Camera, defines position/orientation in 3d space",
+      description = [=[Camera, defines position/orientation in 3d space]=],
       fields = {
         {
           type = "Vector3",
@@ -753,7 +753,7 @@ return {
         {
           type = "float",
           name = "fovy",
-          description = "Camera field-of-view aperture in Y (degrees) in perspective, used as near plane width in orthographic"
+          description = "Camera field-of-view aperture in Y (degrees) in perspective, used as near plane height in world units in orthographic"
         },
         {
           type = "int",
@@ -764,33 +764,33 @@ return {
     },
     {
       name = "Camera2D",
-      description = "Camera2D, defines position/orientation in 2d space",
+      description = [=[Camera2D, defines position/orientation in 2d space]=],
       fields = {
         {
           type = "Vector2",
           name = "offset",
-          description = "Camera offset (displacement from target)"
+          description = "Camera offset (screen space offset from window origin)"
         },
         {
           type = "Vector2",
           name = "target",
-          description = "Camera target (rotation and zoom origin)"
+          description = "Camera target (world space target point that is mapped to screen space offset)"
         },
         {
           type = "float",
           name = "rotation",
-          description = "Camera rotation in degrees"
+          description = "Camera rotation in degrees (pivots around target)"
         },
         {
           type = "float",
           name = "zoom",
-          description = "Camera zoom (scaling), should be 1.0f by default"
+          description = "Camera zoom (scaling around target), must not be set to 0, set to 1.0f for no scale"
         }
       }
     },
     {
       name = "Mesh",
-      description = "Mesh, vertex data and vao/vbo",
+      description = [=[Mesh, vertex data and vao/vbo]=],
       fields = {
         {
           type = "int",
@@ -838,6 +838,21 @@ return {
           description = "Vertex indices (in case vertex data comes indexed)"
         },
         {
+          type = "int",
+          name = "boneCount",
+          description = "Number of bones (MAX: 256 bones)"
+        },
+        {
+          type = "unsigned char *",
+          name = "boneIndices",
+          description = "Vertex bone indices, up to 4 bones influence by vertex (skinning) (shader-location = 6)"
+        },
+        {
+          type = "float *",
+          name = "boneWeights",
+          description = "Vertex bone weight, up to 4 bones influence by vertex (skinning) (shader-location = 7)"
+        },
+        {
           type = "float *",
           name = "animVertices",
           description = "Animated vertex positions (after bones transformations)"
@@ -846,26 +861,6 @@ return {
           type = "float *",
           name = "animNormals",
           description = "Animated normals (after bones transformations)"
-        },
-        {
-          type = "unsigned char *",
-          name = "boneIds",
-          description = "Vertex bone ids, max 255 bone ids, up to 4 bones influence by vertex (skinning) (shader-location = 6)"
-        },
-        {
-          type = "float *",
-          name = "boneWeights",
-          description = "Vertex bone weight, up to 4 bones influence by vertex (skinning) (shader-location = 7)"
-        },
-        {
-          type = "Matrix *",
-          name = "boneMatrices",
-          description = "Bones animated transformation matrices"
-        },
-        {
-          type = "int",
-          name = "boneCount",
-          description = "Number of bones"
         },
         {
           type = "unsigned int",
@@ -881,7 +876,7 @@ return {
     },
     {
       name = "Shader",
-      description = "Shader",
+      description = [=[Shader]=],
       fields = {
         {
           type = "unsigned int",
@@ -897,7 +892,7 @@ return {
     },
     {
       name = "MaterialMap",
-      description = "MaterialMap",
+      description = [=[MaterialMap]=],
       fields = {
         {
           type = "Texture2D",
@@ -918,7 +913,7 @@ return {
     },
     {
       name = "Material",
-      description = "Material, includes shader and maps",
+      description = [=[Material, includes shader and maps]=],
       fields = {
         {
           type = "Shader",
@@ -939,7 +934,7 @@ return {
     },
     {
       name = "Transform",
-      description = "Transform, vertex transformation data",
+      description = [=[Transform, vertex transformation data]=],
       fields = {
         {
           type = "Vector3",
@@ -960,7 +955,7 @@ return {
     },
     {
       name = "BoneInfo",
-      description = "Bone, skeletal animation bone",
+      description = [=[Bone, skeletal animation bone]=],
       fields = {
         {
           type = "char[32]",
@@ -975,8 +970,29 @@ return {
       }
     },
     {
+      name = "ModelSkeleton",
+      description = [=[Skeleton, animation bones hierarchy]=],
+      fields = {
+        {
+          type = "int",
+          name = "boneCount",
+          description = "Number of bones"
+        },
+        {
+          type = "BoneInfo *",
+          name = "bones",
+          description = "Bones information (skeleton)"
+        },
+        {
+          type = "ModelAnimPose",
+          name = "bindPose",
+          description = "Bones base transformation (Transform[])"
+        }
+      }
+    },
+    {
       name = "Model",
-      description = "Model, meshes, materials and animation data",
+      description = [=[Model, meshes, materials and animation data]=],
       fields = {
         {
           type = "Matrix",
@@ -1009,56 +1025,51 @@ return {
           description = "Mesh material number"
         },
         {
-          type = "int",
-          name = "boneCount",
-          description = "Number of bones"
+          type = "ModelSkeleton",
+          name = "skeleton",
+          description = "Skeleton for animation"
         },
         {
-          type = "BoneInfo *",
-          name = "bones",
-          description = "Bones information (skeleton)"
+          type = "ModelAnimPose",
+          name = "currentPose",
+          description = "Current animation pose (Transform[])"
         },
         {
-          type = "Transform *",
-          name = "bindPose",
-          description = "Bones base transformation (pose)"
+          type = "Matrix *",
+          name = "boneMatrices",
+          description = "Bones animated transformation matrices"
         }
       }
     },
     {
       name = "ModelAnimation",
-      description = "ModelAnimation",
+      description = [=[ModelAnimation, contains a full animation sequence]=],
       fields = {
-        {
-          type = "int",
-          name = "boneCount",
-          description = "Number of bones"
-        },
-        {
-          type = "int",
-          name = "frameCount",
-          description = "Number of animation frames"
-        },
-        {
-          type = "BoneInfo *",
-          name = "bones",
-          description = "Bones information (skeleton)"
-        },
-        {
-          type = "Transform **",
-          name = "framePoses",
-          description = "Poses array by frame"
-        },
         {
           type = "char[32]",
           name = "name",
           description = "Animation name"
+        },
+        {
+          type = "int",
+          name = "boneCount",
+          description = "Number of bones (per pose)"
+        },
+        {
+          type = "int",
+          name = "keyframeCount",
+          description = "Number of animation key frames"
+        },
+        {
+          type = "ModelAnimPose *",
+          name = "keyframePoses",
+          description = "Animation sequence keyframe poses [keyframe][pose]"
         }
       }
     },
     {
       name = "Ray",
-      description = "Ray, ray for raycasting",
+      description = [=[Ray, ray for raycasting]=],
       fields = {
         {
           type = "Vector3",
@@ -1074,7 +1085,7 @@ return {
     },
     {
       name = "RayCollision",
-      description = "RayCollision, ray hit information",
+      description = [=[RayCollision, ray hit information]=],
       fields = {
         {
           type = "bool",
@@ -1100,7 +1111,7 @@ return {
     },
     {
       name = "BoundingBox",
-      description = "BoundingBox",
+      description = [=[BoundingBox]=],
       fields = {
         {
           type = "Vector3",
@@ -1116,7 +1127,7 @@ return {
     },
     {
       name = "Wave",
-      description = "Wave, audio wave data",
+      description = [=[Wave, audio wave data]=],
       fields = {
         {
           type = "unsigned int",
@@ -1147,7 +1158,7 @@ return {
     },
     {
       name = "AudioStream",
-      description = "AudioStream, custom audio stream",
+      description = [=[AudioStream, custom audio stream]=],
       fields = {
         {
           type = "rAudioBuffer *",
@@ -1178,7 +1189,7 @@ return {
     },
     {
       name = "Sound",
-      description = "Sound",
+      description = [=[Sound]=],
       fields = {
         {
           type = "AudioStream",
@@ -1194,7 +1205,7 @@ return {
     },
     {
       name = "Music",
-      description = "Music, audio stream, anything longer than ~10 seconds should be streamed",
+      description = [=[Music, audio stream, anything longer than ~10 seconds should be streamed]=],
       fields = {
         {
           type = "AudioStream",
@@ -1225,7 +1236,7 @@ return {
     },
     {
       name = "VrDeviceInfo",
-      description = "VrDeviceInfo, Head-Mounted-Display device parameters",
+      description = [=[VrDeviceInfo, Head-Mounted-Display device parameters]=],
       fields = {
         {
           type = "int",
@@ -1276,7 +1287,7 @@ return {
     },
     {
       name = "VrStereoConfig",
-      description = "VrStereoConfig, VR stereo rendering configuration for simulator",
+      description = [=[VrStereoConfig, VR stereo rendering configuration for simulator]=],
       fields = {
         {
           type = "Matrix[2]",
@@ -1322,13 +1333,8 @@ return {
     },
     {
       name = "FilePathList",
-      description = "File path list",
+      description = [=[File path list]=],
       fields = {
-        {
-          type = "unsigned int",
-          name = "capacity",
-          description = "Filepaths max entries"
-        },
         {
           type = "unsigned int",
           name = "count",
@@ -1343,7 +1349,7 @@ return {
     },
     {
       name = "AutomationEvent",
-      description = "Automation event",
+      description = [=[Automation event]=],
       fields = {
         {
           type = "unsigned int",
@@ -1364,7 +1370,7 @@ return {
     },
     {
       name = "AutomationEventList",
-      description = "Automation event list",
+      description = [=[Automation event list]=],
       fields = {
         {
           type = "unsigned int",
@@ -1409,12 +1415,17 @@ return {
       type = "Camera3D",
       name = "Camera",
       description = "Camera type fallback, defaults to Camera3D"
+    },
+    {
+      type = "Transform",
+      name = "*ModelAnimPose",
+      description = "Anim pose, an array of Transform[]"
     }
   },
   enums = {
     {
       name = "ConfigFlags",
-      description = "System/Window config flags",
+      description = [=[System/Window config flags]=],
       values = {
         {
           name = "FLAG_VSYNC_HINT",
@@ -1500,7 +1511,7 @@ return {
     },
     {
       name = "TraceLogLevel",
-      description = "Trace log level",
+      description = [=[Trace log level]=],
       values = {
         {
           name = "LOG_ALL",
@@ -1546,7 +1557,7 @@ return {
     },
     {
       name = "KeyboardKey",
-      description = "Keyboard keys (US keyboard layout)",
+      description = [=[Keyboard keys (US keyboard layout)]=],
       values = {
         {
           name = "KEY_NULL",
@@ -2102,7 +2113,7 @@ return {
     },
     {
       name = "MouseButton",
-      description = "Mouse buttons",
+      description = [=[Mouse buttons]=],
       values = {
         {
           name = "MOUSE_BUTTON_LEFT",
@@ -2143,7 +2154,7 @@ return {
     },
     {
       name = "MouseCursor",
-      description = "Mouse cursor",
+      description = [=[Mouse cursor]=],
       values = {
         {
           name = "MOUSE_CURSOR_DEFAULT",
@@ -2204,12 +2215,12 @@ return {
     },
     {
       name = "GamepadButton",
-      description = "Gamepad buttons",
+      description = [=[Gamepad buttons]=],
       values = {
         {
           name = "GAMEPAD_BUTTON_UNKNOWN",
           value = 0,
-          description = "Unknown button, just for error checking"
+          description = "Unknown button, for error checking"
         },
         {
           name = "GAMEPAD_BUTTON_LEFT_FACE_UP",
@@ -2300,7 +2311,7 @@ return {
     },
     {
       name = "GamepadAxis",
-      description = "Gamepad axis",
+      description = [=[Gamepad axes]=],
       values = {
         {
           name = "GAMEPAD_AXIS_LEFT_X",
@@ -2336,7 +2347,7 @@ return {
     },
     {
       name = "MaterialMapIndex",
-      description = "Material map index",
+      description = [=[Material map index]=],
       values = {
         {
           name = "MATERIAL_MAP_ALBEDO",
@@ -2397,7 +2408,7 @@ return {
     },
     {
       name = "ShaderLocationIndex",
-      description = "Shader location index",
+      description = [=[Shader location index]=],
       values = {
         {
           name = "SHADER_LOC_VERTEX_POSITION",
@@ -2507,7 +2518,7 @@ return {
         {
           name = "SHADER_LOC_MAP_HEIGHT",
           value = 21,
-          description = "Shader location: sampler2d texture: height"
+          description = "Shader location: sampler2d texture: heightmap"
         },
         {
           name = "SHADER_LOC_MAP_CUBEMAP",
@@ -2532,23 +2543,28 @@ return {
         {
           name = "SHADER_LOC_VERTEX_BONEIDS",
           value = 26,
-          description = "Shader location: vertex attribute: boneIds"
+          description = "Shader location: vertex attribute: bone indices"
         },
         {
           name = "SHADER_LOC_VERTEX_BONEWEIGHTS",
           value = 27,
-          description = "Shader location: vertex attribute: boneWeights"
+          description = "Shader location: vertex attribute: bone weights"
         },
         {
-          name = "SHADER_LOC_BONE_MATRICES",
+          name = "SHADER_LOC_MATRIX_BONETRANSFORMS",
           value = 28,
-          description = "Shader location: array of matrices uniform: boneMatrices"
+          description = "Shader location: matrix attribute: bone transforms (animation)"
+        },
+        {
+          name = "SHADER_LOC_VERTEX_INSTANCETRANSFORM",
+          value = 29,
+          description = "Shader location: vertex attribute: instance transforms"
         }
       }
     },
     {
       name = "ShaderUniformDataType",
-      description = "Shader uniform data type",
+      description = [=[Shader uniform data type]=],
       values = {
         {
           name = "SHADER_UNIFORM_FLOAT",
@@ -2591,15 +2607,35 @@ return {
           description = "Shader uniform type: ivec4 (4 int)"
         },
         {
-          name = "SHADER_UNIFORM_SAMPLER2D",
+          name = "SHADER_UNIFORM_UINT",
           value = 8,
+          description = "Shader uniform type: unsigned int"
+        },
+        {
+          name = "SHADER_UNIFORM_UIVEC2",
+          value = 9,
+          description = "Shader uniform type: uivec2 (2 unsigned int)"
+        },
+        {
+          name = "SHADER_UNIFORM_UIVEC3",
+          value = 10,
+          description = "Shader uniform type: uivec3 (3 unsigned int)"
+        },
+        {
+          name = "SHADER_UNIFORM_UIVEC4",
+          value = 11,
+          description = "Shader uniform type: uivec4 (4 unsigned int)"
+        },
+        {
+          name = "SHADER_UNIFORM_SAMPLER2D",
+          value = 12,
           description = "Shader uniform type: sampler2d"
         }
       }
     },
     {
       name = "ShaderAttributeDataType",
-      description = "Shader attribute data types",
+      description = [=[Shader attribute data types]=],
       values = {
         {
           name = "SHADER_ATTRIB_FLOAT",
@@ -2625,7 +2661,7 @@ return {
     },
     {
       name = "PixelFormat",
-      description = "Pixel formats",
+      description = [=[Pixel formats]=],
       values = {
         {
           name = "PIXELFORMAT_UNCOMPRESSED_GRAYSCALE",
@@ -2751,12 +2787,12 @@ return {
     },
     {
       name = "TextureFilter",
-      description = "Texture parameters: filter mode",
+      description = [=[Texture parameters: filter mode]=],
       values = {
         {
           name = "TEXTURE_FILTER_POINT",
           value = 0,
-          description = "No filter, just pixel approximation"
+          description = "No filter, pixel approximation"
         },
         {
           name = "TEXTURE_FILTER_BILINEAR",
@@ -2787,7 +2823,7 @@ return {
     },
     {
       name = "TextureWrap",
-      description = "Texture parameters: wrap mode",
+      description = [=[Texture parameters: wrap mode]=],
       values = {
         {
           name = "TEXTURE_WRAP_REPEAT",
@@ -2813,7 +2849,7 @@ return {
     },
     {
       name = "CubemapLayout",
-      description = "Cubemap layouts",
+      description = [=[Cubemap layouts]=],
       values = {
         {
           name = "CUBEMAP_LAYOUT_AUTO_DETECT",
@@ -2844,7 +2880,7 @@ return {
     },
     {
       name = "FontType",
-      description = "Font type, defines generation method",
+      description = [=[Font type, defines generation method]=],
       values = {
         {
           name = "FONT_DEFAULT",
@@ -2865,7 +2901,7 @@ return {
     },
     {
       name = "BlendMode",
-      description = "Color blending modes (pre-defined)",
+      description = [=[Color blending modes (pre-defined)]=],
       values = {
         {
           name = "BLEND_ALPHA",
@@ -2911,7 +2947,7 @@ return {
     },
     {
       name = "Gesture",
-      description = "Gesture",
+      description = [=[Gesture]=],
       values = {
         {
           name = "GESTURE_NONE",
@@ -2972,7 +3008,7 @@ return {
     },
     {
       name = "CameraMode",
-      description = "Camera system modes",
+      description = [=[Camera system modes]=],
       values = {
         {
           name = "CAMERA_CUSTOM",
@@ -3003,7 +3039,7 @@ return {
     },
     {
       name = "CameraProjection",
-      description = "Camera projection",
+      description = [=[Camera projection]=],
       values = {
         {
           name = "CAMERA_PERSPECTIVE",
@@ -3019,7 +3055,7 @@ return {
     },
     {
       name = "NPatchLayout",
-      description = "N-patch layout",
+      description = [=[N-patch layout]=],
       values = {
         {
           name = "NPATCH_NINE_PATCH",
@@ -3042,7 +3078,7 @@ return {
   callbacks = {
     {
       name = "TraceLogCallback",
-      description = "Logging: Redirect trace log messages",
+      description = [=[Logging: Redirect trace log messages]=],
       returnType = "void",
       params = {
         {type = "int", name = "logLevel"},
@@ -3052,7 +3088,7 @@ return {
     },
     {
       name = "LoadFileDataCallback",
-      description = "FileIO: Load binary data",
+      description = [=[FileIO: Load binary data]=],
       returnType = "unsigned char *",
       params = {
         {type = "const char *", name = "fileName"},
@@ -3061,7 +3097,7 @@ return {
     },
     {
       name = "SaveFileDataCallback",
-      description = "FileIO: Save binary data",
+      description = [=[FileIO: Save binary data]=],
       returnType = "bool",
       params = {
         {type = "const char *", name = "fileName"},
@@ -3071,7 +3107,7 @@ return {
     },
     {
       name = "LoadFileTextCallback",
-      description = "FileIO: Load text data",
+      description = [=[FileIO: Load text data]=],
       returnType = "char *",
       params = {
         {type = "const char *", name = "fileName"}
@@ -3079,16 +3115,16 @@ return {
     },
     {
       name = "SaveFileTextCallback",
-      description = "FileIO: Save text data",
+      description = [=[FileIO: Save text data]=],
       returnType = "bool",
       params = {
         {type = "const char *", name = "fileName"},
-        {type = "char *", name = "text"}
+        {type = "const char *", name = "text"}
       }
     },
     {
       name = "AudioCallback",
-      description = "",
+      description = [=[]=],
       returnType = "void",
       params = {
         {type = "void *", name = "bufferData"},
@@ -3099,7 +3135,7 @@ return {
   functions = {
     {
       name = "InitWindow",
-      description = "Initialize window and OpenGL context",
+      description = [=[Initialize window and OpenGL context]=],
       returnType = "void",
       params = {
         {type = "int", name = "width"},
@@ -3109,52 +3145,52 @@ return {
     },
     {
       name = "CloseWindow",
-      description = "Close window and unload OpenGL context",
+      description = [=[Close window and unload OpenGL context]=],
       returnType = "void"
     },
     {
       name = "WindowShouldClose",
-      description = "Check if application should close (KEY_ESCAPE pressed or windows close icon clicked)",
+      description = [=[Check if application should close (KEY_ESCAPE pressed or windows close icon clicked)]=],
       returnType = "bool"
     },
     {
       name = "IsWindowReady",
-      description = "Check if window has been initialized successfully",
+      description = [=[Check if window has been initialized successfully]=],
       returnType = "bool"
     },
     {
       name = "IsWindowFullscreen",
-      description = "Check if window is currently fullscreen",
+      description = [=[Check if window is currently fullscreen]=],
       returnType = "bool"
     },
     {
       name = "IsWindowHidden",
-      description = "Check if window is currently hidden",
+      description = [=[Check if window is currently hidden]=],
       returnType = "bool"
     },
     {
       name = "IsWindowMinimized",
-      description = "Check if window is currently minimized",
+      description = [=[Check if window is currently minimized]=],
       returnType = "bool"
     },
     {
       name = "IsWindowMaximized",
-      description = "Check if window is currently maximized",
+      description = [=[Check if window is currently maximized]=],
       returnType = "bool"
     },
     {
       name = "IsWindowFocused",
-      description = "Check if window is currently focused",
+      description = [=[Check if window is currently focused]=],
       returnType = "bool"
     },
     {
       name = "IsWindowResized",
-      description = "Check if window has been resized last frame",
+      description = [=[Check if window has been resized last frame]=],
       returnType = "bool"
     },
     {
       name = "IsWindowState",
-      description = "Check if one specific window flag is enabled",
+      description = [=[Check if one specific window flag is enabled]=],
       returnType = "bool",
       params = {
         {type = "unsigned int", name = "flag"}
@@ -3162,7 +3198,7 @@ return {
     },
     {
       name = "SetWindowState",
-      description = "Set window configuration state using flags",
+      description = [=[Set window configuration state using flags]=],
       returnType = "void",
       params = {
         {type = "unsigned int", name = "flags"}
@@ -3170,7 +3206,7 @@ return {
     },
     {
       name = "ClearWindowState",
-      description = "Clear window configuration state flags",
+      description = [=[Clear window configuration state flags]=],
       returnType = "void",
       params = {
         {type = "unsigned int", name = "flags"}
@@ -3178,32 +3214,32 @@ return {
     },
     {
       name = "ToggleFullscreen",
-      description = "Toggle window state: fullscreen/windowed, resizes monitor to match window resolution",
+      description = [=[Toggle window state: fullscreen/windowed, resizes monitor to match window resolution]=],
       returnType = "void"
     },
     {
       name = "ToggleBorderlessWindowed",
-      description = "Toggle window state: borderless windowed, resizes window to match monitor resolution",
+      description = [=[Toggle window state: borderless windowed, resizes window to match monitor resolution]=],
       returnType = "void"
     },
     {
       name = "MaximizeWindow",
-      description = "Set window state: maximized, if resizable",
+      description = [=[Set window state: maximized, if resizable]=],
       returnType = "void"
     },
     {
       name = "MinimizeWindow",
-      description = "Set window state: minimized, if resizable",
+      description = [=[Set window state: minimized, if resizable]=],
       returnType = "void"
     },
     {
       name = "RestoreWindow",
-      description = "Set window state: not minimized/maximized",
+      description = [=[Restore window from being minimized/maximized]=],
       returnType = "void"
     },
     {
       name = "SetWindowIcon",
-      description = "Set icon for window (single image, RGBA 32bit)",
+      description = [=[Set icon for window (single image, RGBA 32bit)]=],
       returnType = "void",
       params = {
         {type = "Image", name = "image"}
@@ -3211,7 +3247,7 @@ return {
     },
     {
       name = "SetWindowIcons",
-      description = "Set icon for window (multiple images, RGBA 32bit)",
+      description = [=[Set icon for window (multiple images, RGBA 32bit)]=],
       returnType = "void",
       params = {
         {type = "Image *", name = "images"},
@@ -3220,7 +3256,7 @@ return {
     },
     {
       name = "SetWindowTitle",
-      description = "Set title for window",
+      description = [=[Set title for window]=],
       returnType = "void",
       params = {
         {type = "const char *", name = "title"}
@@ -3228,7 +3264,7 @@ return {
     },
     {
       name = "SetWindowPosition",
-      description = "Set window position on screen",
+      description = [=[Set window position on screen]=],
       returnType = "void",
       params = {
         {type = "int", name = "x"},
@@ -3237,7 +3273,7 @@ return {
     },
     {
       name = "SetWindowMonitor",
-      description = "Set monitor for the current window",
+      description = [=[Set monitor for the current window]=],
       returnType = "void",
       params = {
         {type = "int", name = "monitor"}
@@ -3245,7 +3281,7 @@ return {
     },
     {
       name = "SetWindowMinSize",
-      description = "Set window minimum dimensions (for FLAG_WINDOW_RESIZABLE)",
+      description = [=[Set window minimum dimensions (for FLAG_WINDOW_RESIZABLE)]=],
       returnType = "void",
       params = {
         {type = "int", name = "width"},
@@ -3254,7 +3290,7 @@ return {
     },
     {
       name = "SetWindowMaxSize",
-      description = "Set window maximum dimensions (for FLAG_WINDOW_RESIZABLE)",
+      description = [=[Set window maximum dimensions (for FLAG_WINDOW_RESIZABLE)]=],
       returnType = "void",
       params = {
         {type = "int", name = "width"},
@@ -3263,7 +3299,7 @@ return {
     },
     {
       name = "SetWindowSize",
-      description = "Set window dimensions",
+      description = [=[Set window dimensions]=],
       returnType = "void",
       params = {
         {type = "int", name = "width"},
@@ -3272,7 +3308,7 @@ return {
     },
     {
       name = "SetWindowOpacity",
-      description = "Set window opacity [0.0f..1.0f]",
+      description = [=[Set window opacity [0.0f..1.0f]]=],
       returnType = "void",
       params = {
         {type = "float", name = "opacity"}
@@ -3280,47 +3316,47 @@ return {
     },
     {
       name = "SetWindowFocused",
-      description = "Set window focused",
+      description = [=[Set window focused]=],
       returnType = "void"
     },
     {
       name = "GetWindowHandle",
-      description = "Get native window handle",
+      description = [=[Get native window handle]=],
       returnType = "void *"
     },
     {
       name = "GetScreenWidth",
-      description = "Get current screen width",
+      description = [=[Get current screen width]=],
       returnType = "int"
     },
     {
       name = "GetScreenHeight",
-      description = "Get current screen height",
+      description = [=[Get current screen height]=],
       returnType = "int"
     },
     {
       name = "GetRenderWidth",
-      description = "Get current render width (it considers HiDPI)",
+      description = [=[Get current render width (it considers HiDPI)]=],
       returnType = "int"
     },
     {
       name = "GetRenderHeight",
-      description = "Get current render height (it considers HiDPI)",
+      description = [=[Get current render height (it considers HiDPI)]=],
       returnType = "int"
     },
     {
       name = "GetMonitorCount",
-      description = "Get number of connected monitors",
+      description = [=[Get number of connected monitors]=],
       returnType = "int"
     },
     {
       name = "GetCurrentMonitor",
-      description = "Get current monitor where window is placed",
+      description = [=[Get current monitor where window is placed]=],
       returnType = "int"
     },
     {
       name = "GetMonitorPosition",
-      description = "Get specified monitor position",
+      description = [=[Get specified monitor position]=],
       returnType = "Vector2",
       params = {
         {type = "int", name = "monitor"}
@@ -3328,7 +3364,7 @@ return {
     },
     {
       name = "GetMonitorWidth",
-      description = "Get specified monitor width (current video mode used by monitor)",
+      description = [=[Get specified monitor width (current video mode used by monitor)]=],
       returnType = "int",
       params = {
         {type = "int", name = "monitor"}
@@ -3336,7 +3372,7 @@ return {
     },
     {
       name = "GetMonitorHeight",
-      description = "Get specified monitor height (current video mode used by monitor)",
+      description = [=[Get specified monitor height (current video mode used by monitor)]=],
       returnType = "int",
       params = {
         {type = "int", name = "monitor"}
@@ -3344,7 +3380,7 @@ return {
     },
     {
       name = "GetMonitorPhysicalWidth",
-      description = "Get specified monitor physical width in millimetres",
+      description = [=[Get specified monitor physical width in millimetres]=],
       returnType = "int",
       params = {
         {type = "int", name = "monitor"}
@@ -3352,7 +3388,7 @@ return {
     },
     {
       name = "GetMonitorPhysicalHeight",
-      description = "Get specified monitor physical height in millimetres",
+      description = [=[Get specified monitor physical height in millimetres]=],
       returnType = "int",
       params = {
         {type = "int", name = "monitor"}
@@ -3360,7 +3396,7 @@ return {
     },
     {
       name = "GetMonitorRefreshRate",
-      description = "Get specified monitor refresh rate",
+      description = [=[Get specified monitor refresh rate]=],
       returnType = "int",
       params = {
         {type = "int", name = "monitor"}
@@ -3368,17 +3404,17 @@ return {
     },
     {
       name = "GetWindowPosition",
-      description = "Get window position XY on monitor",
+      description = [=[Get window position XY on monitor]=],
       returnType = "Vector2"
     },
     {
       name = "GetWindowScaleDPI",
-      description = "Get window scale DPI factor",
+      description = [=[Get window scale DPI factor]=],
       returnType = "Vector2"
     },
     {
       name = "GetMonitorName",
-      description = "Get the human-readable, UTF-8 encoded name of the specified monitor",
+      description = [=[Get the human-readable, UTF-8 encoded name of the specified monitor]=],
       returnType = "const char *",
       params = {
         {type = "int", name = "monitor"}
@@ -3386,7 +3422,7 @@ return {
     },
     {
       name = "SetClipboardText",
-      description = "Set clipboard text content",
+      description = [=[Set clipboard text content]=],
       returnType = "void",
       params = {
         {type = "const char *", name = "text"}
@@ -3394,57 +3430,57 @@ return {
     },
     {
       name = "GetClipboardText",
-      description = "Get clipboard text content",
+      description = [=[Get clipboard text content]=],
       returnType = "const char *"
     },
     {
       name = "GetClipboardImage",
-      description = "Get clipboard image content",
+      description = [=[Get clipboard image content]=],
       returnType = "Image"
     },
     {
       name = "EnableEventWaiting",
-      description = "Enable waiting for events on EndDrawing(), no automatic event polling",
+      description = [=[Enable waiting for events on EndDrawing(), no automatic event polling]=],
       returnType = "void"
     },
     {
       name = "DisableEventWaiting",
-      description = "Disable waiting for events on EndDrawing(), automatic events polling",
+      description = [=[Disable waiting for events on EndDrawing(), automatic events polling]=],
       returnType = "void"
     },
     {
       name = "ShowCursor",
-      description = "Shows cursor",
+      description = [=[Shows cursor]=],
       returnType = "void"
     },
     {
       name = "HideCursor",
-      description = "Hides cursor",
+      description = [=[Hides cursor]=],
       returnType = "void"
     },
     {
       name = "IsCursorHidden",
-      description = "Check if cursor is not visible",
+      description = [=[Check if cursor is not visible]=],
       returnType = "bool"
     },
     {
       name = "EnableCursor",
-      description = "Enables cursor (unlock cursor)",
+      description = [=[Enables cursor (unlock cursor)]=],
       returnType = "void"
     },
     {
       name = "DisableCursor",
-      description = "Disables cursor (lock cursor)",
+      description = [=[Disables cursor (lock cursor)]=],
       returnType = "void"
     },
     {
       name = "IsCursorOnScreen",
-      description = "Check if cursor is on the screen",
+      description = [=[Check if cursor is on the screen]=],
       returnType = "bool"
     },
     {
       name = "ClearBackground",
-      description = "Set background color (framebuffer clear color)",
+      description = [=[Set background color (framebuffer clear color)]=],
       returnType = "void",
       params = {
         {type = "Color", name = "color"}
@@ -3452,17 +3488,17 @@ return {
     },
     {
       name = "BeginDrawing",
-      description = "Setup canvas (framebuffer) to start drawing",
+      description = [=[Setup canvas (framebuffer) to start drawing]=],
       returnType = "void"
     },
     {
       name = "EndDrawing",
-      description = "End canvas drawing and swap buffers (double buffering)",
+      description = [=[End canvas drawing and swap buffers (double buffering)]=],
       returnType = "void"
     },
     {
       name = "BeginMode2D",
-      description = "Begin 2D mode with custom camera (2D)",
+      description = [=[Begin 2D mode with custom camera (2D)]=],
       returnType = "void",
       params = {
         {type = "Camera2D", name = "camera"}
@@ -3470,12 +3506,12 @@ return {
     },
     {
       name = "EndMode2D",
-      description = "Ends 2D mode with custom camera",
+      description = [=[Ends 2D mode with custom camera]=],
       returnType = "void"
     },
     {
       name = "BeginMode3D",
-      description = "Begin 3D mode with custom camera (3D)",
+      description = [=[Begin 3D mode with custom camera (3D)]=],
       returnType = "void",
       params = {
         {type = "Camera3D", name = "camera"}
@@ -3483,12 +3519,12 @@ return {
     },
     {
       name = "EndMode3D",
-      description = "Ends 3D mode and returns to default 2D orthographic mode",
+      description = [=[Ends 3D mode and returns to default 2D orthographic mode]=],
       returnType = "void"
     },
     {
       name = "BeginTextureMode",
-      description = "Begin drawing to render texture",
+      description = [=[Begin drawing to render texture]=],
       returnType = "void",
       params = {
         {type = "RenderTexture2D", name = "target"}
@@ -3496,12 +3532,12 @@ return {
     },
     {
       name = "EndTextureMode",
-      description = "Ends drawing to render texture",
+      description = [=[Ends drawing to render texture]=],
       returnType = "void"
     },
     {
       name = "BeginShaderMode",
-      description = "Begin custom shader drawing",
+      description = [=[Begin custom shader drawing]=],
       returnType = "void",
       params = {
         {type = "Shader", name = "shader"}
@@ -3509,12 +3545,12 @@ return {
     },
     {
       name = "EndShaderMode",
-      description = "End custom shader drawing (use default shader)",
+      description = [=[End custom shader drawing (use default shader)]=],
       returnType = "void"
     },
     {
       name = "BeginBlendMode",
-      description = "Begin blending mode (alpha, additive, multiplied, subtract, custom)",
+      description = [=[Begin blending mode (alpha, additive, multiplied, subtract, custom)]=],
       returnType = "void",
       params = {
         {type = "int", name = "mode"}
@@ -3522,12 +3558,12 @@ return {
     },
     {
       name = "EndBlendMode",
-      description = "End blending mode (reset to default: alpha blending)",
+      description = [=[End blending mode (reset to default: alpha blending)]=],
       returnType = "void"
     },
     {
       name = "BeginScissorMode",
-      description = "Begin scissor mode (define screen area for following drawing)",
+      description = [=[Begin scissor mode (define screen area for following drawing)]=],
       returnType = "void",
       params = {
         {type = "int", name = "x"},
@@ -3538,12 +3574,12 @@ return {
     },
     {
       name = "EndScissorMode",
-      description = "End scissor mode",
+      description = [=[End scissor mode]=],
       returnType = "void"
     },
     {
       name = "BeginVrStereoMode",
-      description = "Begin stereo rendering (requires VR simulator)",
+      description = [=[Begin stereo rendering (requires VR simulator)]=],
       returnType = "void",
       params = {
         {type = "VrStereoConfig", name = "config"}
@@ -3551,12 +3587,12 @@ return {
     },
     {
       name = "EndVrStereoMode",
-      description = "End stereo rendering (requires VR simulator)",
+      description = [=[End stereo rendering (requires VR simulator)]=],
       returnType = "void"
     },
     {
       name = "LoadVrStereoConfig",
-      description = "Load VR stereo config for VR simulator device parameters",
+      description = [=[Load VR stereo config for VR simulator device parameters]=],
       returnType = "VrStereoConfig",
       params = {
         {type = "VrDeviceInfo", name = "device"}
@@ -3564,7 +3600,7 @@ return {
     },
     {
       name = "UnloadVrStereoConfig",
-      description = "Unload VR stereo config",
+      description = [=[Unload VR stereo config]=],
       returnType = "void",
       params = {
         {type = "VrStereoConfig", name = "config"}
@@ -3572,7 +3608,7 @@ return {
     },
     {
       name = "LoadShader",
-      description = "Load shader from files and bind default locations",
+      description = [=[Load shader from files and bind default locations]=],
       returnType = "Shader",
       params = {
         {type = "const char *", name = "vsFileName"},
@@ -3581,7 +3617,7 @@ return {
     },
     {
       name = "LoadShaderFromMemory",
-      description = "Load shader from code strings and bind default locations",
+      description = [=[Load shader from code strings and bind default locations]=],
       returnType = "Shader",
       params = {
         {type = "const char *", name = "vsCode"},
@@ -3590,7 +3626,7 @@ return {
     },
     {
       name = "IsShaderValid",
-      description = "Check if a shader is valid (loaded on GPU)",
+      description = [=[Check if a shader is valid (loaded on GPU)]=],
       returnType = "bool",
       params = {
         {type = "Shader", name = "shader"}
@@ -3598,7 +3634,7 @@ return {
     },
     {
       name = "GetShaderLocation",
-      description = "Get shader uniform location",
+      description = [=[Get shader uniform location]=],
       returnType = "int",
       params = {
         {type = "Shader", name = "shader"},
@@ -3607,7 +3643,7 @@ return {
     },
     {
       name = "GetShaderLocationAttrib",
-      description = "Get shader attribute location",
+      description = [=[Get shader attribute location]=],
       returnType = "int",
       params = {
         {type = "Shader", name = "shader"},
@@ -3616,7 +3652,7 @@ return {
     },
     {
       name = "SetShaderValue",
-      description = "Set shader uniform value",
+      description = [=[Set shader uniform value]=],
       returnType = "void",
       params = {
         {type = "Shader", name = "shader"},
@@ -3627,7 +3663,7 @@ return {
     },
     {
       name = "SetShaderValueV",
-      description = "Set shader uniform value vector",
+      description = [=[Set shader uniform value vector]=],
       returnType = "void",
       params = {
         {type = "Shader", name = "shader"},
@@ -3639,7 +3675,7 @@ return {
     },
     {
       name = "SetShaderValueMatrix",
-      description = "Set shader uniform value (matrix 4x4)",
+      description = [=[Set shader uniform value (matrix 4x4)]=],
       returnType = "void",
       params = {
         {type = "Shader", name = "shader"},
@@ -3649,7 +3685,7 @@ return {
     },
     {
       name = "SetShaderValueTexture",
-      description = "Set shader uniform value for texture (sampler2d)",
+      description = [=[Set shader uniform value and bind the texture (sampler2d)]=],
       returnType = "void",
       params = {
         {type = "Shader", name = "shader"},
@@ -3659,7 +3695,7 @@ return {
     },
     {
       name = "UnloadShader",
-      description = "Unload shader from GPU memory (VRAM)",
+      description = [=[Unload shader from GPU memory (VRAM)]=],
       returnType = "void",
       params = {
         {type = "Shader", name = "shader"}
@@ -3667,7 +3703,7 @@ return {
     },
     {
       name = "GetScreenToWorldRay",
-      description = "Get a ray trace from screen position (i.e mouse)",
+      description = [=[Get a ray trace from screen position (i.e mouse)]=],
       returnType = "Ray",
       params = {
         {type = "Vector2", name = "position"},
@@ -3676,7 +3712,7 @@ return {
     },
     {
       name = "GetScreenToWorldRayEx",
-      description = "Get a ray trace from screen position (i.e mouse) in a viewport",
+      description = [=[Get a ray trace from screen position (i.e mouse) in a viewport]=],
       returnType = "Ray",
       params = {
         {type = "Vector2", name = "position"},
@@ -3687,7 +3723,7 @@ return {
     },
     {
       name = "GetWorldToScreen",
-      description = "Get the screen space position for a 3d world space position",
+      description = [=[Get the screen space position for a 3d world space position]=],
       returnType = "Vector2",
       params = {
         {type = "Vector3", name = "position"},
@@ -3696,7 +3732,7 @@ return {
     },
     {
       name = "GetWorldToScreenEx",
-      description = "Get size position for a 3d world space position",
+      description = [=[Get size position for a 3d world space position]=],
       returnType = "Vector2",
       params = {
         {type = "Vector3", name = "position"},
@@ -3707,7 +3743,7 @@ return {
     },
     {
       name = "GetWorldToScreen2D",
-      description = "Get the screen space position for a 2d camera world space position",
+      description = [=[Get the screen space position for a 2d camera world space position]=],
       returnType = "Vector2",
       params = {
         {type = "Vector2", name = "position"},
@@ -3716,7 +3752,7 @@ return {
     },
     {
       name = "GetScreenToWorld2D",
-      description = "Get the world space position for a 2d camera screen space position",
+      description = [=[Get the world space position for a 2d camera screen space position]=],
       returnType = "Vector2",
       params = {
         {type = "Vector2", name = "position"},
@@ -3725,7 +3761,7 @@ return {
     },
     {
       name = "GetCameraMatrix",
-      description = "Get camera transform matrix (view matrix)",
+      description = [=[Get camera transform matrix (view matrix)]=],
       returnType = "Matrix",
       params = {
         {type = "Camera", name = "camera"}
@@ -3733,7 +3769,7 @@ return {
     },
     {
       name = "GetCameraMatrix2D",
-      description = "Get camera 2d transform matrix",
+      description = [=[Get camera 2d transform matrix]=],
       returnType = "Matrix",
       params = {
         {type = "Camera2D", name = "camera"}
@@ -3741,7 +3777,7 @@ return {
     },
     {
       name = "SetTargetFPS",
-      description = "Set target FPS (maximum)",
+      description = [=[Set target FPS (maximum)]=],
       returnType = "void",
       params = {
         {type = "int", name = "fps"}
@@ -3749,32 +3785,32 @@ return {
     },
     {
       name = "GetFrameTime",
-      description = "Get time in seconds for last frame drawn (delta time)",
+      description = [=[Get time in seconds for last frame drawn (delta time)]=],
       returnType = "float"
     },
     {
       name = "GetTime",
-      description = "Get elapsed time in seconds since InitWindow()",
+      description = [=[Get elapsed time in seconds since InitWindow()]=],
       returnType = "double"
     },
     {
       name = "GetFPS",
-      description = "Get current FPS",
+      description = [=[Get current FPS]=],
       returnType = "int"
     },
     {
       name = "SwapScreenBuffer",
-      description = "Swap back buffer with front buffer (screen drawing)",
+      description = [=[Swap back buffer with front buffer (screen drawing)]=],
       returnType = "void"
     },
     {
       name = "PollInputEvents",
-      description = "Register all input events",
+      description = [=[Register all input events]=],
       returnType = "void"
     },
     {
       name = "WaitTime",
-      description = "Wait for some time (halt program execution)",
+      description = [=[Wait for some time (halt program execution)]=],
       returnType = "void",
       params = {
         {type = "double", name = "seconds"}
@@ -3782,7 +3818,7 @@ return {
     },
     {
       name = "SetRandomSeed",
-      description = "Set the seed for the random number generator",
+      description = [=[Set the seed for the random number generator]=],
       returnType = "void",
       params = {
         {type = "unsigned int", name = "seed"}
@@ -3790,7 +3826,7 @@ return {
     },
     {
       name = "GetRandomValue",
-      description = "Get a random value between min and max (both included)",
+      description = [=[Get a random value between min and max (both included)]=],
       returnType = "int",
       params = {
         {type = "int", name = "min"},
@@ -3799,7 +3835,7 @@ return {
     },
     {
       name = "LoadRandomSequence",
-      description = "Load random values sequence, no values repeated",
+      description = [=[Load random values sequence, no values repeated]=],
       returnType = "int *",
       params = {
         {type = "unsigned int", name = "count"},
@@ -3809,7 +3845,7 @@ return {
     },
     {
       name = "UnloadRandomSequence",
-      description = "Unload random values sequence",
+      description = [=[Unload random values sequence]=],
       returnType = "void",
       params = {
         {type = "int *", name = "sequence"}
@@ -3817,7 +3853,7 @@ return {
     },
     {
       name = "TakeScreenshot",
-      description = "Takes a screenshot of current screen (filename extension defines format)",
+      description = [=[Takes a screenshot of current screen (filename extension defines format)]=],
       returnType = "void",
       params = {
         {type = "const char *", name = "fileName"}
@@ -3825,7 +3861,7 @@ return {
     },
     {
       name = "SetConfigFlags",
-      description = "Setup init configuration flags (view FLAGS)",
+      description = [=[Setup init configuration flags (view FLAGS)]=],
       returnType = "void",
       params = {
         {type = "unsigned int", name = "flags"}
@@ -3833,15 +3869,23 @@ return {
     },
     {
       name = "OpenURL",
-      description = "Open URL with default system browser (if available)",
+      description = [=[Open URL with default system browser (if available)]=],
       returnType = "void",
       params = {
         {type = "const char *", name = "url"}
       }
     },
     {
+      name = "SetTraceLogLevel",
+      description = [=[Set the current threshold (minimum) log level]=],
+      returnType = "void",
+      params = {
+        {type = "int", name = "logLevel"}
+      }
+    },
+    {
       name = "TraceLog",
-      description = "Show trace log messages (LOG_DEBUG, LOG_INFO, LOG_WARNING, LOG_ERROR...)",
+      description = [=[Show trace log messages (LOG_DEBUG, LOG_INFO, LOG_WARNING, LOG_ERROR...)]=],
       returnType = "void",
       params = {
         {type = "int", name = "logLevel"},
@@ -3850,16 +3894,16 @@ return {
       }
     },
     {
-      name = "SetTraceLogLevel",
-      description = "Set the current threshold (minimum) log level",
+      name = "SetTraceLogCallback",
+      description = [=[Set custom trace log]=],
       returnType = "void",
       params = {
-        {type = "int", name = "logLevel"}
+        {type = "TraceLogCallback", name = "callback"}
       }
     },
     {
       name = "MemAlloc",
-      description = "Internal memory allocator",
+      description = [=[Internal memory allocator]=],
       returnType = "void *",
       params = {
         {type = "unsigned int", name = "size"}
@@ -3867,7 +3911,7 @@ return {
     },
     {
       name = "MemRealloc",
-      description = "Internal memory reallocator",
+      description = [=[Internal memory reallocator]=],
       returnType = "void *",
       params = {
         {type = "void *", name = "ptr"},
@@ -3876,55 +3920,15 @@ return {
     },
     {
       name = "MemFree",
-      description = "Internal memory free",
+      description = [=[Internal memory free]=],
       returnType = "void",
       params = {
         {type = "void *", name = "ptr"}
       }
     },
     {
-      name = "SetTraceLogCallback",
-      description = "Set custom trace log",
-      returnType = "void",
-      params = {
-        {type = "TraceLogCallback", name = "callback"}
-      }
-    },
-    {
-      name = "SetLoadFileDataCallback",
-      description = "Set custom file binary data loader",
-      returnType = "void",
-      params = {
-        {type = "LoadFileDataCallback", name = "callback"}
-      }
-    },
-    {
-      name = "SetSaveFileDataCallback",
-      description = "Set custom file binary data saver",
-      returnType = "void",
-      params = {
-        {type = "SaveFileDataCallback", name = "callback"}
-      }
-    },
-    {
-      name = "SetLoadFileTextCallback",
-      description = "Set custom file text data loader",
-      returnType = "void",
-      params = {
-        {type = "LoadFileTextCallback", name = "callback"}
-      }
-    },
-    {
-      name = "SetSaveFileTextCallback",
-      description = "Set custom file text data saver",
-      returnType = "void",
-      params = {
-        {type = "SaveFileTextCallback", name = "callback"}
-      }
-    },
-    {
       name = "LoadFileData",
-      description = "Load file data as byte array (read)",
+      description = [=[Load file data as byte array (read)]=],
       returnType = "unsigned char *",
       params = {
         {type = "const char *", name = "fileName"},
@@ -3933,7 +3937,7 @@ return {
     },
     {
       name = "UnloadFileData",
-      description = "Unload file data allocated by LoadFileData()",
+      description = [=[Unload file data allocated by LoadFileData()]=],
       returnType = "void",
       params = {
         {type = "unsigned char *", name = "data"}
@@ -3941,7 +3945,7 @@ return {
     },
     {
       name = "SaveFileData",
-      description = "Save data to file from byte array (write), returns true on success",
+      description = [=[Save data to file from byte array (write), returns true on success]=],
       returnType = "bool",
       params = {
         {type = "const char *", name = "fileName"},
@@ -3951,7 +3955,7 @@ return {
     },
     {
       name = "ExportDataAsCode",
-      description = "Export data to code (.h), returns true on success",
+      description = [=[Export data to code (.h), returns true on success]=],
       returnType = "bool",
       params = {
         {type = "const unsigned char *", name = "data"},
@@ -3961,7 +3965,7 @@ return {
     },
     {
       name = "LoadFileText",
-      description = "Load text data from file (read), returns a '\\0' terminated string",
+      description = [=[Load text data from file (read), returns a '\\0' terminated string]=],
       returnType = "char *",
       params = {
         {type = "const char *", name = "fileName"}
@@ -3969,7 +3973,7 @@ return {
     },
     {
       name = "UnloadFileText",
-      description = "Unload file text data allocated by LoadFileText()",
+      description = [=[Unload file text data allocated by LoadFileText()]=],
       returnType = "void",
       params = {
         {type = "char *", name = "text"}
@@ -3977,16 +3981,102 @@ return {
     },
     {
       name = "SaveFileText",
-      description = "Save text data to file (write), string must be '\\0' terminated, returns true on success",
+      description = [=[Save text data to file (write), string must be '\\0' terminated, returns true on success]=],
       returnType = "bool",
       params = {
         {type = "const char *", name = "fileName"},
-        {type = "char *", name = "text"}
+        {type = "const char *", name = "text"}
+      }
+    },
+    {
+      name = "SetLoadFileDataCallback",
+      description = [=[Set custom file binary data loader]=],
+      returnType = "void",
+      params = {
+        {type = "LoadFileDataCallback", name = "callback"}
+      }
+    },
+    {
+      name = "SetSaveFileDataCallback",
+      description = [=[Set custom file binary data saver]=],
+      returnType = "void",
+      params = {
+        {type = "SaveFileDataCallback", name = "callback"}
+      }
+    },
+    {
+      name = "SetLoadFileTextCallback",
+      description = [=[Set custom file text data loader]=],
+      returnType = "void",
+      params = {
+        {type = "LoadFileTextCallback", name = "callback"}
+      }
+    },
+    {
+      name = "SetSaveFileTextCallback",
+      description = [=[Set custom file text data saver]=],
+      returnType = "void",
+      params = {
+        {type = "SaveFileTextCallback", name = "callback"}
+      }
+    },
+    {
+      name = "FileRename",
+      description = [=[Rename file (if exists)]=],
+      returnType = "int",
+      params = {
+        {type = "const char *", name = "fileName"},
+        {type = "const char *", name = "fileRename"}
+      }
+    },
+    {
+      name = "FileRemove",
+      description = [=[Remove file (if exists)]=],
+      returnType = "int",
+      params = {
+        {type = "const char *", name = "fileName"}
+      }
+    },
+    {
+      name = "FileCopy",
+      description = [=[Copy file from one path to another, dstPath created if it doesn't exist]=],
+      returnType = "int",
+      params = {
+        {type = "const char *", name = "srcPath"},
+        {type = "const char *", name = "dstPath"}
+      }
+    },
+    {
+      name = "FileMove",
+      description = [=[Move file from one directory to another, dstPath created if it doesn't exist]=],
+      returnType = "int",
+      params = {
+        {type = "const char *", name = "srcPath"},
+        {type = "const char *", name = "dstPath"}
+      }
+    },
+    {
+      name = "FileTextReplace",
+      description = [=[Replace text in an existing file]=],
+      returnType = "int",
+      params = {
+        {type = "const char *", name = "fileName"},
+        {type = "const char *", name = "search"},
+        {type = "const char *", name = "replacement"}
+      }
+    },
+    {
+      name = "FileTextFindIndex",
+      description = [=[Find text in existing file]=],
+      returnType = "int",
+      params = {
+        {type = "const char *", name = "fileName"},
+        {type = "const char *", name = "search"}
       }
     },
     {
       name = "FileExists",
-      description = "Check if file exists",
+      description = [=[Check if file exists]=],
       returnType = "bool",
       params = {
         {type = "const char *", name = "fileName"}
@@ -3994,7 +4084,7 @@ return {
     },
     {
       name = "DirectoryExists",
-      description = "Check if a directory path exists",
+      description = [=[Check if a directory path exists]=],
       returnType = "bool",
       params = {
         {type = "const char *", name = "dirPath"}
@@ -4002,7 +4092,7 @@ return {
     },
     {
       name = "IsFileExtension",
-      description = "Check file extension (including point: .png, .wav)",
+      description = [=[Check file extension (recommended include point: .png, .wav)]=],
       returnType = "bool",
       params = {
         {type = "const char *", name = "fileName"},
@@ -4011,15 +4101,23 @@ return {
     },
     {
       name = "GetFileLength",
-      description = "Get file length in bytes (NOTE: GetFileSize() conflicts with windows.h)",
+      description = [=[Get file length in bytes (NOTE: GetFileSize() conflicts with windows.h)]=],
       returnType = "int",
       params = {
         {type = "const char *", name = "fileName"}
       }
     },
     {
+      name = "GetFileModTime",
+      description = [=[Get file modification time (last write time)]=],
+      returnType = "long",
+      params = {
+        {type = "const char *", name = "fileName"}
+      }
+    },
+    {
       name = "GetFileExtension",
-      description = "Get pointer to extension for a filename string (includes dot: '.png')",
+      description = [=[Get pointer to extension for a filename string (includes dot: '.png')]=],
       returnType = "const char *",
       params = {
         {type = "const char *", name = "fileName"}
@@ -4027,7 +4125,7 @@ return {
     },
     {
       name = "GetFileName",
-      description = "Get pointer to filename for a path string",
+      description = [=[Get pointer to filename for a path string]=],
       returnType = "const char *",
       params = {
         {type = "const char *", name = "filePath"}
@@ -4035,7 +4133,7 @@ return {
     },
     {
       name = "GetFileNameWithoutExt",
-      description = "Get filename string without extension (uses static string)",
+      description = [=[Get filename string without extension (uses static string)]=],
       returnType = "const char *",
       params = {
         {type = "const char *", name = "filePath"}
@@ -4043,7 +4141,7 @@ return {
     },
     {
       name = "GetDirectoryPath",
-      description = "Get full path for a given fileName with path (uses static string)",
+      description = [=[Get full path for a given fileName with path (uses static string)]=],
       returnType = "const char *",
       params = {
         {type = "const char *", name = "filePath"}
@@ -4051,7 +4149,7 @@ return {
     },
     {
       name = "GetPrevDirectoryPath",
-      description = "Get previous directory path for a given path (uses static string)",
+      description = [=[Get previous directory path for a given path (uses static string)]=],
       returnType = "const char *",
       params = {
         {type = "const char *", name = "dirPath"}
@@ -4059,17 +4157,17 @@ return {
     },
     {
       name = "GetWorkingDirectory",
-      description = "Get current working directory (uses static string)",
+      description = [=[Get current working directory (uses static string)]=],
       returnType = "const char *"
     },
     {
       name = "GetApplicationDirectory",
-      description = "Get the directory of the running application (uses static string)",
+      description = [=[Get the directory of the running application (uses static string)]=],
       returnType = "const char *"
     },
     {
       name = "MakeDirectory",
-      description = "Create directories (including full path requested), returns 0 on success",
+      description = [=[Create directories (including full path requested), returns 0 on success]=],
       returnType = "int",
       params = {
         {type = "const char *", name = "dirPath"}
@@ -4077,15 +4175,15 @@ return {
     },
     {
       name = "ChangeDirectory",
-      description = "Change working directory, return true on success",
+      description = [=[Change working directory, return true on success]=],
       returnType = "bool",
       params = {
-        {type = "const char *", name = "dir"}
+        {type = "const char *", name = "dirPath"}
       }
     },
     {
       name = "IsPathFile",
-      description = "Check if a given path is a file or a directory",
+      description = [=[Check if a given path is a file or a directory]=],
       returnType = "bool",
       params = {
         {type = "const char *", name = "path"}
@@ -4093,7 +4191,7 @@ return {
     },
     {
       name = "IsFileNameValid",
-      description = "Check if fileName is valid for the platform/OS",
+      description = [=[Check if fileName is valid for the platform/OS]=],
       returnType = "bool",
       params = {
         {type = "const char *", name = "fileName"}
@@ -4101,7 +4199,7 @@ return {
     },
     {
       name = "LoadDirectoryFiles",
-      description = "Load directory filepaths",
+      description = [=[Load directory filepaths, files and directories, no subdirs scan]=],
       returnType = "FilePathList",
       params = {
         {type = "const char *", name = "dirPath"}
@@ -4109,7 +4207,7 @@ return {
     },
     {
       name = "LoadDirectoryFilesEx",
-      description = "Load directory filepaths with extension filtering and recursive directory scan. Use 'DIR' in the filter string to include directories in the result",
+      description = [=[Load directory filepaths with extension filtering and subdir scan; some filters available: "*.*", "FILES*", "DIRS*"]=],
       returnType = "FilePathList",
       params = {
         {type = "const char *", name = "basePath"},
@@ -4119,7 +4217,7 @@ return {
     },
     {
       name = "UnloadDirectoryFiles",
-      description = "Unload filepaths",
+      description = [=[Unload filepaths]=],
       returnType = "void",
       params = {
         {type = "FilePathList", name = "files"}
@@ -4127,33 +4225,43 @@ return {
     },
     {
       name = "IsFileDropped",
-      description = "Check if a file has been dropped into window",
+      description = [=[Check if a file has been dropped into window]=],
       returnType = "bool"
     },
     {
       name = "LoadDroppedFiles",
-      description = "Load dropped filepaths",
+      description = [=[Load dropped filepaths]=],
       returnType = "FilePathList"
     },
     {
       name = "UnloadDroppedFiles",
-      description = "Unload dropped filepaths",
+      description = [=[Unload dropped filepaths]=],
       returnType = "void",
       params = {
         {type = "FilePathList", name = "files"}
       }
     },
     {
-      name = "GetFileModTime",
-      description = "Get file modification time (last write time)",
-      returnType = "long",
+      name = "GetDirectoryFileCount",
+      description = [=[Get the file count in a directory]=],
+      returnType = "unsigned int",
       params = {
-        {type = "const char *", name = "fileName"}
+        {type = "const char *", name = "dirPath"}
+      }
+    },
+    {
+      name = "GetDirectoryFileCountEx",
+      description = [=[Get the file count in a directory with extension filtering and recursive directory scan. Use 'DIR' in the filter string to include directories in the result]=],
+      returnType = "unsigned int",
+      params = {
+        {type = "const char *", name = "basePath"},
+        {type = "const char *", name = "filter"},
+        {type = "bool", name = "scanSubdirs"}
       }
     },
     {
       name = "CompressData",
-      description = "Compress data (DEFLATE algorithm), memory must be MemFree()",
+      description = [=[Compress data (DEFLATE algorithm), memory must be MemFree()]=],
       returnType = "unsigned char *",
       params = {
         {type = "const unsigned char *", name = "data"},
@@ -4163,7 +4271,7 @@ return {
     },
     {
       name = "DecompressData",
-      description = "Decompress data (DEFLATE algorithm), memory must be MemFree()",
+      description = [=[Decompress data (DEFLATE algorithm), memory must be MemFree()]=],
       returnType = "unsigned char *",
       params = {
         {type = "const unsigned char *", name = "compData"},
@@ -4173,7 +4281,7 @@ return {
     },
     {
       name = "EncodeDataBase64",
-      description = "Encode data to Base64 string, memory must be MemFree()",
+      description = [=[Encode data to Base64 string (includes NULL terminator), memory must be MemFree()]=],
       returnType = "char *",
       params = {
         {type = "const unsigned char *", name = "data"},
@@ -4183,16 +4291,16 @@ return {
     },
     {
       name = "DecodeDataBase64",
-      description = "Decode Base64 string data, memory must be MemFree()",
+      description = [=[Decode Base64 string (expected NULL terminated), memory must be MemFree()]=],
       returnType = "unsigned char *",
       params = {
-        {type = "const unsigned char *", name = "data"},
+        {type = "const char *", name = "text"},
         {type = "int *", name = "outputSize"}
       }
     },
     {
       name = "ComputeCRC32",
-      description = "Compute CRC32 hash code",
+      description = [=[Compute CRC32 hash code]=],
       returnType = "unsigned int",
       params = {
         {type = "unsigned char *", name = "data"},
@@ -4201,7 +4309,7 @@ return {
     },
     {
       name = "ComputeMD5",
-      description = "Compute MD5 hash code, returns static int[4] (16 bytes)",
+      description = [=[Compute MD5 hash code, returns static int[4] (16 bytes)]=],
       returnType = "unsigned int *",
       params = {
         {type = "unsigned char *", name = "data"},
@@ -4210,7 +4318,16 @@ return {
     },
     {
       name = "ComputeSHA1",
-      description = "Compute SHA1 hash code, returns static int[5] (20 bytes)",
+      description = [=[Compute SHA1 hash code, returns static int[5] (20 bytes)]=],
+      returnType = "unsigned int *",
+      params = {
+        {type = "unsigned char *", name = "data"},
+        {type = "int", name = "dataSize"}
+      }
+    },
+    {
+      name = "ComputeSHA256",
+      description = [=[Compute SHA256 hash code, returns static int[8] (32 bytes)]=],
       returnType = "unsigned int *",
       params = {
         {type = "unsigned char *", name = "data"},
@@ -4219,7 +4336,7 @@ return {
     },
     {
       name = "LoadAutomationEventList",
-      description = "Load automation events list from file, NULL for empty list, capacity = MAX_AUTOMATION_EVENTS",
+      description = [=[Load automation events list from file, NULL for empty list, capacity = MAX_AUTOMATION_EVENTS]=],
       returnType = "AutomationEventList",
       params = {
         {type = "const char *", name = "fileName"}
@@ -4227,7 +4344,7 @@ return {
     },
     {
       name = "UnloadAutomationEventList",
-      description = "Unload automation events list from file",
+      description = [=[Unload automation events list from file]=],
       returnType = "void",
       params = {
         {type = "AutomationEventList", name = "list"}
@@ -4235,7 +4352,7 @@ return {
     },
     {
       name = "ExportAutomationEventList",
-      description = "Export automation events list as text file",
+      description = [=[Export automation events list as text file]=],
       returnType = "bool",
       params = {
         {type = "AutomationEventList", name = "list"},
@@ -4244,7 +4361,7 @@ return {
     },
     {
       name = "SetAutomationEventList",
-      description = "Set automation event list to record to",
+      description = [=[Set automation event list to record to]=],
       returnType = "void",
       params = {
         {type = "AutomationEventList *", name = "list"}
@@ -4252,7 +4369,7 @@ return {
     },
     {
       name = "SetAutomationEventBaseFrame",
-      description = "Set automation event internal base frame to start recording",
+      description = [=[Set automation event internal base frame to start recording]=],
       returnType = "void",
       params = {
         {type = "int", name = "frame"}
@@ -4260,17 +4377,17 @@ return {
     },
     {
       name = "StartAutomationEventRecording",
-      description = "Start recording automation events (AutomationEventList must be set)",
+      description = [=[Start recording automation events (AutomationEventList must be set)]=],
       returnType = "void"
     },
     {
       name = "StopAutomationEventRecording",
-      description = "Stop recording automation events",
+      description = [=[Stop recording automation events]=],
       returnType = "void"
     },
     {
       name = "PlayAutomationEvent",
-      description = "Play a recorded automation event",
+      description = [=[Play a recorded automation event]=],
       returnType = "void",
       params = {
         {type = "AutomationEvent", name = "event"}
@@ -4278,7 +4395,7 @@ return {
     },
     {
       name = "IsKeyPressed",
-      description = "Check if a key has been pressed once",
+      description = [=[Check if a key has been pressed once]=],
       returnType = "bool",
       params = {
         {type = "int", name = "key"}
@@ -4286,7 +4403,7 @@ return {
     },
     {
       name = "IsKeyPressedRepeat",
-      description = "Check if a key has been pressed again",
+      description = [=[Check if a key has been pressed again]=],
       returnType = "bool",
       params = {
         {type = "int", name = "key"}
@@ -4294,7 +4411,7 @@ return {
     },
     {
       name = "IsKeyDown",
-      description = "Check if a key is being pressed",
+      description = [=[Check if a key is being pressed]=],
       returnType = "bool",
       params = {
         {type = "int", name = "key"}
@@ -4302,7 +4419,7 @@ return {
     },
     {
       name = "IsKeyReleased",
-      description = "Check if a key has been released once",
+      description = [=[Check if a key has been released once]=],
       returnType = "bool",
       params = {
         {type = "int", name = "key"}
@@ -4310,7 +4427,7 @@ return {
     },
     {
       name = "IsKeyUp",
-      description = "Check if a key is NOT being pressed",
+      description = [=[Check if a key is NOT being pressed]=],
       returnType = "bool",
       params = {
         {type = "int", name = "key"}
@@ -4318,17 +4435,25 @@ return {
     },
     {
       name = "GetKeyPressed",
-      description = "Get key pressed (keycode), call it multiple times for keys queued, returns 0 when the queue is empty",
+      description = [=[Get key pressed (keycode), call it multiple times for keys queued, returns 0 when the queue is empty]=],
       returnType = "int"
     },
     {
       name = "GetCharPressed",
-      description = "Get char pressed (unicode), call it multiple times for chars queued, returns 0 when the queue is empty",
+      description = [=[Get char pressed (unicode), call it multiple times for chars queued, returns 0 when the queue is empty]=],
       returnType = "int"
     },
     {
+      name = "GetKeyName",
+      description = [=[Get name of a QWERTY key on the current keyboard layout (eg returns string 'q' for KEY_A on an AZERTY keyboard)]=],
+      returnType = "const char *",
+      params = {
+        {type = "int", name = "key"}
+      }
+    },
+    {
       name = "SetExitKey",
-      description = "Set a custom key to exit program (default is ESC)",
+      description = [=[Set a custom key to exit program (default is ESC)]=],
       returnType = "void",
       params = {
         {type = "int", name = "key"}
@@ -4336,7 +4461,7 @@ return {
     },
     {
       name = "IsGamepadAvailable",
-      description = "Check if a gamepad is available",
+      description = [=[Check if a gamepad is available]=],
       returnType = "bool",
       params = {
         {type = "int", name = "gamepad"}
@@ -4344,7 +4469,7 @@ return {
     },
     {
       name = "GetGamepadName",
-      description = "Get gamepad internal name id",
+      description = [=[Get gamepad internal name id]=],
       returnType = "const char *",
       params = {
         {type = "int", name = "gamepad"}
@@ -4352,7 +4477,7 @@ return {
     },
     {
       name = "IsGamepadButtonPressed",
-      description = "Check if a gamepad button has been pressed once",
+      description = [=[Check if a gamepad button has been pressed once]=],
       returnType = "bool",
       params = {
         {type = "int", name = "gamepad"},
@@ -4361,7 +4486,7 @@ return {
     },
     {
       name = "IsGamepadButtonDown",
-      description = "Check if a gamepad button is being pressed",
+      description = [=[Check if a gamepad button is being pressed]=],
       returnType = "bool",
       params = {
         {type = "int", name = "gamepad"},
@@ -4370,7 +4495,7 @@ return {
     },
     {
       name = "IsGamepadButtonReleased",
-      description = "Check if a gamepad button has been released once",
+      description = [=[Check if a gamepad button has been released once]=],
       returnType = "bool",
       params = {
         {type = "int", name = "gamepad"},
@@ -4379,7 +4504,7 @@ return {
     },
     {
       name = "IsGamepadButtonUp",
-      description = "Check if a gamepad button is NOT being pressed",
+      description = [=[Check if a gamepad button is NOT being pressed]=],
       returnType = "bool",
       params = {
         {type = "int", name = "gamepad"},
@@ -4388,12 +4513,12 @@ return {
     },
     {
       name = "GetGamepadButtonPressed",
-      description = "Get the last gamepad button pressed",
+      description = [=[Get the last gamepad button pressed]=],
       returnType = "int"
     },
     {
       name = "GetGamepadAxisCount",
-      description = "Get gamepad axis count for a gamepad",
+      description = [=[Get axis count for a gamepad]=],
       returnType = "int",
       params = {
         {type = "int", name = "gamepad"}
@@ -4401,7 +4526,7 @@ return {
     },
     {
       name = "GetGamepadAxisMovement",
-      description = "Get axis movement value for a gamepad axis",
+      description = [=[Get movement value for a gamepad axis]=],
       returnType = "float",
       params = {
         {type = "int", name = "gamepad"},
@@ -4410,7 +4535,7 @@ return {
     },
     {
       name = "SetGamepadMappings",
-      description = "Set internal gamepad mappings (SDL_GameControllerDB)",
+      description = [=[Set internal gamepad mappings (SDL_GameControllerDB)]=],
       returnType = "int",
       params = {
         {type = "const char *", name = "mappings"}
@@ -4418,7 +4543,7 @@ return {
     },
     {
       name = "SetGamepadVibration",
-      description = "Set gamepad vibration for both motors (duration in seconds)",
+      description = [=[Set gamepad vibration for both motors (duration in seconds)]=],
       returnType = "void",
       params = {
         {type = "int", name = "gamepad"},
@@ -4429,7 +4554,7 @@ return {
     },
     {
       name = "IsMouseButtonPressed",
-      description = "Check if a mouse button has been pressed once",
+      description = [=[Check if a mouse button has been pressed once]=],
       returnType = "bool",
       params = {
         {type = "int", name = "button"}
@@ -4437,7 +4562,7 @@ return {
     },
     {
       name = "IsMouseButtonDown",
-      description = "Check if a mouse button is being pressed",
+      description = [=[Check if a mouse button is being pressed]=],
       returnType = "bool",
       params = {
         {type = "int", name = "button"}
@@ -4445,7 +4570,7 @@ return {
     },
     {
       name = "IsMouseButtonReleased",
-      description = "Check if a mouse button has been released once",
+      description = [=[Check if a mouse button has been released once]=],
       returnType = "bool",
       params = {
         {type = "int", name = "button"}
@@ -4453,7 +4578,7 @@ return {
     },
     {
       name = "IsMouseButtonUp",
-      description = "Check if a mouse button is NOT being pressed",
+      description = [=[Check if a mouse button is NOT being pressed]=],
       returnType = "bool",
       params = {
         {type = "int", name = "button"}
@@ -4461,27 +4586,27 @@ return {
     },
     {
       name = "GetMouseX",
-      description = "Get mouse position X",
+      description = [=[Get mouse position X]=],
       returnType = "int"
     },
     {
       name = "GetMouseY",
-      description = "Get mouse position Y",
+      description = [=[Get mouse position Y]=],
       returnType = "int"
     },
     {
       name = "GetMousePosition",
-      description = "Get mouse position XY",
+      description = [=[Get mouse position XY]=],
       returnType = "Vector2"
     },
     {
       name = "GetMouseDelta",
-      description = "Get mouse delta between frames",
+      description = [=[Get mouse delta between frames]=],
       returnType = "Vector2"
     },
     {
       name = "SetMousePosition",
-      description = "Set mouse position XY",
+      description = [=[Set mouse position XY]=],
       returnType = "void",
       params = {
         {type = "int", name = "x"},
@@ -4490,7 +4615,7 @@ return {
     },
     {
       name = "SetMouseOffset",
-      description = "Set mouse offset",
+      description = [=[Set mouse offset]=],
       returnType = "void",
       params = {
         {type = "int", name = "offsetX"},
@@ -4499,7 +4624,7 @@ return {
     },
     {
       name = "SetMouseScale",
-      description = "Set mouse scaling",
+      description = [=[Set mouse scaling]=],
       returnType = "void",
       params = {
         {type = "float", name = "scaleX"},
@@ -4508,17 +4633,17 @@ return {
     },
     {
       name = "GetMouseWheelMove",
-      description = "Get mouse wheel movement for X or Y, whichever is larger",
+      description = [=[Get mouse wheel movement for X or Y, whichever is larger]=],
       returnType = "float"
     },
     {
       name = "GetMouseWheelMoveV",
-      description = "Get mouse wheel movement for both X and Y",
+      description = [=[Get mouse wheel movement for both X and Y]=],
       returnType = "Vector2"
     },
     {
       name = "SetMouseCursor",
-      description = "Set mouse cursor",
+      description = [=[Set mouse cursor]=],
       returnType = "void",
       params = {
         {type = "int", name = "cursor"}
@@ -4526,17 +4651,17 @@ return {
     },
     {
       name = "GetTouchX",
-      description = "Get touch position X for touch point 0 (relative to screen size)",
+      description = [=[Get touch position X for touch point 0 (relative to screen size)]=],
       returnType = "int"
     },
     {
       name = "GetTouchY",
-      description = "Get touch position Y for touch point 0 (relative to screen size)",
+      description = [=[Get touch position Y for touch point 0 (relative to screen size)]=],
       returnType = "int"
     },
     {
       name = "GetTouchPosition",
-      description = "Get touch position XY for a touch point index (relative to screen size)",
+      description = [=[Get touch position XY for a touch point index (relative to screen size)]=],
       returnType = "Vector2",
       params = {
         {type = "int", name = "index"}
@@ -4544,7 +4669,7 @@ return {
     },
     {
       name = "GetTouchPointId",
-      description = "Get touch point identifier for given index",
+      description = [=[Get touch point identifier for given index]=],
       returnType = "int",
       params = {
         {type = "int", name = "index"}
@@ -4552,12 +4677,12 @@ return {
     },
     {
       name = "GetTouchPointCount",
-      description = "Get number of touch points",
+      description = [=[Get number of touch points]=],
       returnType = "int"
     },
     {
       name = "SetGesturesEnabled",
-      description = "Enable a set of gestures using flags",
+      description = [=[Enable a set of gestures using flags]=],
       returnType = "void",
       params = {
         {type = "unsigned int", name = "flags"}
@@ -4565,7 +4690,7 @@ return {
     },
     {
       name = "IsGestureDetected",
-      description = "Check if a gesture have been detected",
+      description = [=[Check if a gesture have been detected]=],
       returnType = "bool",
       params = {
         {type = "unsigned int", name = "gesture"}
@@ -4573,37 +4698,37 @@ return {
     },
     {
       name = "GetGestureDetected",
-      description = "Get latest detected gesture",
+      description = [=[Get latest detected gesture]=],
       returnType = "int"
     },
     {
       name = "GetGestureHoldDuration",
-      description = "Get gesture hold time in seconds",
+      description = [=[Get gesture hold time in seconds]=],
       returnType = "float"
     },
     {
       name = "GetGestureDragVector",
-      description = "Get gesture drag vector",
+      description = [=[Get gesture drag vector]=],
       returnType = "Vector2"
     },
     {
       name = "GetGestureDragAngle",
-      description = "Get gesture drag angle",
+      description = [=[Get gesture drag angle]=],
       returnType = "float"
     },
     {
       name = "GetGesturePinchVector",
-      description = "Get gesture pinch delta",
+      description = [=[Get gesture pinch delta]=],
       returnType = "Vector2"
     },
     {
       name = "GetGesturePinchAngle",
-      description = "Get gesture pinch angle",
+      description = [=[Get gesture pinch angle]=],
       returnType = "float"
     },
     {
       name = "UpdateCamera",
-      description = "Update camera position for selected mode",
+      description = [=[Update camera position for selected mode]=],
       returnType = "void",
       params = {
         {type = "Camera *", name = "camera"},
@@ -4612,7 +4737,7 @@ return {
     },
     {
       name = "UpdateCameraPro",
-      description = "Update camera movement/rotation",
+      description = [=[Update camera movement/rotation]=],
       returnType = "void",
       params = {
         {type = "Camera *", name = "camera"},
@@ -4623,7 +4748,7 @@ return {
     },
     {
       name = "SetShapesTexture",
-      description = "Set texture and rectangle to be used on shapes drawing",
+      description = [=[Set texture and rectangle to be used on shapes drawing]=],
       returnType = "void",
       params = {
         {type = "Texture2D", name = "texture"},
@@ -4632,17 +4757,17 @@ return {
     },
     {
       name = "GetShapesTexture",
-      description = "Get texture that is used for shapes drawing",
+      description = [=[Get texture that is used for shapes drawing]=],
       returnType = "Texture2D"
     },
     {
       name = "GetShapesTextureRectangle",
-      description = "Get texture source rectangle that is used for shapes drawing",
+      description = [=[Get texture source rectangle that is used for shapes drawing]=],
       returnType = "Rectangle"
     },
     {
       name = "DrawPixel",
-      description = "Draw a pixel using geometry [Can be slow, use with care]",
+      description = [=[Draw a pixel using geometry [Can be slow, use with care]]=],
       returnType = "void",
       params = {
         {type = "int", name = "posX"},
@@ -4652,7 +4777,7 @@ return {
     },
     {
       name = "DrawPixelV",
-      description = "Draw a pixel using geometry (Vector version) [Can be slow, use with care]",
+      description = [=[Draw a pixel using geometry (Vector version) [Can be slow, use with care]]=],
       returnType = "void",
       params = {
         {type = "Vector2", name = "position"},
@@ -4661,7 +4786,7 @@ return {
     },
     {
       name = "DrawLine",
-      description = "Draw a line",
+      description = [=[Draw a line]=],
       returnType = "void",
       params = {
         {type = "int", name = "startPosX"},
@@ -4673,7 +4798,7 @@ return {
     },
     {
       name = "DrawLineV",
-      description = "Draw a line (using gl lines)",
+      description = [=[Draw a line (using gl lines)]=],
       returnType = "void",
       params = {
         {type = "Vector2", name = "startPos"},
@@ -4683,7 +4808,7 @@ return {
     },
     {
       name = "DrawLineEx",
-      description = "Draw a line (using triangles/quads)",
+      description = [=[Draw a line (using triangles/quads)]=],
       returnType = "void",
       params = {
         {type = "Vector2", name = "startPos"},
@@ -4694,7 +4819,7 @@ return {
     },
     {
       name = "DrawLineStrip",
-      description = "Draw lines sequence (using gl lines)",
+      description = [=[Draw lines sequence (using gl lines)]=],
       returnType = "void",
       params = {
         {type = "const Vector2 *", name = "points"},
@@ -4704,7 +4829,7 @@ return {
     },
     {
       name = "DrawLineBezier",
-      description = "Draw line segment cubic-bezier in-out interpolation",
+      description = [=[Draw line segment cubic-bezier in-out interpolation]=],
       returnType = "void",
       params = {
         {type = "Vector2", name = "startPos"},
@@ -4714,8 +4839,20 @@ return {
       }
     },
     {
+      name = "DrawLineDashed",
+      description = [=[Draw a dashed line]=],
+      returnType = "void",
+      params = {
+        {type = "Vector2", name = "startPos"},
+        {type = "Vector2", name = "endPos"},
+        {type = "int", name = "dashSize"},
+        {type = "int", name = "spaceSize"},
+        {type = "Color", name = "color"}
+      }
+    },
+    {
       name = "DrawCircle",
-      description = "Draw a color-filled circle",
+      description = [=[Draw a color-filled circle]=],
       returnType = "void",
       params = {
         {type = "int", name = "centerX"},
@@ -4725,8 +4862,29 @@ return {
       }
     },
     {
+      name = "DrawCircleV",
+      description = [=[Draw a color-filled circle (Vector version)]=],
+      returnType = "void",
+      params = {
+        {type = "Vector2", name = "center"},
+        {type = "float", name = "radius"},
+        {type = "Color", name = "color"}
+      }
+    },
+    {
+      name = "DrawCircleGradient",
+      description = [=[Draw a gradient-filled circle]=],
+      returnType = "void",
+      params = {
+        {type = "Vector2", name = "center"},
+        {type = "float", name = "radius"},
+        {type = "Color", name = "inner"},
+        {type = "Color", name = "outer"}
+      }
+    },
+    {
       name = "DrawCircleSector",
-      description = "Draw a piece of a circle",
+      description = [=[Draw a piece of a circle]=],
       returnType = "void",
       params = {
         {type = "Vector2", name = "center"},
@@ -4739,7 +4897,7 @@ return {
     },
     {
       name = "DrawCircleSectorLines",
-      description = "Draw circle sector outline",
+      description = [=[Draw circle sector outline]=],
       returnType = "void",
       params = {
         {type = "Vector2", name = "center"},
@@ -4751,30 +4909,8 @@ return {
       }
     },
     {
-      name = "DrawCircleGradient",
-      description = "Draw a gradient-filled circle",
-      returnType = "void",
-      params = {
-        {type = "int", name = "centerX"},
-        {type = "int", name = "centerY"},
-        {type = "float", name = "radius"},
-        {type = "Color", name = "inner"},
-        {type = "Color", name = "outer"}
-      }
-    },
-    {
-      name = "DrawCircleV",
-      description = "Draw a color-filled circle (Vector version)",
-      returnType = "void",
-      params = {
-        {type = "Vector2", name = "center"},
-        {type = "float", name = "radius"},
-        {type = "Color", name = "color"}
-      }
-    },
-    {
       name = "DrawCircleLines",
-      description = "Draw circle outline",
+      description = [=[Draw circle outline]=],
       returnType = "void",
       params = {
         {type = "int", name = "centerX"},
@@ -4785,7 +4921,7 @@ return {
     },
     {
       name = "DrawCircleLinesV",
-      description = "Draw circle outline (Vector version)",
+      description = [=[Draw circle outline (Vector version)]=],
       returnType = "void",
       params = {
         {type = "Vector2", name = "center"},
@@ -4795,11 +4931,22 @@ return {
     },
     {
       name = "DrawEllipse",
-      description = "Draw ellipse",
+      description = [=[Draw ellipse]=],
       returnType = "void",
       params = {
         {type = "int", name = "centerX"},
         {type = "int", name = "centerY"},
+        {type = "float", name = "radiusH"},
+        {type = "float", name = "radiusV"},
+        {type = "Color", name = "color"}
+      }
+    },
+    {
+      name = "DrawEllipseV",
+      description = [=[Draw ellipse (Vector version)]=],
+      returnType = "void",
+      params = {
+        {type = "Vector2", name = "center"},
         {type = "float", name = "radiusH"},
         {type = "float", name = "radiusV"},
         {type = "Color", name = "color"}
@@ -4807,7 +4954,7 @@ return {
     },
     {
       name = "DrawEllipseLines",
-      description = "Draw ellipse outline",
+      description = [=[Draw ellipse outline]=],
       returnType = "void",
       params = {
         {type = "int", name = "centerX"},
@@ -4818,8 +4965,19 @@ return {
       }
     },
     {
+      name = "DrawEllipseLinesV",
+      description = [=[Draw ellipse outline (Vector version)]=],
+      returnType = "void",
+      params = {
+        {type = "Vector2", name = "center"},
+        {type = "float", name = "radiusH"},
+        {type = "float", name = "radiusV"},
+        {type = "Color", name = "color"}
+      }
+    },
+    {
       name = "DrawRing",
-      description = "Draw ring",
+      description = [=[Draw ring]=],
       returnType = "void",
       params = {
         {type = "Vector2", name = "center"},
@@ -4833,7 +4991,7 @@ return {
     },
     {
       name = "DrawRingLines",
-      description = "Draw ring outline",
+      description = [=[Draw ring outline]=],
       returnType = "void",
       params = {
         {type = "Vector2", name = "center"},
@@ -4847,7 +5005,7 @@ return {
     },
     {
       name = "DrawRectangle",
-      description = "Draw a color-filled rectangle",
+      description = [=[Draw a color-filled rectangle]=],
       returnType = "void",
       params = {
         {type = "int", name = "posX"},
@@ -4859,7 +5017,7 @@ return {
     },
     {
       name = "DrawRectangleV",
-      description = "Draw a color-filled rectangle (Vector version)",
+      description = [=[Draw a color-filled rectangle (Vector version)]=],
       returnType = "void",
       params = {
         {type = "Vector2", name = "position"},
@@ -4869,7 +5027,7 @@ return {
     },
     {
       name = "DrawRectangleRec",
-      description = "Draw a color-filled rectangle",
+      description = [=[Draw a color-filled rectangle]=],
       returnType = "void",
       params = {
         {type = "Rectangle", name = "rec"},
@@ -4878,7 +5036,7 @@ return {
     },
     {
       name = "DrawRectanglePro",
-      description = "Draw a color-filled rectangle with pro parameters",
+      description = [=[Draw a color-filled rectangle with pro parameters]=],
       returnType = "void",
       params = {
         {type = "Rectangle", name = "rec"},
@@ -4889,7 +5047,7 @@ return {
     },
     {
       name = "DrawRectangleGradientV",
-      description = "Draw a vertical-gradient-filled rectangle",
+      description = [=[Draw a vertical-gradient-filled rectangle]=],
       returnType = "void",
       params = {
         {type = "int", name = "posX"},
@@ -4902,7 +5060,7 @@ return {
     },
     {
       name = "DrawRectangleGradientH",
-      description = "Draw a horizontal-gradient-filled rectangle",
+      description = [=[Draw a horizontal-gradient-filled rectangle]=],
       returnType = "void",
       params = {
         {type = "int", name = "posX"},
@@ -4915,19 +5073,19 @@ return {
     },
     {
       name = "DrawRectangleGradientEx",
-      description = "Draw a gradient-filled rectangle with custom vertex colors",
+      description = [=[Draw a gradient-filled rectangle with custom vertex colors]=],
       returnType = "void",
       params = {
         {type = "Rectangle", name = "rec"},
         {type = "Color", name = "topLeft"},
         {type = "Color", name = "bottomLeft"},
-        {type = "Color", name = "topRight"},
-        {type = "Color", name = "bottomRight"}
+        {type = "Color", name = "bottomRight"},
+        {type = "Color", name = "topRight"}
       }
     },
     {
       name = "DrawRectangleLines",
-      description = "Draw rectangle outline",
+      description = [=[Draw rectangle outline]=],
       returnType = "void",
       params = {
         {type = "int", name = "posX"},
@@ -4939,7 +5097,7 @@ return {
     },
     {
       name = "DrawRectangleLinesEx",
-      description = "Draw rectangle outline with extended parameters",
+      description = [=[Draw rectangle outline with extended parameters]=],
       returnType = "void",
       params = {
         {type = "Rectangle", name = "rec"},
@@ -4949,7 +5107,7 @@ return {
     },
     {
       name = "DrawRectangleRounded",
-      description = "Draw rectangle with rounded edges",
+      description = [=[Draw rectangle with rounded edges]=],
       returnType = "void",
       params = {
         {type = "Rectangle", name = "rec"},
@@ -4960,7 +5118,7 @@ return {
     },
     {
       name = "DrawRectangleRoundedLines",
-      description = "Draw rectangle lines with rounded edges",
+      description = [=[Draw rectangle lines with rounded edges]=],
       returnType = "void",
       params = {
         {type = "Rectangle", name = "rec"},
@@ -4971,7 +5129,7 @@ return {
     },
     {
       name = "DrawRectangleRoundedLinesEx",
-      description = "Draw rectangle with rounded edges outline",
+      description = [=[Draw rectangle with rounded edges outline]=],
       returnType = "void",
       params = {
         {type = "Rectangle", name = "rec"},
@@ -4983,7 +5141,7 @@ return {
     },
     {
       name = "DrawTriangle",
-      description = "Draw a color-filled triangle (vertex in counter-clockwise order!)",
+      description = [=[Draw a color-filled triangle (vertex in counter-clockwise order!)]=],
       returnType = "void",
       params = {
         {type = "Vector2", name = "v1"},
@@ -4994,7 +5152,7 @@ return {
     },
     {
       name = "DrawTriangleLines",
-      description = "Draw triangle outline (vertex in counter-clockwise order!)",
+      description = [=[Draw triangle outline (vertex in counter-clockwise order!)]=],
       returnType = "void",
       params = {
         {type = "Vector2", name = "v1"},
@@ -5005,7 +5163,7 @@ return {
     },
     {
       name = "DrawTriangleFan",
-      description = "Draw a triangle fan defined by points (first vertex is the center)",
+      description = [=[Draw a triangle fan defined by points (first vertex is the center)]=],
       returnType = "void",
       params = {
         {type = "const Vector2 *", name = "points"},
@@ -5015,7 +5173,7 @@ return {
     },
     {
       name = "DrawTriangleStrip",
-      description = "Draw a triangle strip defined by points",
+      description = [=[Draw a triangle strip defined by points]=],
       returnType = "void",
       params = {
         {type = "const Vector2 *", name = "points"},
@@ -5025,7 +5183,7 @@ return {
     },
     {
       name = "DrawPoly",
-      description = "Draw a regular polygon (Vector version)",
+      description = [=[Draw a regular polygon (Vector version)]=],
       returnType = "void",
       params = {
         {type = "Vector2", name = "center"},
@@ -5037,7 +5195,7 @@ return {
     },
     {
       name = "DrawPolyLines",
-      description = "Draw a polygon outline of n sides",
+      description = [=[Draw a polygon outline of n sides]=],
       returnType = "void",
       params = {
         {type = "Vector2", name = "center"},
@@ -5049,7 +5207,7 @@ return {
     },
     {
       name = "DrawPolyLinesEx",
-      description = "Draw a polygon outline of n sides with extended parameters",
+      description = [=[Draw a polygon outline of n sides with extended parameters]=],
       returnType = "void",
       params = {
         {type = "Vector2", name = "center"},
@@ -5062,7 +5220,7 @@ return {
     },
     {
       name = "DrawSplineLinear",
-      description = "Draw spline: Linear, minimum 2 points",
+      description = [=[Draw spline: Linear, minimum 2 points]=],
       returnType = "void",
       params = {
         {type = "const Vector2 *", name = "points"},
@@ -5073,7 +5231,7 @@ return {
     },
     {
       name = "DrawSplineBasis",
-      description = "Draw spline: B-Spline, minimum 4 points",
+      description = [=[Draw spline: B-Spline, minimum 4 points]=],
       returnType = "void",
       params = {
         {type = "const Vector2 *", name = "points"},
@@ -5084,7 +5242,7 @@ return {
     },
     {
       name = "DrawSplineCatmullRom",
-      description = "Draw spline: Catmull-Rom, minimum 4 points",
+      description = [=[Draw spline: Catmull-Rom, minimum 4 points]=],
       returnType = "void",
       params = {
         {type = "const Vector2 *", name = "points"},
@@ -5095,7 +5253,7 @@ return {
     },
     {
       name = "DrawSplineBezierQuadratic",
-      description = "Draw spline: Quadratic Bezier, minimum 3 points (1 control point): [p1, c2, p3, c4...]",
+      description = [=[Draw spline: Quadratic Bezier, minimum 3 points (1 control point): [p1, c2, p3, c4...]]=],
       returnType = "void",
       params = {
         {type = "const Vector2 *", name = "points"},
@@ -5106,7 +5264,7 @@ return {
     },
     {
       name = "DrawSplineBezierCubic",
-      description = "Draw spline: Cubic Bezier, minimum 4 points (2 control points): [p1, c2, c3, p4, c5, c6...]",
+      description = [=[Draw spline: Cubic Bezier, minimum 4 points (2 control points): [p1, c2, c3, p4, c5, c6...]]=],
       returnType = "void",
       params = {
         {type = "const Vector2 *", name = "points"},
@@ -5117,7 +5275,7 @@ return {
     },
     {
       name = "DrawSplineSegmentLinear",
-      description = "Draw spline segment: Linear, 2 points",
+      description = [=[Draw spline segment: Linear, 2 points]=],
       returnType = "void",
       params = {
         {type = "Vector2", name = "p1"},
@@ -5128,7 +5286,7 @@ return {
     },
     {
       name = "DrawSplineSegmentBasis",
-      description = "Draw spline segment: B-Spline, 4 points",
+      description = [=[Draw spline segment: B-Spline, 4 points]=],
       returnType = "void",
       params = {
         {type = "Vector2", name = "p1"},
@@ -5141,7 +5299,7 @@ return {
     },
     {
       name = "DrawSplineSegmentCatmullRom",
-      description = "Draw spline segment: Catmull-Rom, 4 points",
+      description = [=[Draw spline segment: Catmull-Rom, 4 points]=],
       returnType = "void",
       params = {
         {type = "Vector2", name = "p1"},
@@ -5154,7 +5312,7 @@ return {
     },
     {
       name = "DrawSplineSegmentBezierQuadratic",
-      description = "Draw spline segment: Quadratic Bezier, 2 points, 1 control point",
+      description = [=[Draw spline segment: Quadratic Bezier, 2 points, 1 control point]=],
       returnType = "void",
       params = {
         {type = "Vector2", name = "p1"},
@@ -5166,7 +5324,7 @@ return {
     },
     {
       name = "DrawSplineSegmentBezierCubic",
-      description = "Draw spline segment: Cubic Bezier, 2 points, 2 control points",
+      description = [=[Draw spline segment: Cubic Bezier, 2 points, 2 control points]=],
       returnType = "void",
       params = {
         {type = "Vector2", name = "p1"},
@@ -5179,7 +5337,7 @@ return {
     },
     {
       name = "GetSplinePointLinear",
-      description = "Get (evaluate) spline point: Linear",
+      description = [=[Get (evaluate) spline point: Linear]=],
       returnType = "Vector2",
       params = {
         {type = "Vector2", name = "startPos"},
@@ -5189,7 +5347,7 @@ return {
     },
     {
       name = "GetSplinePointBasis",
-      description = "Get (evaluate) spline point: B-Spline",
+      description = [=[Get (evaluate) spline point: B-Spline]=],
       returnType = "Vector2",
       params = {
         {type = "Vector2", name = "p1"},
@@ -5201,7 +5359,7 @@ return {
     },
     {
       name = "GetSplinePointCatmullRom",
-      description = "Get (evaluate) spline point: Catmull-Rom",
+      description = [=[Get (evaluate) spline point: Catmull-Rom]=],
       returnType = "Vector2",
       params = {
         {type = "Vector2", name = "p1"},
@@ -5213,7 +5371,7 @@ return {
     },
     {
       name = "GetSplinePointBezierQuad",
-      description = "Get (evaluate) spline point: Quadratic Bezier",
+      description = [=[Get (evaluate) spline point: Quadratic Bezier]=],
       returnType = "Vector2",
       params = {
         {type = "Vector2", name = "p1"},
@@ -5224,7 +5382,7 @@ return {
     },
     {
       name = "GetSplinePointBezierCubic",
-      description = "Get (evaluate) spline point: Cubic Bezier",
+      description = [=[Get (evaluate) spline point: Cubic Bezier]=],
       returnType = "Vector2",
       params = {
         {type = "Vector2", name = "p1"},
@@ -5236,7 +5394,7 @@ return {
     },
     {
       name = "CheckCollisionRecs",
-      description = "Check collision between two rectangles",
+      description = [=[Check collision between two rectangles]=],
       returnType = "bool",
       params = {
         {type = "Rectangle", name = "rec1"},
@@ -5245,7 +5403,7 @@ return {
     },
     {
       name = "CheckCollisionCircles",
-      description = "Check collision between two circles",
+      description = [=[Check collision between two circles]=],
       returnType = "bool",
       params = {
         {type = "Vector2", name = "center1"},
@@ -5256,7 +5414,7 @@ return {
     },
     {
       name = "CheckCollisionCircleRec",
-      description = "Check collision between circle and rectangle",
+      description = [=[Check collision between circle and rectangle]=],
       returnType = "bool",
       params = {
         {type = "Vector2", name = "center"},
@@ -5266,7 +5424,7 @@ return {
     },
     {
       name = "CheckCollisionCircleLine",
-      description = "Check if circle collides with a line created betweeen two points [p1] and [p2]",
+      description = [=[Check if circle collides with a line created betweeen two points [p1] and [p2]]=],
       returnType = "bool",
       params = {
         {type = "Vector2", name = "center"},
@@ -5277,7 +5435,7 @@ return {
     },
     {
       name = "CheckCollisionPointRec",
-      description = "Check if point is inside rectangle",
+      description = [=[Check if point is inside rectangle]=],
       returnType = "bool",
       params = {
         {type = "Vector2", name = "point"},
@@ -5286,7 +5444,7 @@ return {
     },
     {
       name = "CheckCollisionPointCircle",
-      description = "Check if point is inside circle",
+      description = [=[Check if point is inside circle]=],
       returnType = "bool",
       params = {
         {type = "Vector2", name = "point"},
@@ -5296,7 +5454,7 @@ return {
     },
     {
       name = "CheckCollisionPointTriangle",
-      description = "Check if point is inside a triangle",
+      description = [=[Check if point is inside a triangle]=],
       returnType = "bool",
       params = {
         {type = "Vector2", name = "point"},
@@ -5307,7 +5465,7 @@ return {
     },
     {
       name = "CheckCollisionPointLine",
-      description = "Check if point belongs to line created between two points [p1] and [p2] with defined margin in pixels [threshold]",
+      description = [=[Check if point belongs to line created between two points [p1] and [p2] with defined margin in pixels [threshold]]=],
       returnType = "bool",
       params = {
         {type = "Vector2", name = "point"},
@@ -5318,7 +5476,7 @@ return {
     },
     {
       name = "CheckCollisionPointPoly",
-      description = "Check if point is within a polygon described by array of vertices",
+      description = [=[Check if point is within a polygon described by array of vertices]=],
       returnType = "bool",
       params = {
         {type = "Vector2", name = "point"},
@@ -5328,7 +5486,7 @@ return {
     },
     {
       name = "CheckCollisionLines",
-      description = "Check the collision between two lines defined by two points each, returns collision point by reference",
+      description = [=[Check the collision between two lines defined by two points each, returns collision point by reference]=],
       returnType = "bool",
       params = {
         {type = "Vector2", name = "startPos1"},
@@ -5340,7 +5498,7 @@ return {
     },
     {
       name = "GetCollisionRec",
-      description = "Get collision rectangle for two rectangles collision",
+      description = [=[Get collision rectangle for two rectangles collision]=],
       returnType = "Rectangle",
       params = {
         {type = "Rectangle", name = "rec1"},
@@ -5349,7 +5507,7 @@ return {
     },
     {
       name = "LoadImage",
-      description = "Load image from file into CPU memory (RAM)",
+      description = [=[Load image from file into CPU memory (RAM)]=],
       returnType = "Image",
       params = {
         {type = "const char *", name = "fileName"}
@@ -5357,7 +5515,7 @@ return {
     },
     {
       name = "LoadImageRaw",
-      description = "Load image from RAW file data",
+      description = [=[Load image from RAW file data]=],
       returnType = "Image",
       params = {
         {type = "const char *", name = "fileName"},
@@ -5369,7 +5527,7 @@ return {
     },
     {
       name = "LoadImageAnim",
-      description = "Load image sequence from file (frames appended to image.data)",
+      description = [=[Load image sequence from file (frames appended to image.data)]=],
       returnType = "Image",
       params = {
         {type = "const char *", name = "fileName"},
@@ -5378,7 +5536,7 @@ return {
     },
     {
       name = "LoadImageAnimFromMemory",
-      description = "Load image sequence from memory buffer",
+      description = [=[Load image sequence from memory buffer]=],
       returnType = "Image",
       params = {
         {type = "const char *", name = "fileType"},
@@ -5389,7 +5547,7 @@ return {
     },
     {
       name = "LoadImageFromMemory",
-      description = "Load image from memory buffer, fileType refers to extension: i.e. '.png'",
+      description = [=[Load image from memory buffer, fileType refers to extension: i.e. '.png']=],
       returnType = "Image",
       params = {
         {type = "const char *", name = "fileType"},
@@ -5399,7 +5557,7 @@ return {
     },
     {
       name = "LoadImageFromTexture",
-      description = "Load image from GPU texture data",
+      description = [=[Load image from GPU texture data]=],
       returnType = "Image",
       params = {
         {type = "Texture2D", name = "texture"}
@@ -5407,12 +5565,12 @@ return {
     },
     {
       name = "LoadImageFromScreen",
-      description = "Load image from screen buffer and (screenshot)",
+      description = [=[Load image from screen buffer and (screenshot)]=],
       returnType = "Image"
     },
     {
       name = "IsImageValid",
-      description = "Check if an image is valid (data and parameters)",
+      description = [=[Check if an image is valid (data and parameters)]=],
       returnType = "bool",
       params = {
         {type = "Image", name = "image"}
@@ -5420,7 +5578,7 @@ return {
     },
     {
       name = "UnloadImage",
-      description = "Unload image from CPU memory (RAM)",
+      description = [=[Unload image from CPU memory (RAM)]=],
       returnType = "void",
       params = {
         {type = "Image", name = "image"}
@@ -5428,7 +5586,7 @@ return {
     },
     {
       name = "ExportImage",
-      description = "Export image data to file, returns true on success",
+      description = [=[Export image data to file, returns true on success]=],
       returnType = "bool",
       params = {
         {type = "Image", name = "image"},
@@ -5437,7 +5595,7 @@ return {
     },
     {
       name = "ExportImageToMemory",
-      description = "Export image to memory buffer",
+      description = [=[Export image to memory buffer, memory must be MemFree()]=],
       returnType = "unsigned char *",
       params = {
         {type = "Image", name = "image"},
@@ -5447,7 +5605,7 @@ return {
     },
     {
       name = "ExportImageAsCode",
-      description = "Export image as code file defining an array of bytes, returns true on success",
+      description = [=[Export image as code file defining an array of bytes, returns true on success]=],
       returnType = "bool",
       params = {
         {type = "Image", name = "image"},
@@ -5456,7 +5614,7 @@ return {
     },
     {
       name = "GenImageColor",
-      description = "Generate image: plain color",
+      description = [=[Generate image: plain color]=],
       returnType = "Image",
       params = {
         {type = "int", name = "width"},
@@ -5466,7 +5624,7 @@ return {
     },
     {
       name = "GenImageGradientLinear",
-      description = "Generate image: linear gradient, direction in degrees [0..360], 0=Vertical gradient",
+      description = [=[Generate image: linear gradient, direction in degrees [0..360], 0=Vertical gradient]=],
       returnType = "Image",
       params = {
         {type = "int", name = "width"},
@@ -5478,7 +5636,7 @@ return {
     },
     {
       name = "GenImageGradientRadial",
-      description = "Generate image: radial gradient",
+      description = [=[Generate image: radial gradient]=],
       returnType = "Image",
       params = {
         {type = "int", name = "width"},
@@ -5490,7 +5648,7 @@ return {
     },
     {
       name = "GenImageGradientSquare",
-      description = "Generate image: square gradient",
+      description = [=[Generate image: square gradient]=],
       returnType = "Image",
       params = {
         {type = "int", name = "width"},
@@ -5502,7 +5660,7 @@ return {
     },
     {
       name = "GenImageChecked",
-      description = "Generate image: checked",
+      description = [=[Generate image: checked]=],
       returnType = "Image",
       params = {
         {type = "int", name = "width"},
@@ -5515,7 +5673,7 @@ return {
     },
     {
       name = "GenImageWhiteNoise",
-      description = "Generate image: white noise",
+      description = [=[Generate image: white noise]=],
       returnType = "Image",
       params = {
         {type = "int", name = "width"},
@@ -5525,7 +5683,7 @@ return {
     },
     {
       name = "GenImagePerlinNoise",
-      description = "Generate image: perlin noise",
+      description = [=[Generate image: perlin noise]=],
       returnType = "Image",
       params = {
         {type = "int", name = "width"},
@@ -5537,7 +5695,7 @@ return {
     },
     {
       name = "GenImageCellular",
-      description = "Generate image: cellular algorithm, bigger tileSize means bigger cells",
+      description = [=[Generate image: cellular algorithm, bigger tileSize means bigger cells]=],
       returnType = "Image",
       params = {
         {type = "int", name = "width"},
@@ -5547,7 +5705,7 @@ return {
     },
     {
       name = "GenImageText",
-      description = "Generate image: grayscale image from text data",
+      description = [=[Generate image: grayscale image from text data]=],
       returnType = "Image",
       params = {
         {type = "int", name = "width"},
@@ -5557,7 +5715,7 @@ return {
     },
     {
       name = "ImageCopy",
-      description = "Create an image duplicate (useful for transformations)",
+      description = [=[Create an image duplicate (useful for transformations)]=],
       returnType = "Image",
       params = {
         {type = "Image", name = "image"}
@@ -5565,7 +5723,7 @@ return {
     },
     {
       name = "ImageFromImage",
-      description = "Create an image from another image piece",
+      description = [=[Create an image from another image piece]=],
       returnType = "Image",
       params = {
         {type = "Image", name = "image"},
@@ -5574,7 +5732,7 @@ return {
     },
     {
       name = "ImageFromChannel",
-      description = "Create an image from a selected channel of another image (GRAYSCALE)",
+      description = [=[Create an image from a selected channel of another image (GRAYSCALE)]=],
       returnType = "Image",
       params = {
         {type = "Image", name = "image"},
@@ -5583,7 +5741,7 @@ return {
     },
     {
       name = "ImageText",
-      description = "Create an image from text (default font)",
+      description = [=[Create an image from text (default font)]=],
       returnType = "Image",
       params = {
         {type = "const char *", name = "text"},
@@ -5593,7 +5751,7 @@ return {
     },
     {
       name = "ImageTextEx",
-      description = "Create an image from text (custom sprite font)",
+      description = [=[Create an image from text (custom sprite font)]=],
       returnType = "Image",
       params = {
         {type = "Font", name = "font"},
@@ -5605,7 +5763,7 @@ return {
     },
     {
       name = "ImageFormat",
-      description = "Convert image data to desired format",
+      description = [=[Convert image data to desired format]=],
       returnType = "void",
       params = {
         {type = "Image *", name = "image"},
@@ -5614,7 +5772,7 @@ return {
     },
     {
       name = "ImageToPOT",
-      description = "Convert image to POT (power-of-two)",
+      description = [=[Convert image to POT (power-of-two)]=],
       returnType = "void",
       params = {
         {type = "Image *", name = "image"},
@@ -5623,7 +5781,7 @@ return {
     },
     {
       name = "ImageCrop",
-      description = "Crop an image to a defined rectangle",
+      description = [=[Crop an image to a defined rectangle]=],
       returnType = "void",
       params = {
         {type = "Image *", name = "image"},
@@ -5632,7 +5790,7 @@ return {
     },
     {
       name = "ImageAlphaCrop",
-      description = "Crop image depending on alpha value",
+      description = [=[Crop image depending on alpha value]=],
       returnType = "void",
       params = {
         {type = "Image *", name = "image"},
@@ -5641,7 +5799,7 @@ return {
     },
     {
       name = "ImageAlphaClear",
-      description = "Clear alpha channel to desired color",
+      description = [=[Clear alpha channel to desired color]=],
       returnType = "void",
       params = {
         {type = "Image *", name = "image"},
@@ -5651,7 +5809,7 @@ return {
     },
     {
       name = "ImageAlphaMask",
-      description = "Apply alpha mask to image",
+      description = [=[Apply alpha mask to image]=],
       returnType = "void",
       params = {
         {type = "Image *", name = "image"},
@@ -5660,7 +5818,7 @@ return {
     },
     {
       name = "ImageAlphaPremultiply",
-      description = "Premultiply alpha channel",
+      description = [=[Premultiply alpha channel]=],
       returnType = "void",
       params = {
         {type = "Image *", name = "image"}
@@ -5668,7 +5826,7 @@ return {
     },
     {
       name = "ImageBlurGaussian",
-      description = "Apply Gaussian blur using a box blur approximation",
+      description = [=[Apply Gaussian blur using a box blur approximation]=],
       returnType = "void",
       params = {
         {type = "Image *", name = "image"},
@@ -5677,7 +5835,7 @@ return {
     },
     {
       name = "ImageKernelConvolution",
-      description = "Apply custom square convolution kernel to image",
+      description = [=[Apply custom square convolution kernel to image]=],
       returnType = "void",
       params = {
         {type = "Image *", name = "image"},
@@ -5687,7 +5845,7 @@ return {
     },
     {
       name = "ImageResize",
-      description = "Resize image (Bicubic scaling algorithm)",
+      description = [=[Resize image (Bicubic scaling algorithm)]=],
       returnType = "void",
       params = {
         {type = "Image *", name = "image"},
@@ -5697,7 +5855,7 @@ return {
     },
     {
       name = "ImageResizeNN",
-      description = "Resize image (Nearest-Neighbor scaling algorithm)",
+      description = [=[Resize image (Nearest-Neighbor scaling algorithm)]=],
       returnType = "void",
       params = {
         {type = "Image *", name = "image"},
@@ -5707,7 +5865,7 @@ return {
     },
     {
       name = "ImageResizeCanvas",
-      description = "Resize canvas and fill with color",
+      description = [=[Resize canvas and fill with color]=],
       returnType = "void",
       params = {
         {type = "Image *", name = "image"},
@@ -5720,7 +5878,7 @@ return {
     },
     {
       name = "ImageMipmaps",
-      description = "Compute all mipmap levels for a provided image",
+      description = [=[Compute all mipmap levels for a provided image]=],
       returnType = "void",
       params = {
         {type = "Image *", name = "image"}
@@ -5728,7 +5886,7 @@ return {
     },
     {
       name = "ImageDither",
-      description = "Dither image data to 16bpp or lower (Floyd-Steinberg dithering)",
+      description = [=[Dither image data to 16bpp or lower (Floyd-Steinberg dithering)]=],
       returnType = "void",
       params = {
         {type = "Image *", name = "image"},
@@ -5740,7 +5898,7 @@ return {
     },
     {
       name = "ImageFlipVertical",
-      description = "Flip image vertically",
+      description = [=[Flip image vertically]=],
       returnType = "void",
       params = {
         {type = "Image *", name = "image"}
@@ -5748,7 +5906,7 @@ return {
     },
     {
       name = "ImageFlipHorizontal",
-      description = "Flip image horizontally",
+      description = [=[Flip image horizontally]=],
       returnType = "void",
       params = {
         {type = "Image *", name = "image"}
@@ -5756,7 +5914,7 @@ return {
     },
     {
       name = "ImageRotate",
-      description = "Rotate image by input angle in degrees (-359 to 359)",
+      description = [=[Rotate image by input angle in degrees (-359 to 359)]=],
       returnType = "void",
       params = {
         {type = "Image *", name = "image"},
@@ -5765,7 +5923,7 @@ return {
     },
     {
       name = "ImageRotateCW",
-      description = "Rotate image clockwise 90deg",
+      description = [=[Rotate image clockwise 90deg]=],
       returnType = "void",
       params = {
         {type = "Image *", name = "image"}
@@ -5773,7 +5931,7 @@ return {
     },
     {
       name = "ImageRotateCCW",
-      description = "Rotate image counter-clockwise 90deg",
+      description = [=[Rotate image counter-clockwise 90deg]=],
       returnType = "void",
       params = {
         {type = "Image *", name = "image"}
@@ -5781,7 +5939,7 @@ return {
     },
     {
       name = "ImageColorTint",
-      description = "Modify image color: tint",
+      description = [=[Modify image color: tint]=],
       returnType = "void",
       params = {
         {type = "Image *", name = "image"},
@@ -5790,7 +5948,7 @@ return {
     },
     {
       name = "ImageColorInvert",
-      description = "Modify image color: invert",
+      description = [=[Modify image color: invert]=],
       returnType = "void",
       params = {
         {type = "Image *", name = "image"}
@@ -5798,7 +5956,7 @@ return {
     },
     {
       name = "ImageColorGrayscale",
-      description = "Modify image color: grayscale",
+      description = [=[Modify image color: grayscale]=],
       returnType = "void",
       params = {
         {type = "Image *", name = "image"}
@@ -5806,7 +5964,7 @@ return {
     },
     {
       name = "ImageColorContrast",
-      description = "Modify image color: contrast (-100 to 100)",
+      description = [=[Modify image color: contrast (-100 to 100)]=],
       returnType = "void",
       params = {
         {type = "Image *", name = "image"},
@@ -5815,7 +5973,7 @@ return {
     },
     {
       name = "ImageColorBrightness",
-      description = "Modify image color: brightness (-255 to 255)",
+      description = [=[Modify image color: brightness (-255 to 255)]=],
       returnType = "void",
       params = {
         {type = "Image *", name = "image"},
@@ -5824,7 +5982,7 @@ return {
     },
     {
       name = "ImageColorReplace",
-      description = "Modify image color: replace color",
+      description = [=[Modify image color: replace color]=],
       returnType = "void",
       params = {
         {type = "Image *", name = "image"},
@@ -5834,7 +5992,7 @@ return {
     },
     {
       name = "LoadImageColors",
-      description = "Load color data from image as a Color array (RGBA - 32bit)",
+      description = [=[Load color data from image as a Color array (RGBA - 32bit)]=],
       returnType = "Color *",
       params = {
         {type = "Image", name = "image"}
@@ -5842,7 +6000,7 @@ return {
     },
     {
       name = "LoadImagePalette",
-      description = "Load colors palette from image as a Color array (RGBA - 32bit)",
+      description = [=[Load colors palette from image as a Color array (RGBA - 32bit)]=],
       returnType = "Color *",
       params = {
         {type = "Image", name = "image"},
@@ -5852,7 +6010,7 @@ return {
     },
     {
       name = "UnloadImageColors",
-      description = "Unload color data loaded with LoadImageColors()",
+      description = [=[Unload color data loaded with LoadImageColors()]=],
       returnType = "void",
       params = {
         {type = "Color *", name = "colors"}
@@ -5860,7 +6018,7 @@ return {
     },
     {
       name = "UnloadImagePalette",
-      description = "Unload colors palette loaded with LoadImagePalette()",
+      description = [=[Unload colors palette loaded with LoadImagePalette()]=],
       returnType = "void",
       params = {
         {type = "Color *", name = "colors"}
@@ -5868,7 +6026,7 @@ return {
     },
     {
       name = "GetImageAlphaBorder",
-      description = "Get image alpha border rectangle",
+      description = [=[Get image alpha border rectangle]=],
       returnType = "Rectangle",
       params = {
         {type = "Image", name = "image"},
@@ -5877,7 +6035,7 @@ return {
     },
     {
       name = "GetImageColor",
-      description = "Get image pixel color at (x, y) position",
+      description = [=[Get image pixel color at (x, y) position]=],
       returnType = "Color",
       params = {
         {type = "Image", name = "image"},
@@ -5887,7 +6045,7 @@ return {
     },
     {
       name = "ImageClearBackground",
-      description = "Clear image background with given color",
+      description = [=[Clear image background with given color]=],
       returnType = "void",
       params = {
         {type = "Image *", name = "dst"},
@@ -5896,7 +6054,7 @@ return {
     },
     {
       name = "ImageDrawPixel",
-      description = "Draw pixel within an image",
+      description = [=[Draw pixel within an image]=],
       returnType = "void",
       params = {
         {type = "Image *", name = "dst"},
@@ -5907,7 +6065,7 @@ return {
     },
     {
       name = "ImageDrawPixelV",
-      description = "Draw pixel within an image (Vector version)",
+      description = [=[Draw pixel within an image (Vector version)]=],
       returnType = "void",
       params = {
         {type = "Image *", name = "dst"},
@@ -5917,7 +6075,7 @@ return {
     },
     {
       name = "ImageDrawLine",
-      description = "Draw line within an image",
+      description = [=[Draw line within an image]=],
       returnType = "void",
       params = {
         {type = "Image *", name = "dst"},
@@ -5930,7 +6088,7 @@ return {
     },
     {
       name = "ImageDrawLineV",
-      description = "Draw line within an image (Vector version)",
+      description = [=[Draw line within an image (Vector version)]=],
       returnType = "void",
       params = {
         {type = "Image *", name = "dst"},
@@ -5941,7 +6099,7 @@ return {
     },
     {
       name = "ImageDrawLineEx",
-      description = "Draw a line defining thickness within an image",
+      description = [=[Draw a line defining thickness within an image]=],
       returnType = "void",
       params = {
         {type = "Image *", name = "dst"},
@@ -5953,7 +6111,7 @@ return {
     },
     {
       name = "ImageDrawCircle",
-      description = "Draw a filled circle within an image",
+      description = [=[Draw a filled circle within an image]=],
       returnType = "void",
       params = {
         {type = "Image *", name = "dst"},
@@ -5965,7 +6123,7 @@ return {
     },
     {
       name = "ImageDrawCircleV",
-      description = "Draw a filled circle within an image (Vector version)",
+      description = [=[Draw a filled circle within an image (Vector version)]=],
       returnType = "void",
       params = {
         {type = "Image *", name = "dst"},
@@ -5976,7 +6134,7 @@ return {
     },
     {
       name = "ImageDrawCircleLines",
-      description = "Draw circle outline within an image",
+      description = [=[Draw circle outline within an image]=],
       returnType = "void",
       params = {
         {type = "Image *", name = "dst"},
@@ -5988,7 +6146,7 @@ return {
     },
     {
       name = "ImageDrawCircleLinesV",
-      description = "Draw circle outline within an image (Vector version)",
+      description = [=[Draw circle outline within an image (Vector version)]=],
       returnType = "void",
       params = {
         {type = "Image *", name = "dst"},
@@ -5999,7 +6157,7 @@ return {
     },
     {
       name = "ImageDrawRectangle",
-      description = "Draw rectangle within an image",
+      description = [=[Draw rectangle within an image]=],
       returnType = "void",
       params = {
         {type = "Image *", name = "dst"},
@@ -6012,7 +6170,7 @@ return {
     },
     {
       name = "ImageDrawRectangleV",
-      description = "Draw rectangle within an image (Vector version)",
+      description = [=[Draw rectangle within an image (Vector version)]=],
       returnType = "void",
       params = {
         {type = "Image *", name = "dst"},
@@ -6023,7 +6181,7 @@ return {
     },
     {
       name = "ImageDrawRectangleRec",
-      description = "Draw rectangle within an image",
+      description = [=[Draw rectangle within an image]=],
       returnType = "void",
       params = {
         {type = "Image *", name = "dst"},
@@ -6033,7 +6191,7 @@ return {
     },
     {
       name = "ImageDrawRectangleLines",
-      description = "Draw rectangle lines within an image",
+      description = [=[Draw rectangle lines within an image]=],
       returnType = "void",
       params = {
         {type = "Image *", name = "dst"},
@@ -6044,7 +6202,7 @@ return {
     },
     {
       name = "ImageDrawTriangle",
-      description = "Draw triangle within an image",
+      description = [=[Draw triangle within an image]=],
       returnType = "void",
       params = {
         {type = "Image *", name = "dst"},
@@ -6056,7 +6214,7 @@ return {
     },
     {
       name = "ImageDrawTriangleEx",
-      description = "Draw triangle with interpolated colors within an image",
+      description = [=[Draw triangle with interpolated colors within an image]=],
       returnType = "void",
       params = {
         {type = "Image *", name = "dst"},
@@ -6070,7 +6228,7 @@ return {
     },
     {
       name = "ImageDrawTriangleLines",
-      description = "Draw triangle outline within an image",
+      description = [=[Draw triangle outline within an image]=],
       returnType = "void",
       params = {
         {type = "Image *", name = "dst"},
@@ -6082,29 +6240,29 @@ return {
     },
     {
       name = "ImageDrawTriangleFan",
-      description = "Draw a triangle fan defined by points within an image (first vertex is the center)",
+      description = [=[Draw a triangle fan defined by points within an image (first vertex is the center)]=],
       returnType = "void",
       params = {
         {type = "Image *", name = "dst"},
-        {type = "Vector2 *", name = "points"},
+        {type = "const Vector2 *", name = "points"},
         {type = "int", name = "pointCount"},
         {type = "Color", name = "color"}
       }
     },
     {
       name = "ImageDrawTriangleStrip",
-      description = "Draw a triangle strip defined by points within an image",
+      description = [=[Draw a triangle strip defined by points within an image]=],
       returnType = "void",
       params = {
         {type = "Image *", name = "dst"},
-        {type = "Vector2 *", name = "points"},
+        {type = "const Vector2 *", name = "points"},
         {type = "int", name = "pointCount"},
         {type = "Color", name = "color"}
       }
     },
     {
       name = "ImageDraw",
-      description = "Draw a source image within a destination image (tint applied to source)",
+      description = [=[Draw a source image within a destination image (tint applied to source)]=],
       returnType = "void",
       params = {
         {type = "Image *", name = "dst"},
@@ -6116,7 +6274,7 @@ return {
     },
     {
       name = "ImageDrawText",
-      description = "Draw text (using default font) within an image (destination)",
+      description = [=[Draw text (using default font) within an image (destination)]=],
       returnType = "void",
       params = {
         {type = "Image *", name = "dst"},
@@ -6129,7 +6287,7 @@ return {
     },
     {
       name = "ImageDrawTextEx",
-      description = "Draw text (custom sprite font) within an image (destination)",
+      description = [=[Draw text (custom sprite font) within an image (destination)]=],
       returnType = "void",
       params = {
         {type = "Image *", name = "dst"},
@@ -6143,7 +6301,7 @@ return {
     },
     {
       name = "LoadTexture",
-      description = "Load texture from file into GPU memory (VRAM)",
+      description = [=[Load texture from file into GPU memory (VRAM)]=],
       returnType = "Texture2D",
       params = {
         {type = "const char *", name = "fileName"}
@@ -6151,7 +6309,7 @@ return {
     },
     {
       name = "LoadTextureFromImage",
-      description = "Load texture from image data",
+      description = [=[Load texture from image data]=],
       returnType = "Texture2D",
       params = {
         {type = "Image", name = "image"}
@@ -6159,7 +6317,7 @@ return {
     },
     {
       name = "LoadTextureCubemap",
-      description = "Load cubemap from image, multiple image cubemap layouts supported",
+      description = [=[Load cubemap from image, multiple image cubemap layouts supported]=],
       returnType = "TextureCubemap",
       params = {
         {type = "Image", name = "image"},
@@ -6168,7 +6326,7 @@ return {
     },
     {
       name = "LoadRenderTexture",
-      description = "Load texture for rendering (framebuffer)",
+      description = [=[Load texture for rendering (framebuffer)]=],
       returnType = "RenderTexture2D",
       params = {
         {type = "int", name = "width"},
@@ -6177,7 +6335,7 @@ return {
     },
     {
       name = "IsTextureValid",
-      description = "Check if a texture is valid (loaded in GPU)",
+      description = [=[Check if a texture is valid (loaded in GPU)]=],
       returnType = "bool",
       params = {
         {type = "Texture2D", name = "texture"}
@@ -6185,7 +6343,7 @@ return {
     },
     {
       name = "UnloadTexture",
-      description = "Unload texture from GPU memory (VRAM)",
+      description = [=[Unload texture from GPU memory (VRAM)]=],
       returnType = "void",
       params = {
         {type = "Texture2D", name = "texture"}
@@ -6193,7 +6351,7 @@ return {
     },
     {
       name = "IsRenderTextureValid",
-      description = "Check if a render texture is valid (loaded in GPU)",
+      description = [=[Check if a render texture is valid (loaded in GPU)]=],
       returnType = "bool",
       params = {
         {type = "RenderTexture2D", name = "target"}
@@ -6201,7 +6359,7 @@ return {
     },
     {
       name = "UnloadRenderTexture",
-      description = "Unload render texture from GPU memory (VRAM)",
+      description = [=[Unload render texture from GPU memory (VRAM)]=],
       returnType = "void",
       params = {
         {type = "RenderTexture2D", name = "target"}
@@ -6209,7 +6367,7 @@ return {
     },
     {
       name = "UpdateTexture",
-      description = "Update GPU texture with new data",
+      description = [=[Update GPU texture with new data (pixels should be able to fill texture)]=],
       returnType = "void",
       params = {
         {type = "Texture2D", name = "texture"},
@@ -6218,7 +6376,7 @@ return {
     },
     {
       name = "UpdateTextureRec",
-      description = "Update GPU texture rectangle with new data",
+      description = [=[Update GPU texture rectangle with new data (pixels and rec should fit in texture)]=],
       returnType = "void",
       params = {
         {type = "Texture2D", name = "texture"},
@@ -6228,7 +6386,7 @@ return {
     },
     {
       name = "GenTextureMipmaps",
-      description = "Generate GPU mipmaps for a texture",
+      description = [=[Generate GPU mipmaps for a texture]=],
       returnType = "void",
       params = {
         {type = "Texture2D *", name = "texture"}
@@ -6236,7 +6394,7 @@ return {
     },
     {
       name = "SetTextureFilter",
-      description = "Set texture scaling filter mode",
+      description = [=[Set texture scaling filter mode]=],
       returnType = "void",
       params = {
         {type = "Texture2D", name = "texture"},
@@ -6245,7 +6403,7 @@ return {
     },
     {
       name = "SetTextureWrap",
-      description = "Set texture wrapping mode",
+      description = [=[Set texture wrapping mode]=],
       returnType = "void",
       params = {
         {type = "Texture2D", name = "texture"},
@@ -6254,7 +6412,7 @@ return {
     },
     {
       name = "DrawTexture",
-      description = "Draw a Texture2D",
+      description = [=[Draw a Texture2D]=],
       returnType = "void",
       params = {
         {type = "Texture2D", name = "texture"},
@@ -6265,7 +6423,7 @@ return {
     },
     {
       name = "DrawTextureV",
-      description = "Draw a Texture2D with position defined as Vector2",
+      description = [=[Draw a Texture2D with position defined as Vector2]=],
       returnType = "void",
       params = {
         {type = "Texture2D", name = "texture"},
@@ -6275,7 +6433,7 @@ return {
     },
     {
       name = "DrawTextureEx",
-      description = "Draw a Texture2D with extended parameters",
+      description = [=[Draw a Texture2D with extended parameters]=],
       returnType = "void",
       params = {
         {type = "Texture2D", name = "texture"},
@@ -6287,7 +6445,7 @@ return {
     },
     {
       name = "DrawTextureRec",
-      description = "Draw a part of a texture defined by a rectangle",
+      description = [=[Draw a part of a texture defined by a rectangle]=],
       returnType = "void",
       params = {
         {type = "Texture2D", name = "texture"},
@@ -6298,7 +6456,7 @@ return {
     },
     {
       name = "DrawTexturePro",
-      description = "Draw a part of a texture defined by a rectangle with 'pro' parameters",
+      description = [=[Draw a part of a texture defined by a rectangle with 'pro' parameters]=],
       returnType = "void",
       params = {
         {type = "Texture2D", name = "texture"},
@@ -6311,7 +6469,7 @@ return {
     },
     {
       name = "DrawTextureNPatch",
-      description = "Draws a texture (or part of it) that stretches or shrinks nicely",
+      description = [=[Draws a texture (or part of it) that stretches or shrinks nicely]=],
       returnType = "void",
       params = {
         {type = "Texture2D", name = "texture"},
@@ -6324,7 +6482,7 @@ return {
     },
     {
       name = "ColorIsEqual",
-      description = "Check if two colors are equal",
+      description = [=[Check if two colors are equal]=],
       returnType = "bool",
       params = {
         {type = "Color", name = "col1"},
@@ -6333,7 +6491,7 @@ return {
     },
     {
       name = "Fade",
-      description = "Get color with alpha applied, alpha goes from 0.0f to 1.0f",
+      description = [=[Get color with alpha applied, alpha goes from 0.0f to 1.0f]=],
       returnType = "Color",
       params = {
         {type = "Color", name = "color"},
@@ -6342,7 +6500,7 @@ return {
     },
     {
       name = "ColorToInt",
-      description = "Get hexadecimal value for a Color (0xRRGGBBAA)",
+      description = [=[Get hexadecimal value for a Color (0xRRGGBBAA)]=],
       returnType = "int",
       params = {
         {type = "Color", name = "color"}
@@ -6350,7 +6508,7 @@ return {
     },
     {
       name = "ColorNormalize",
-      description = "Get Color normalized as float [0..1]",
+      description = [=[Get Color normalized as float [0..1]]=],
       returnType = "Vector4",
       params = {
         {type = "Color", name = "color"}
@@ -6358,7 +6516,7 @@ return {
     },
     {
       name = "ColorFromNormalized",
-      description = "Get Color from normalized values [0..1]",
+      description = [=[Get Color from normalized values [0..1]]=],
       returnType = "Color",
       params = {
         {type = "Vector4", name = "normalized"}
@@ -6366,7 +6524,7 @@ return {
     },
     {
       name = "ColorToHSV",
-      description = "Get HSV values for a Color, hue [0..360], saturation/value [0..1]",
+      description = [=[Get HSV values for a Color, hue [0..360], saturation/value [0..1]]=],
       returnType = "Vector3",
       params = {
         {type = "Color", name = "color"}
@@ -6374,7 +6532,7 @@ return {
     },
     {
       name = "ColorFromHSV",
-      description = "Get a Color from HSV values, hue [0..360], saturation/value [0..1]",
+      description = [=[Get a Color from HSV values, hue [0..360], saturation/value [0..1]]=],
       returnType = "Color",
       params = {
         {type = "float", name = "hue"},
@@ -6384,7 +6542,7 @@ return {
     },
     {
       name = "ColorTint",
-      description = "Get color multiplied with another color",
+      description = [=[Get color multiplied with another color]=],
       returnType = "Color",
       params = {
         {type = "Color", name = "color"},
@@ -6393,7 +6551,7 @@ return {
     },
     {
       name = "ColorBrightness",
-      description = "Get color with brightness correction, brightness factor goes from -1.0f to 1.0f",
+      description = [=[Get color with brightness correction, brightness factor goes from -1.0f to 1.0f]=],
       returnType = "Color",
       params = {
         {type = "Color", name = "color"},
@@ -6402,7 +6560,7 @@ return {
     },
     {
       name = "ColorContrast",
-      description = "Get color with contrast correction, contrast values between -1.0f and 1.0f",
+      description = [=[Get color with contrast correction, contrast values between -1.0f and 1.0f]=],
       returnType = "Color",
       params = {
         {type = "Color", name = "color"},
@@ -6411,7 +6569,7 @@ return {
     },
     {
       name = "ColorAlpha",
-      description = "Get color with alpha applied, alpha goes from 0.0f to 1.0f",
+      description = [=[Get color with alpha applied, alpha goes from 0.0f to 1.0f]=],
       returnType = "Color",
       params = {
         {type = "Color", name = "color"},
@@ -6420,7 +6578,7 @@ return {
     },
     {
       name = "ColorAlphaBlend",
-      description = "Get src alpha-blended into dst color with tint",
+      description = [=[Get src alpha-blended into dst color with tint]=],
       returnType = "Color",
       params = {
         {type = "Color", name = "dst"},
@@ -6430,7 +6588,7 @@ return {
     },
     {
       name = "ColorLerp",
-      description = "Get color lerp interpolation between two colors, factor [0.0f..1.0f]",
+      description = [=[Get color lerp interpolation between two colors, factor [0.0f..1.0f]]=],
       returnType = "Color",
       params = {
         {type = "Color", name = "color1"},
@@ -6440,7 +6598,7 @@ return {
     },
     {
       name = "GetColor",
-      description = "Get Color structure from hexadecimal value",
+      description = [=[Get Color structure from hexadecimal value]=],
       returnType = "Color",
       params = {
         {type = "unsigned int", name = "hexValue"}
@@ -6448,7 +6606,7 @@ return {
     },
     {
       name = "GetPixelColor",
-      description = "Get Color from a source pixel pointer of certain format",
+      description = [=[Get Color from a source pixel pointer of certain format]=],
       returnType = "Color",
       params = {
         {type = "void *", name = "srcPtr"},
@@ -6457,7 +6615,7 @@ return {
     },
     {
       name = "SetPixelColor",
-      description = "Set color formatted into destination pixel pointer",
+      description = [=[Set color formatted into destination pixel pointer]=],
       returnType = "void",
       params = {
         {type = "void *", name = "dstPtr"},
@@ -6467,7 +6625,7 @@ return {
     },
     {
       name = "GetPixelDataSize",
-      description = "Get pixel data size in bytes for certain format",
+      description = [=[Get pixel data size in bytes for certain format]=],
       returnType = "int",
       params = {
         {type = "int", name = "width"},
@@ -6477,12 +6635,12 @@ return {
     },
     {
       name = "GetFontDefault",
-      description = "Get the default Font",
+      description = [=[Get the default Font]=],
       returnType = "Font"
     },
     {
       name = "LoadFont",
-      description = "Load font from file into GPU memory (VRAM)",
+      description = [=[Load font from file into GPU memory (VRAM)]=],
       returnType = "Font",
       params = {
         {type = "const char *", name = "fileName"}
@@ -6490,18 +6648,18 @@ return {
     },
     {
       name = "LoadFontEx",
-      description = "Load font from file with extended parameters, use NULL for codepoints and 0 for codepointCount to load the default character set, font size is provided in pixels height",
+      description = [=[Load font from file with extended parameters, use NULL for codepoints and 0 for codepointCount to load the default character set, font size is provided in pixels height]=],
       returnType = "Font",
       params = {
         {type = "const char *", name = "fileName"},
         {type = "int", name = "fontSize"},
-        {type = "int *", name = "codepoints"},
+        {type = "const int *", name = "codepoints"},
         {type = "int", name = "codepointCount"}
       }
     },
     {
       name = "LoadFontFromImage",
-      description = "Load font from Image (XNA style)",
+      description = [=[Load font from Image (XNA style)]=],
       returnType = "Font",
       params = {
         {type = "Image", name = "image"},
@@ -6511,20 +6669,20 @@ return {
     },
     {
       name = "LoadFontFromMemory",
-      description = "Load font from memory buffer, fileType refers to extension: i.e. '.ttf'",
+      description = [=[Load font from memory buffer, fileType refers to extension: i.e. '.ttf']=],
       returnType = "Font",
       params = {
         {type = "const char *", name = "fileType"},
         {type = "const unsigned char *", name = "fileData"},
         {type = "int", name = "dataSize"},
         {type = "int", name = "fontSize"},
-        {type = "int *", name = "codepoints"},
+        {type = "const int *", name = "codepoints"},
         {type = "int", name = "codepointCount"}
       }
     },
     {
       name = "IsFontValid",
-      description = "Check if a font is valid (font data loaded, WARNING: GPU texture not checked)",
+      description = [=[Check if a font is valid (font data loaded, WARNING: GPU texture not checked)]=],
       returnType = "bool",
       params = {
         {type = "Font", name = "font"}
@@ -6532,20 +6690,21 @@ return {
     },
     {
       name = "LoadFontData",
-      description = "Load font data for further use",
+      description = [=[Load font data for further use]=],
       returnType = "GlyphInfo *",
       params = {
         {type = "const unsigned char *", name = "fileData"},
         {type = "int", name = "dataSize"},
         {type = "int", name = "fontSize"},
-        {type = "int *", name = "codepoints"},
+        {type = "const int *", name = "codepoints"},
         {type = "int", name = "codepointCount"},
-        {type = "int", name = "type"}
+        {type = "int", name = "type"},
+        {type = "int *", name = "glyphCount"}
       }
     },
     {
       name = "GenImageFontAtlas",
-      description = "Generate image font atlas using chars info",
+      description = [=[Generate image font atlas using chars info]=],
       returnType = "Image",
       params = {
         {type = "const GlyphInfo *", name = "glyphs"},
@@ -6558,7 +6717,7 @@ return {
     },
     {
       name = "UnloadFontData",
-      description = "Unload font chars info data (RAM)",
+      description = [=[Unload font chars info data (RAM)]=],
       returnType = "void",
       params = {
         {type = "GlyphInfo *", name = "glyphs"},
@@ -6567,7 +6726,7 @@ return {
     },
     {
       name = "UnloadFont",
-      description = "Unload font from GPU memory (VRAM)",
+      description = [=[Unload font from GPU memory (VRAM)]=],
       returnType = "void",
       params = {
         {type = "Font", name = "font"}
@@ -6575,7 +6734,7 @@ return {
     },
     {
       name = "ExportFontAsCode",
-      description = "Export font as code file, returns true on success",
+      description = [=[Export font as code file, returns true on success]=],
       returnType = "bool",
       params = {
         {type = "Font", name = "font"},
@@ -6584,7 +6743,7 @@ return {
     },
     {
       name = "DrawFPS",
-      description = "Draw current FPS",
+      description = [=[Draw current FPS]=],
       returnType = "void",
       params = {
         {type = "int", name = "posX"},
@@ -6593,7 +6752,7 @@ return {
     },
     {
       name = "DrawText",
-      description = "Draw text (using default font)",
+      description = [=[Draw text (using default font)]=],
       returnType = "void",
       params = {
         {type = "const char *", name = "text"},
@@ -6605,7 +6764,7 @@ return {
     },
     {
       name = "DrawTextEx",
-      description = "Draw text using font and additional parameters",
+      description = [=[Draw text using font and additional parameters]=],
       returnType = "void",
       params = {
         {type = "Font", name = "font"},
@@ -6618,7 +6777,7 @@ return {
     },
     {
       name = "DrawTextPro",
-      description = "Draw text using Font and pro parameters (rotation)",
+      description = [=[Draw text using Font and pro parameters (rotation)]=],
       returnType = "void",
       params = {
         {type = "Font", name = "font"},
@@ -6633,7 +6792,7 @@ return {
     },
     {
       name = "DrawTextCodepoint",
-      description = "Draw one character (codepoint)",
+      description = [=[Draw one character (codepoint)]=],
       returnType = "void",
       params = {
         {type = "Font", name = "font"},
@@ -6645,7 +6804,7 @@ return {
     },
     {
       name = "DrawTextCodepoints",
-      description = "Draw multiple character (codepoint)",
+      description = [=[Draw multiple character (codepoint)]=],
       returnType = "void",
       params = {
         {type = "Font", name = "font"},
@@ -6659,7 +6818,7 @@ return {
     },
     {
       name = "SetTextLineSpacing",
-      description = "Set vertical line spacing when drawing with line-breaks",
+      description = [=[Set vertical line spacing when drawing with line-breaks]=],
       returnType = "void",
       params = {
         {type = "int", name = "spacing"}
@@ -6667,7 +6826,7 @@ return {
     },
     {
       name = "MeasureText",
-      description = "Measure string width for default font",
+      description = [=[Measure string width for default font]=],
       returnType = "int",
       params = {
         {type = "const char *", name = "text"},
@@ -6676,7 +6835,7 @@ return {
     },
     {
       name = "MeasureTextEx",
-      description = "Measure string size for Font",
+      description = [=[Measure string size for Font]=],
       returnType = "Vector2",
       params = {
         {type = "Font", name = "font"},
@@ -6686,8 +6845,20 @@ return {
       }
     },
     {
+      name = "MeasureTextCodepoints",
+      description = [=[Measure string size for an existing array of codepoints for Font]=],
+      returnType = "Vector2",
+      params = {
+        {type = "Font", name = "font"},
+        {type = "const int *", name = "codepoints"},
+        {type = "int", name = "length"},
+        {type = "float", name = "fontSize"},
+        {type = "float", name = "spacing"}
+      }
+    },
+    {
       name = "GetGlyphIndex",
-      description = "Get glyph index position in font for a codepoint (unicode character), fallback to '?' if not found",
+      description = [=[Get glyph index position in font for a codepoint (unicode character), fallback to '?' if not found]=],
       returnType = "int",
       params = {
         {type = "Font", name = "font"},
@@ -6696,7 +6867,7 @@ return {
     },
     {
       name = "GetGlyphInfo",
-      description = "Get glyph font info data for a codepoint (unicode character), fallback to '?' if not found",
+      description = [=[Get glyph font info data for a codepoint (unicode character), fallback to '?' if not found]=],
       returnType = "GlyphInfo",
       params = {
         {type = "Font", name = "font"},
@@ -6705,7 +6876,7 @@ return {
     },
     {
       name = "GetGlyphAtlasRec",
-      description = "Get glyph rectangle in font atlas for a codepoint (unicode character), fallback to '?' if not found",
+      description = [=[Get glyph rectangle in font atlas for a codepoint (unicode character), fallback to '?' if not found]=],
       returnType = "Rectangle",
       params = {
         {type = "Font", name = "font"},
@@ -6714,7 +6885,7 @@ return {
     },
     {
       name = "LoadUTF8",
-      description = "Load UTF-8 text encoded from codepoints array",
+      description = [=[Load UTF-8 text encoded from codepoints array]=],
       returnType = "char *",
       params = {
         {type = "const int *", name = "codepoints"},
@@ -6723,7 +6894,7 @@ return {
     },
     {
       name = "UnloadUTF8",
-      description = "Unload UTF-8 text encoded from codepoints array",
+      description = [=[Unload UTF-8 text encoded from codepoints array]=],
       returnType = "void",
       params = {
         {type = "char *", name = "text"}
@@ -6731,7 +6902,7 @@ return {
     },
     {
       name = "LoadCodepoints",
-      description = "Load all codepoints from a UTF-8 text string, codepoints count returned by parameter",
+      description = [=[Load all codepoints from a UTF-8 text string, codepoints count returned by parameter]=],
       returnType = "int *",
       params = {
         {type = "const char *", name = "text"},
@@ -6740,7 +6911,7 @@ return {
     },
     {
       name = "UnloadCodepoints",
-      description = "Unload codepoints data from memory",
+      description = [=[Unload codepoints data from memory]=],
       returnType = "void",
       params = {
         {type = "int *", name = "codepoints"}
@@ -6748,7 +6919,7 @@ return {
     },
     {
       name = "GetCodepointCount",
-      description = "Get total number of codepoints in a UTF-8 encoded string",
+      description = [=[Get total number of codepoints in a UTF-8 encoded string]=],
       returnType = "int",
       params = {
         {type = "const char *", name = "text"}
@@ -6756,7 +6927,7 @@ return {
     },
     {
       name = "GetCodepoint",
-      description = "Get next codepoint in a UTF-8 encoded string, 0x3f('?') is returned on failure",
+      description = [=[Get next codepoint in a UTF-8 encoded string, 0x3f('?') is returned on failure]=],
       returnType = "int",
       params = {
         {type = "const char *", name = "text"},
@@ -6765,7 +6936,7 @@ return {
     },
     {
       name = "GetCodepointNext",
-      description = "Get next codepoint in a UTF-8 encoded string, 0x3f('?') is returned on failure",
+      description = [=[Get next codepoint in a UTF-8 encoded string, 0x3f('?') is returned on failure]=],
       returnType = "int",
       params = {
         {type = "const char *", name = "text"},
@@ -6774,7 +6945,7 @@ return {
     },
     {
       name = "GetCodepointPrevious",
-      description = "Get previous codepoint in a UTF-8 encoded string, 0x3f('?') is returned on failure",
+      description = [=[Get previous codepoint in a UTF-8 encoded string, 0x3f('?') is returned on failure]=],
       returnType = "int",
       params = {
         {type = "const char *", name = "text"},
@@ -6783,7 +6954,7 @@ return {
     },
     {
       name = "CodepointToUTF8",
-      description = "Encode one codepoint into UTF-8 byte array (array length returned as parameter)",
+      description = [=[Encode one codepoint into UTF-8 byte array (array length returned as parameter)]=],
       returnType = "const char *",
       params = {
         {type = "int", name = "codepoint"},
@@ -6791,8 +6962,26 @@ return {
       }
     },
     {
+      name = "LoadTextLines",
+      description = [=[Load text as separate lines ('\\n')]=],
+      returnType = "char **",
+      params = {
+        {type = "const char *", name = "text"},
+        {type = "int *", name = "count"}
+      }
+    },
+    {
+      name = "UnloadTextLines",
+      description = [=[Unload text lines]=],
+      returnType = "void",
+      params = {
+        {type = "char **", name = "text"},
+        {type = "int", name = "lineCount"}
+      }
+    },
+    {
       name = "TextCopy",
-      description = "Copy one string to another, returns bytes copied",
+      description = [=[Copy one string to another, returns bytes copied]=],
       returnType = "int",
       params = {
         {type = "char *", name = "dst"},
@@ -6801,7 +6990,7 @@ return {
     },
     {
       name = "TextIsEqual",
-      description = "Check if two text string are equal",
+      description = [=[Check if two text string are equal]=],
       returnType = "bool",
       params = {
         {type = "const char *", name = "text1"},
@@ -6810,7 +6999,7 @@ return {
     },
     {
       name = "TextLength",
-      description = "Get text length, checks for '\\0' ending",
+      description = [=[Get text length, checks for '\\0' ending]=],
       returnType = "unsigned int",
       params = {
         {type = "const char *", name = "text"}
@@ -6818,7 +7007,7 @@ return {
     },
     {
       name = "TextFormat",
-      description = "Text formatting with variables (sprintf() style)",
+      description = [=[Text formatting with variables (sprintf() style)]=],
       returnType = "const char *",
       params = {
         {type = "const char *", name = "text"},
@@ -6827,7 +7016,7 @@ return {
     },
     {
       name = "TextSubtext",
-      description = "Get a piece of a text string",
+      description = [=[Get a piece of a text string]=],
       returnType = "const char *",
       params = {
         {type = "const char *", name = "text"},
@@ -6836,18 +7025,78 @@ return {
       }
     },
     {
-      name = "TextReplace",
-      description = "Replace text string (WARNING: memory must be freed!)",
+      name = "TextRemoveSpaces",
+      description = [=[Remove text spaces, concat words]=],
+      returnType = "const char *",
+      params = {
+        {type = "const char *", name = "text"}
+      }
+    },
+    {
+      name = "GetTextBetween",
+      description = [=[Get text between two strings]=],
       returnType = "char *",
       params = {
         {type = "const char *", name = "text"},
-        {type = "const char *", name = "replace"},
-        {type = "const char *", name = "by"}
+        {type = "const char *", name = "begin"},
+        {type = "const char *", name = "end"}
+      }
+    },
+    {
+      name = "TextReplace",
+      description = [=[Replace text string with new string]=],
+      returnType = "char *",
+      params = {
+        {type = "const char *", name = "text"},
+        {type = "const char *", name = "search"},
+        {type = "const char *", name = "replacement"}
+      }
+    },
+    {
+      name = "TextReplaceAlloc",
+      description = [=[Replace text string with new string, memory must be MemFree()]=],
+      returnType = "char *",
+      params = {
+        {type = "const char *", name = "text"},
+        {type = "const char *", name = "search"},
+        {type = "const char *", name = "replacement"}
+      }
+    },
+    {
+      name = "TextReplaceBetween",
+      description = [=[Replace text between two specific strings]=],
+      returnType = "char *",
+      params = {
+        {type = "const char *", name = "text"},
+        {type = "const char *", name = "begin"},
+        {type = "const char *", name = "end"},
+        {type = "const char *", name = "replacement"}
+      }
+    },
+    {
+      name = "TextReplaceBetweenAlloc",
+      description = [=[Replace text between two specific strings, memory must be MemFree()]=],
+      returnType = "char *",
+      params = {
+        {type = "const char *", name = "text"},
+        {type = "const char *", name = "begin"},
+        {type = "const char *", name = "end"},
+        {type = "const char *", name = "replacement"}
       }
     },
     {
       name = "TextInsert",
-      description = "Insert text in a position (WARNING: memory must be freed!)",
+      description = [=[Insert text in a defined byte position]=],
+      returnType = "char *",
+      params = {
+        {type = "const char *", name = "text"},
+        {type = "const char *", name = "insert"},
+        {type = "int", name = "position"}
+      }
+    },
+    {
+      name = "TextInsertAlloc",
+      description = [=[Insert text in a defined byte position, memory must be MemFree()]=],
       returnType = "char *",
       params = {
         {type = "const char *", name = "text"},
@@ -6857,18 +7106,18 @@ return {
     },
     {
       name = "TextJoin",
-      description = "Join text strings with delimiter",
-      returnType = "const char *",
+      description = [=[Join text strings with delimiter]=],
+      returnType = "char *",
       params = {
-        {type = "const char **", name = "textList"},
+        {type = "char **", name = "textList"},
         {type = "int", name = "count"},
         {type = "const char *", name = "delimiter"}
       }
     },
     {
       name = "TextSplit",
-      description = "Split text into multiple strings",
-      returnType = "const char **",
+      description = [=[Split text into multiple strings, using MAX_TEXTSPLIT_COUNT static strings]=],
+      returnType = "char **",
       params = {
         {type = "const char *", name = "text"},
         {type = "char", name = "delimiter"},
@@ -6877,7 +7126,7 @@ return {
     },
     {
       name = "TextAppend",
-      description = "Append text at specific position and move cursor!",
+      description = [=[Append text at specific position and move cursor]=],
       returnType = "void",
       params = {
         {type = "char *", name = "text"},
@@ -6887,56 +7136,56 @@ return {
     },
     {
       name = "TextFindIndex",
-      description = "Find first text occurrence within a string",
+      description = [=[Find first text occurrence within a string, -1 if not found]=],
       returnType = "int",
       params = {
         {type = "const char *", name = "text"},
-        {type = "const char *", name = "find"}
+        {type = "const char *", name = "search"}
       }
     },
     {
       name = "TextToUpper",
-      description = "Get upper case version of provided string",
-      returnType = "const char *",
+      description = [=[Get upper case version of provided string]=],
+      returnType = "char *",
       params = {
         {type = "const char *", name = "text"}
       }
     },
     {
       name = "TextToLower",
-      description = "Get lower case version of provided string",
-      returnType = "const char *",
+      description = [=[Get lower case version of provided string]=],
+      returnType = "char *",
       params = {
         {type = "const char *", name = "text"}
       }
     },
     {
       name = "TextToPascal",
-      description = "Get Pascal case notation version of provided string",
-      returnType = "const char *",
+      description = [=[Get Pascal case notation version of provided string]=],
+      returnType = "char *",
       params = {
         {type = "const char *", name = "text"}
       }
     },
     {
       name = "TextToSnake",
-      description = "Get Snake case notation version of provided string",
-      returnType = "const char *",
+      description = [=[Get Snake case notation version of provided string]=],
+      returnType = "char *",
       params = {
         {type = "const char *", name = "text"}
       }
     },
     {
       name = "TextToCamel",
-      description = "Get Camel case notation version of provided string",
-      returnType = "const char *",
+      description = [=[Get Camel case notation version of provided string]=],
+      returnType = "char *",
       params = {
         {type = "const char *", name = "text"}
       }
     },
     {
       name = "TextToInteger",
-      description = "Get integer value from text (negative values not supported)",
+      description = [=[Get integer value from text]=],
       returnType = "int",
       params = {
         {type = "const char *", name = "text"}
@@ -6944,7 +7193,7 @@ return {
     },
     {
       name = "TextToFloat",
-      description = "Get float value from text (negative values not supported)",
+      description = [=[Get float value from text]=],
       returnType = "float",
       params = {
         {type = "const char *", name = "text"}
@@ -6952,7 +7201,7 @@ return {
     },
     {
       name = "DrawLine3D",
-      description = "Draw a line in 3D world space",
+      description = [=[Draw a line in 3D world space]=],
       returnType = "void",
       params = {
         {type = "Vector3", name = "startPos"},
@@ -6962,7 +7211,7 @@ return {
     },
     {
       name = "DrawPoint3D",
-      description = "Draw a point in 3D space, actually a small line",
+      description = [=[Draw a point in 3D space, actually a small line]=],
       returnType = "void",
       params = {
         {type = "Vector3", name = "position"},
@@ -6971,7 +7220,7 @@ return {
     },
     {
       name = "DrawCircle3D",
-      description = "Draw a circle in 3D world space",
+      description = [=[Draw a circle in 3D world space]=],
       returnType = "void",
       params = {
         {type = "Vector3", name = "center"},
@@ -6983,7 +7232,7 @@ return {
     },
     {
       name = "DrawTriangle3D",
-      description = "Draw a color-filled triangle (vertex in counter-clockwise order!)",
+      description = [=[Draw a color-filled triangle (vertex in counter-clockwise order!)]=],
       returnType = "void",
       params = {
         {type = "Vector3", name = "v1"},
@@ -6994,7 +7243,7 @@ return {
     },
     {
       name = "DrawTriangleStrip3D",
-      description = "Draw a triangle strip defined by points",
+      description = [=[Draw a triangle strip defined by points]=],
       returnType = "void",
       params = {
         {type = "const Vector3 *", name = "points"},
@@ -7004,7 +7253,7 @@ return {
     },
     {
       name = "DrawCube",
-      description = "Draw cube",
+      description = [=[Draw cube]=],
       returnType = "void",
       params = {
         {type = "Vector3", name = "position"},
@@ -7016,7 +7265,7 @@ return {
     },
     {
       name = "DrawCubeV",
-      description = "Draw cube (Vector version)",
+      description = [=[Draw cube (Vector version)]=],
       returnType = "void",
       params = {
         {type = "Vector3", name = "position"},
@@ -7026,7 +7275,7 @@ return {
     },
     {
       name = "DrawCubeWires",
-      description = "Draw cube wires",
+      description = [=[Draw cube wires]=],
       returnType = "void",
       params = {
         {type = "Vector3", name = "position"},
@@ -7038,7 +7287,7 @@ return {
     },
     {
       name = "DrawCubeWiresV",
-      description = "Draw cube wires (Vector version)",
+      description = [=[Draw cube wires (Vector version)]=],
       returnType = "void",
       params = {
         {type = "Vector3", name = "position"},
@@ -7048,7 +7297,7 @@ return {
     },
     {
       name = "DrawSphere",
-      description = "Draw sphere",
+      description = [=[Draw sphere]=],
       returnType = "void",
       params = {
         {type = "Vector3", name = "centerPos"},
@@ -7058,7 +7307,7 @@ return {
     },
     {
       name = "DrawSphereEx",
-      description = "Draw sphere with extended parameters",
+      description = [=[Draw sphere with extended parameters]=],
       returnType = "void",
       params = {
         {type = "Vector3", name = "centerPos"},
@@ -7070,7 +7319,7 @@ return {
     },
     {
       name = "DrawSphereWires",
-      description = "Draw sphere wires",
+      description = [=[Draw sphere wires]=],
       returnType = "void",
       params = {
         {type = "Vector3", name = "centerPos"},
@@ -7082,7 +7331,7 @@ return {
     },
     {
       name = "DrawCylinder",
-      description = "Draw a cylinder/cone",
+      description = [=[Draw a cylinder/cone]=],
       returnType = "void",
       params = {
         {type = "Vector3", name = "position"},
@@ -7095,7 +7344,7 @@ return {
     },
     {
       name = "DrawCylinderEx",
-      description = "Draw a cylinder with base at startPos and top at endPos",
+      description = [=[Draw a cylinder with base at startPos and top at endPos]=],
       returnType = "void",
       params = {
         {type = "Vector3", name = "startPos"},
@@ -7108,7 +7357,7 @@ return {
     },
     {
       name = "DrawCylinderWires",
-      description = "Draw a cylinder/cone wires",
+      description = [=[Draw a cylinder/cone wires]=],
       returnType = "void",
       params = {
         {type = "Vector3", name = "position"},
@@ -7121,7 +7370,7 @@ return {
     },
     {
       name = "DrawCylinderWiresEx",
-      description = "Draw a cylinder wires with base at startPos and top at endPos",
+      description = [=[Draw a cylinder wires with base at startPos and top at endPos]=],
       returnType = "void",
       params = {
         {type = "Vector3", name = "startPos"},
@@ -7134,7 +7383,7 @@ return {
     },
     {
       name = "DrawCapsule",
-      description = "Draw a capsule with the center of its sphere caps at startPos and endPos",
+      description = [=[Draw a capsule with the center of its sphere caps at startPos and endPos]=],
       returnType = "void",
       params = {
         {type = "Vector3", name = "startPos"},
@@ -7147,7 +7396,7 @@ return {
     },
     {
       name = "DrawCapsuleWires",
-      description = "Draw capsule wireframe with the center of its sphere caps at startPos and endPos",
+      description = [=[Draw capsule wireframe with the center of its sphere caps at startPos and endPos]=],
       returnType = "void",
       params = {
         {type = "Vector3", name = "startPos"},
@@ -7160,7 +7409,7 @@ return {
     },
     {
       name = "DrawPlane",
-      description = "Draw a plane XZ",
+      description = [=[Draw a plane XZ]=],
       returnType = "void",
       params = {
         {type = "Vector3", name = "centerPos"},
@@ -7170,7 +7419,7 @@ return {
     },
     {
       name = "DrawRay",
-      description = "Draw a ray line",
+      description = [=[Draw a ray line]=],
       returnType = "void",
       params = {
         {type = "Ray", name = "ray"},
@@ -7179,7 +7428,7 @@ return {
     },
     {
       name = "DrawGrid",
-      description = "Draw a grid (centered at (0, 0, 0))",
+      description = [=[Draw a grid (centered at (0, 0, 0))]=],
       returnType = "void",
       params = {
         {type = "int", name = "slices"},
@@ -7188,7 +7437,7 @@ return {
     },
     {
       name = "LoadModel",
-      description = "Load model from files (meshes and materials)",
+      description = [=[Load model from files (meshes and materials)]=],
       returnType = "Model",
       params = {
         {type = "const char *", name = "fileName"}
@@ -7196,7 +7445,7 @@ return {
     },
     {
       name = "LoadModelFromMesh",
-      description = "Load model from generated mesh (default material)",
+      description = [=[Load model from generated mesh (default material)]=],
       returnType = "Model",
       params = {
         {type = "Mesh", name = "mesh"}
@@ -7204,7 +7453,7 @@ return {
     },
     {
       name = "IsModelValid",
-      description = "Check if a model is valid (loaded in GPU, VAO/VBOs)",
+      description = [=[Check if a model is valid (loaded in GPU, VAO/VBOs)]=],
       returnType = "bool",
       params = {
         {type = "Model", name = "model"}
@@ -7212,7 +7461,7 @@ return {
     },
     {
       name = "UnloadModel",
-      description = "Unload model (including meshes) from memory (RAM and/or VRAM)",
+      description = [=[Unload model (including meshes) from memory (RAM and/or VRAM)]=],
       returnType = "void",
       params = {
         {type = "Model", name = "model"}
@@ -7220,7 +7469,7 @@ return {
     },
     {
       name = "GetModelBoundingBox",
-      description = "Compute model bounding box limits (considers all meshes)",
+      description = [=[Compute model bounding box limits (considers all meshes)]=],
       returnType = "BoundingBox",
       params = {
         {type = "Model", name = "model"}
@@ -7228,7 +7477,7 @@ return {
     },
     {
       name = "DrawModel",
-      description = "Draw a model (with texture if set)",
+      description = [=[Draw a model (with texture if set)]=],
       returnType = "void",
       params = {
         {type = "Model", name = "model"},
@@ -7239,7 +7488,7 @@ return {
     },
     {
       name = "DrawModelEx",
-      description = "Draw a model with extended parameters",
+      description = [=[Draw a model with extended parameters]=],
       returnType = "void",
       params = {
         {type = "Model", name = "model"},
@@ -7252,7 +7501,7 @@ return {
     },
     {
       name = "DrawModelWires",
-      description = "Draw a model wires (with texture if set)",
+      description = [=[Draw a model wires (with texture if set)]=],
       returnType = "void",
       params = {
         {type = "Model", name = "model"},
@@ -7263,31 +7512,7 @@ return {
     },
     {
       name = "DrawModelWiresEx",
-      description = "Draw a model wires (with texture if set) with extended parameters",
-      returnType = "void",
-      params = {
-        {type = "Model", name = "model"},
-        {type = "Vector3", name = "position"},
-        {type = "Vector3", name = "rotationAxis"},
-        {type = "float", name = "rotationAngle"},
-        {type = "Vector3", name = "scale"},
-        {type = "Color", name = "tint"}
-      }
-    },
-    {
-      name = "DrawModelPoints",
-      description = "Draw a model as points",
-      returnType = "void",
-      params = {
-        {type = "Model", name = "model"},
-        {type = "Vector3", name = "position"},
-        {type = "float", name = "scale"},
-        {type = "Color", name = "tint"}
-      }
-    },
-    {
-      name = "DrawModelPointsEx",
-      description = "Draw a model as points with extended parameters",
+      description = [=[Draw a model wires (with texture if set) with extended parameters]=],
       returnType = "void",
       params = {
         {type = "Model", name = "model"},
@@ -7300,7 +7525,7 @@ return {
     },
     {
       name = "DrawBoundingBox",
-      description = "Draw bounding box (wires)",
+      description = [=[Draw bounding box (wires)]=],
       returnType = "void",
       params = {
         {type = "BoundingBox", name = "box"},
@@ -7309,7 +7534,7 @@ return {
     },
     {
       name = "DrawBillboard",
-      description = "Draw a billboard texture",
+      description = [=[Draw a billboard texture]=],
       returnType = "void",
       params = {
         {type = "Camera", name = "camera"},
@@ -7321,7 +7546,7 @@ return {
     },
     {
       name = "DrawBillboardRec",
-      description = "Draw a billboard texture defined by source",
+      description = [=[Draw a billboard texture defined by source]=],
       returnType = "void",
       params = {
         {type = "Camera", name = "camera"},
@@ -7334,7 +7559,7 @@ return {
     },
     {
       name = "DrawBillboardPro",
-      description = "Draw a billboard texture defined by source and rotation",
+      description = [=[Draw a billboard texture defined by source and rotation]=],
       returnType = "void",
       params = {
         {type = "Camera", name = "camera"},
@@ -7350,7 +7575,7 @@ return {
     },
     {
       name = "UploadMesh",
-      description = "Upload mesh vertex data in GPU and provide VAO/VBO ids",
+      description = [=[Upload mesh vertex data in GPU and provide VAO/VBO ids]=],
       returnType = "void",
       params = {
         {type = "Mesh *", name = "mesh"},
@@ -7359,7 +7584,7 @@ return {
     },
     {
       name = "UpdateMeshBuffer",
-      description = "Update mesh vertex data in GPU for a specific buffer index",
+      description = [=[Update mesh vertex data in GPU for a specific buffer index]=],
       returnType = "void",
       params = {
         {type = "Mesh", name = "mesh"},
@@ -7371,7 +7596,7 @@ return {
     },
     {
       name = "UnloadMesh",
-      description = "Unload mesh data from CPU and GPU",
+      description = [=[Unload mesh data from CPU and GPU]=],
       returnType = "void",
       params = {
         {type = "Mesh", name = "mesh"}
@@ -7379,7 +7604,7 @@ return {
     },
     {
       name = "DrawMesh",
-      description = "Draw a 3d mesh with material and transform",
+      description = [=[Draw a 3d mesh with material and transform]=],
       returnType = "void",
       params = {
         {type = "Mesh", name = "mesh"},
@@ -7389,7 +7614,7 @@ return {
     },
     {
       name = "DrawMeshInstanced",
-      description = "Draw multiple mesh instances with material and different transforms",
+      description = [=[Draw multiple mesh instances with material and different transforms]=],
       returnType = "void",
       params = {
         {type = "Mesh", name = "mesh"},
@@ -7400,7 +7625,7 @@ return {
     },
     {
       name = "GetMeshBoundingBox",
-      description = "Compute mesh bounding box limits",
+      description = [=[Compute mesh bounding box limits]=],
       returnType = "BoundingBox",
       params = {
         {type = "Mesh", name = "mesh"}
@@ -7408,7 +7633,7 @@ return {
     },
     {
       name = "GenMeshTangents",
-      description = "Compute mesh tangents",
+      description = [=[Compute mesh tangents]=],
       returnType = "void",
       params = {
         {type = "Mesh *", name = "mesh"}
@@ -7416,7 +7641,7 @@ return {
     },
     {
       name = "ExportMesh",
-      description = "Export mesh data to file, returns true on success",
+      description = [=[Export mesh data to file, returns true on success]=],
       returnType = "bool",
       params = {
         {type = "Mesh", name = "mesh"},
@@ -7425,7 +7650,7 @@ return {
     },
     {
       name = "ExportMeshAsCode",
-      description = "Export mesh as code file (.h) defining multiple arrays of vertex attributes",
+      description = [=[Export mesh as code file (.h) defining multiple arrays of vertex attributes]=],
       returnType = "bool",
       params = {
         {type = "Mesh", name = "mesh"},
@@ -7434,7 +7659,7 @@ return {
     },
     {
       name = "GenMeshPoly",
-      description = "Generate polygonal mesh",
+      description = [=[Generate polygonal mesh]=],
       returnType = "Mesh",
       params = {
         {type = "int", name = "sides"},
@@ -7443,7 +7668,7 @@ return {
     },
     {
       name = "GenMeshPlane",
-      description = "Generate plane mesh (with subdivisions)",
+      description = [=[Generate plane mesh (with subdivisions)]=],
       returnType = "Mesh",
       params = {
         {type = "float", name = "width"},
@@ -7454,7 +7679,7 @@ return {
     },
     {
       name = "GenMeshCube",
-      description = "Generate cuboid mesh",
+      description = [=[Generate cuboid mesh]=],
       returnType = "Mesh",
       params = {
         {type = "float", name = "width"},
@@ -7464,7 +7689,7 @@ return {
     },
     {
       name = "GenMeshSphere",
-      description = "Generate sphere mesh (standard sphere)",
+      description = [=[Generate sphere mesh (standard sphere)]=],
       returnType = "Mesh",
       params = {
         {type = "float", name = "radius"},
@@ -7474,7 +7699,7 @@ return {
     },
     {
       name = "GenMeshHemiSphere",
-      description = "Generate half-sphere mesh (no bottom cap)",
+      description = [=[Generate half-sphere mesh (no bottom cap)]=],
       returnType = "Mesh",
       params = {
         {type = "float", name = "radius"},
@@ -7484,7 +7709,7 @@ return {
     },
     {
       name = "GenMeshCylinder",
-      description = "Generate cylinder mesh",
+      description = [=[Generate cylinder mesh]=],
       returnType = "Mesh",
       params = {
         {type = "float", name = "radius"},
@@ -7494,7 +7719,7 @@ return {
     },
     {
       name = "GenMeshCone",
-      description = "Generate cone/pyramid mesh",
+      description = [=[Generate cone/pyramid mesh]=],
       returnType = "Mesh",
       params = {
         {type = "float", name = "radius"},
@@ -7504,7 +7729,7 @@ return {
     },
     {
       name = "GenMeshTorus",
-      description = "Generate torus mesh",
+      description = [=[Generate torus mesh]=],
       returnType = "Mesh",
       params = {
         {type = "float", name = "radius"},
@@ -7515,7 +7740,7 @@ return {
     },
     {
       name = "GenMeshKnot",
-      description = "Generate trefoil knot mesh",
+      description = [=[Generate trefoil knot mesh]=],
       returnType = "Mesh",
       params = {
         {type = "float", name = "radius"},
@@ -7526,7 +7751,7 @@ return {
     },
     {
       name = "GenMeshHeightmap",
-      description = "Generate heightmap mesh from image data",
+      description = [=[Generate heightmap mesh from image data]=],
       returnType = "Mesh",
       params = {
         {type = "Image", name = "heightmap"},
@@ -7535,7 +7760,7 @@ return {
     },
     {
       name = "GenMeshCubicmap",
-      description = "Generate cubes-based map mesh from image data",
+      description = [=[Generate cubes-based map mesh from image data]=],
       returnType = "Mesh",
       params = {
         {type = "Image", name = "cubicmap"},
@@ -7544,7 +7769,7 @@ return {
     },
     {
       name = "LoadMaterials",
-      description = "Load materials from model file",
+      description = [=[Load materials from model file]=],
       returnType = "Material *",
       params = {
         {type = "const char *", name = "fileName"},
@@ -7553,12 +7778,12 @@ return {
     },
     {
       name = "LoadMaterialDefault",
-      description = "Load default material (Supports: DIFFUSE, SPECULAR, NORMAL maps)",
+      description = [=[Load default material (Supports: DIFFUSE, SPECULAR, NORMAL maps)]=],
       returnType = "Material"
     },
     {
       name = "IsMaterialValid",
-      description = "Check if a material is valid (shader assigned, map textures loaded in GPU)",
+      description = [=[Check if a material is valid (shader assigned, map textures loaded in GPU)]=],
       returnType = "bool",
       params = {
         {type = "Material", name = "material"}
@@ -7566,7 +7791,7 @@ return {
     },
     {
       name = "UnloadMaterial",
-      description = "Unload material from GPU memory (VRAM)",
+      description = [=[Unload material from GPU memory (VRAM)]=],
       returnType = "void",
       params = {
         {type = "Material", name = "material"}
@@ -7574,7 +7799,7 @@ return {
     },
     {
       name = "SetMaterialTexture",
-      description = "Set texture for a material map type (MATERIAL_MAP_DIFFUSE, MATERIAL_MAP_SPECULAR...)",
+      description = [=[Set texture for a material map type (MATERIAL_MAP_DIFFUSE, MATERIAL_MAP_SPECULAR...)]=],
       returnType = "void",
       params = {
         {type = "Material *", name = "material"},
@@ -7584,7 +7809,7 @@ return {
     },
     {
       name = "SetModelMeshMaterial",
-      description = "Set material for a mesh",
+      description = [=[Set material for a mesh]=],
       returnType = "void",
       params = {
         {type = "Model *", name = "model"},
@@ -7594,7 +7819,7 @@ return {
     },
     {
       name = "LoadModelAnimations",
-      description = "Load model animations from file",
+      description = [=[Load model animations from file]=],
       returnType = "ModelAnimation *",
       params = {
         {type = "const char *", name = "fileName"},
@@ -7603,35 +7828,30 @@ return {
     },
     {
       name = "UpdateModelAnimation",
-      description = "Update model animation pose (CPU)",
+      description = [=[Update model animation pose (vertex buffers and bone matrices)]=],
       returnType = "void",
       params = {
         {type = "Model", name = "model"},
         {type = "ModelAnimation", name = "anim"},
-        {type = "int", name = "frame"}
+        {type = "float", name = "frame"}
       }
     },
     {
-      name = "UpdateModelAnimationBones",
-      description = "Update model animation mesh bone matrices (GPU skinning)",
+      name = "UpdateModelAnimationEx",
+      description = [=[Update model animation pose, blending two animations]=],
       returnType = "void",
       params = {
         {type = "Model", name = "model"},
-        {type = "ModelAnimation", name = "anim"},
-        {type = "int", name = "frame"}
-      }
-    },
-    {
-      name = "UnloadModelAnimation",
-      description = "Unload animation data",
-      returnType = "void",
-      params = {
-        {type = "ModelAnimation", name = "anim"}
+        {type = "ModelAnimation", name = "animA"},
+        {type = "float", name = "frameA"},
+        {type = "ModelAnimation", name = "animB"},
+        {type = "float", name = "frameB"},
+        {type = "float", name = "blend"}
       }
     },
     {
       name = "UnloadModelAnimations",
-      description = "Unload animation array data",
+      description = [=[Unload animation array data]=],
       returnType = "void",
       params = {
         {type = "ModelAnimation *", name = "animations"},
@@ -7640,7 +7860,7 @@ return {
     },
     {
       name = "IsModelAnimationValid",
-      description = "Check model animation skeleton match",
+      description = [=[Check model animation skeleton match]=],
       returnType = "bool",
       params = {
         {type = "Model", name = "model"},
@@ -7649,7 +7869,7 @@ return {
     },
     {
       name = "CheckCollisionSpheres",
-      description = "Check collision between two spheres",
+      description = [=[Check collision between two spheres]=],
       returnType = "bool",
       params = {
         {type = "Vector3", name = "center1"},
@@ -7660,7 +7880,7 @@ return {
     },
     {
       name = "CheckCollisionBoxes",
-      description = "Check collision between two bounding boxes",
+      description = [=[Check collision between two bounding boxes]=],
       returnType = "bool",
       params = {
         {type = "BoundingBox", name = "box1"},
@@ -7669,7 +7889,7 @@ return {
     },
     {
       name = "CheckCollisionBoxSphere",
-      description = "Check collision between box and sphere",
+      description = [=[Check collision between box and sphere]=],
       returnType = "bool",
       params = {
         {type = "BoundingBox", name = "box"},
@@ -7679,7 +7899,7 @@ return {
     },
     {
       name = "GetRayCollisionSphere",
-      description = "Get collision info between ray and sphere",
+      description = [=[Get collision info between ray and sphere]=],
       returnType = "RayCollision",
       params = {
         {type = "Ray", name = "ray"},
@@ -7689,7 +7909,7 @@ return {
     },
     {
       name = "GetRayCollisionBox",
-      description = "Get collision info between ray and box",
+      description = [=[Get collision info between ray and box]=],
       returnType = "RayCollision",
       params = {
         {type = "Ray", name = "ray"},
@@ -7698,7 +7918,7 @@ return {
     },
     {
       name = "GetRayCollisionMesh",
-      description = "Get collision info between ray and mesh",
+      description = [=[Get collision info between ray and mesh]=],
       returnType = "RayCollision",
       params = {
         {type = "Ray", name = "ray"},
@@ -7708,7 +7928,7 @@ return {
     },
     {
       name = "GetRayCollisionTriangle",
-      description = "Get collision info between ray and triangle",
+      description = [=[Get collision info between ray and triangle]=],
       returnType = "RayCollision",
       params = {
         {type = "Ray", name = "ray"},
@@ -7719,7 +7939,7 @@ return {
     },
     {
       name = "GetRayCollisionQuad",
-      description = "Get collision info between ray and quad",
+      description = [=[Get collision info between ray and quad]=],
       returnType = "RayCollision",
       params = {
         {type = "Ray", name = "ray"},
@@ -7731,22 +7951,22 @@ return {
     },
     {
       name = "InitAudioDevice",
-      description = "Initialize audio device and context",
+      description = [=[Initialize audio device and context]=],
       returnType = "void"
     },
     {
       name = "CloseAudioDevice",
-      description = "Close the audio device and context",
+      description = [=[Close the audio device and context]=],
       returnType = "void"
     },
     {
       name = "IsAudioDeviceReady",
-      description = "Check if audio device has been initialized successfully",
+      description = [=[Check if audio device has been initialized successfully]=],
       returnType = "bool"
     },
     {
       name = "SetMasterVolume",
-      description = "Set master volume (listener)",
+      description = [=[Set master volume (listener)]=],
       returnType = "void",
       params = {
         {type = "float", name = "volume"}
@@ -7754,12 +7974,12 @@ return {
     },
     {
       name = "GetMasterVolume",
-      description = "Get master volume (listener)",
+      description = [=[Get master volume (listener)]=],
       returnType = "float"
     },
     {
       name = "LoadWave",
-      description = "Load wave data from file",
+      description = [=[Load wave data from file]=],
       returnType = "Wave",
       params = {
         {type = "const char *", name = "fileName"}
@@ -7767,7 +7987,7 @@ return {
     },
     {
       name = "LoadWaveFromMemory",
-      description = "Load wave from memory buffer, fileType refers to extension: i.e. '.wav'",
+      description = [=[Load wave from memory buffer, fileType refers to extension: i.e. '.wav']=],
       returnType = "Wave",
       params = {
         {type = "const char *", name = "fileType"},
@@ -7777,7 +7997,7 @@ return {
     },
     {
       name = "IsWaveValid",
-      description = "Checks if wave data is valid (data loaded and parameters)",
+      description = [=[Checks if wave data is valid (data loaded and parameters)]=],
       returnType = "bool",
       params = {
         {type = "Wave", name = "wave"}
@@ -7785,7 +8005,7 @@ return {
     },
     {
       name = "LoadSound",
-      description = "Load sound from file",
+      description = [=[Load sound from file]=],
       returnType = "Sound",
       params = {
         {type = "const char *", name = "fileName"}
@@ -7793,7 +8013,7 @@ return {
     },
     {
       name = "LoadSoundFromWave",
-      description = "Load sound from wave data",
+      description = [=[Load sound from wave data]=],
       returnType = "Sound",
       params = {
         {type = "Wave", name = "wave"}
@@ -7801,7 +8021,7 @@ return {
     },
     {
       name = "LoadSoundAlias",
-      description = "Create a new sound that shares the same sample data as the source sound, does not own the sound data",
+      description = [=[Create a new sound that shares the same sample data as the source sound, does not own the sound data]=],
       returnType = "Sound",
       params = {
         {type = "Sound", name = "source"}
@@ -7809,7 +8029,7 @@ return {
     },
     {
       name = "IsSoundValid",
-      description = "Checks if a sound is valid (data loaded and buffers initialized)",
+      description = [=[Checks if a sound is valid (data loaded and buffers initialized)]=],
       returnType = "bool",
       params = {
         {type = "Sound", name = "sound"}
@@ -7817,7 +8037,7 @@ return {
     },
     {
       name = "UpdateSound",
-      description = "Update sound buffer with new data",
+      description = [=[Update sound buffer with new data (default data format: 32 bit float, stereo)]=],
       returnType = "void",
       params = {
         {type = "Sound", name = "sound"},
@@ -7827,7 +8047,7 @@ return {
     },
     {
       name = "UnloadWave",
-      description = "Unload wave data",
+      description = [=[Unload wave data]=],
       returnType = "void",
       params = {
         {type = "Wave", name = "wave"}
@@ -7835,7 +8055,7 @@ return {
     },
     {
       name = "UnloadSound",
-      description = "Unload sound",
+      description = [=[Unload sound]=],
       returnType = "void",
       params = {
         {type = "Sound", name = "sound"}
@@ -7843,7 +8063,7 @@ return {
     },
     {
       name = "UnloadSoundAlias",
-      description = "Unload a sound alias (does not deallocate sample data)",
+      description = [=[Unload a sound alias (does not deallocate sample data)]=],
       returnType = "void",
       params = {
         {type = "Sound", name = "alias"}
@@ -7851,7 +8071,7 @@ return {
     },
     {
       name = "ExportWave",
-      description = "Export wave data to file, returns true on success",
+      description = [=[Export wave data to file, returns true on success]=],
       returnType = "bool",
       params = {
         {type = "Wave", name = "wave"},
@@ -7860,7 +8080,7 @@ return {
     },
     {
       name = "ExportWaveAsCode",
-      description = "Export wave sample data to code (.h), returns true on success",
+      description = [=[Export wave sample data to code (.h), returns true on success]=],
       returnType = "bool",
       params = {
         {type = "Wave", name = "wave"},
@@ -7869,7 +8089,7 @@ return {
     },
     {
       name = "PlaySound",
-      description = "Play a sound",
+      description = [=[Play a sound]=],
       returnType = "void",
       params = {
         {type = "Sound", name = "sound"}
@@ -7877,7 +8097,7 @@ return {
     },
     {
       name = "StopSound",
-      description = "Stop playing a sound",
+      description = [=[Stop playing a sound]=],
       returnType = "void",
       params = {
         {type = "Sound", name = "sound"}
@@ -7885,7 +8105,7 @@ return {
     },
     {
       name = "PauseSound",
-      description = "Pause a sound",
+      description = [=[Pause a sound]=],
       returnType = "void",
       params = {
         {type = "Sound", name = "sound"}
@@ -7893,7 +8113,7 @@ return {
     },
     {
       name = "ResumeSound",
-      description = "Resume a paused sound",
+      description = [=[Resume a paused sound]=],
       returnType = "void",
       params = {
         {type = "Sound", name = "sound"}
@@ -7901,7 +8121,7 @@ return {
     },
     {
       name = "IsSoundPlaying",
-      description = "Check if a sound is currently playing",
+      description = [=[Check if a sound is currently playing]=],
       returnType = "bool",
       params = {
         {type = "Sound", name = "sound"}
@@ -7909,7 +8129,7 @@ return {
     },
     {
       name = "SetSoundVolume",
-      description = "Set volume for a sound (1.0 is max level)",
+      description = [=[Set volume for a sound (1.0 is max level)]=],
       returnType = "void",
       params = {
         {type = "Sound", name = "sound"},
@@ -7918,7 +8138,7 @@ return {
     },
     {
       name = "SetSoundPitch",
-      description = "Set pitch for a sound (1.0 is base level)",
+      description = [=[Set pitch for a sound (1.0 is base level)]=],
       returnType = "void",
       params = {
         {type = "Sound", name = "sound"},
@@ -7927,7 +8147,7 @@ return {
     },
     {
       name = "SetSoundPan",
-      description = "Set pan for a sound (0.5 is center)",
+      description = [=[Set pan for a sound (-1.0 left, 0.0 center, 1.0 right)]=],
       returnType = "void",
       params = {
         {type = "Sound", name = "sound"},
@@ -7936,7 +8156,7 @@ return {
     },
     {
       name = "WaveCopy",
-      description = "Copy a wave to a new wave",
+      description = [=[Copy a wave to a new wave]=],
       returnType = "Wave",
       params = {
         {type = "Wave", name = "wave"}
@@ -7944,7 +8164,7 @@ return {
     },
     {
       name = "WaveCrop",
-      description = "Crop a wave to defined frames range",
+      description = [=[Crop a wave to defined frames range]=],
       returnType = "void",
       params = {
         {type = "Wave *", name = "wave"},
@@ -7954,7 +8174,7 @@ return {
     },
     {
       name = "WaveFormat",
-      description = "Convert wave data to desired format",
+      description = [=[Convert wave data to desired format]=],
       returnType = "void",
       params = {
         {type = "Wave *", name = "wave"},
@@ -7965,7 +8185,7 @@ return {
     },
     {
       name = "LoadWaveSamples",
-      description = "Load samples data from wave as a 32bit float data array",
+      description = [=[Load samples data from wave as a 32bit float data array]=],
       returnType = "float *",
       params = {
         {type = "Wave", name = "wave"}
@@ -7973,7 +8193,7 @@ return {
     },
     {
       name = "UnloadWaveSamples",
-      description = "Unload samples data loaded with LoadWaveSamples()",
+      description = [=[Unload samples data loaded with LoadWaveSamples()]=],
       returnType = "void",
       params = {
         {type = "float *", name = "samples"}
@@ -7981,7 +8201,7 @@ return {
     },
     {
       name = "LoadMusicStream",
-      description = "Load music stream from file",
+      description = [=[Load music stream from file]=],
       returnType = "Music",
       params = {
         {type = "const char *", name = "fileName"}
@@ -7989,7 +8209,7 @@ return {
     },
     {
       name = "LoadMusicStreamFromMemory",
-      description = "Load music stream from data",
+      description = [=[Load music stream from data]=],
       returnType = "Music",
       params = {
         {type = "const char *", name = "fileType"},
@@ -7999,7 +8219,7 @@ return {
     },
     {
       name = "IsMusicValid",
-      description = "Checks if a music stream is valid (context and buffers initialized)",
+      description = [=[Checks if a music stream is valid (context and buffers initialized)]=],
       returnType = "bool",
       params = {
         {type = "Music", name = "music"}
@@ -8007,7 +8227,7 @@ return {
     },
     {
       name = "UnloadMusicStream",
-      description = "Unload music stream",
+      description = [=[Unload music stream]=],
       returnType = "void",
       params = {
         {type = "Music", name = "music"}
@@ -8015,7 +8235,7 @@ return {
     },
     {
       name = "PlayMusicStream",
-      description = "Start music playing",
+      description = [=[Start music playing]=],
       returnType = "void",
       params = {
         {type = "Music", name = "music"}
@@ -8023,7 +8243,7 @@ return {
     },
     {
       name = "IsMusicStreamPlaying",
-      description = "Check if music is playing",
+      description = [=[Check if music is playing]=],
       returnType = "bool",
       params = {
         {type = "Music", name = "music"}
@@ -8031,7 +8251,7 @@ return {
     },
     {
       name = "UpdateMusicStream",
-      description = "Updates buffers for music streaming",
+      description = [=[Updates buffers for music streaming]=],
       returnType = "void",
       params = {
         {type = "Music", name = "music"}
@@ -8039,7 +8259,7 @@ return {
     },
     {
       name = "StopMusicStream",
-      description = "Stop music playing",
+      description = [=[Stop music playing]=],
       returnType = "void",
       params = {
         {type = "Music", name = "music"}
@@ -8047,7 +8267,7 @@ return {
     },
     {
       name = "PauseMusicStream",
-      description = "Pause music playing",
+      description = [=[Pause music playing]=],
       returnType = "void",
       params = {
         {type = "Music", name = "music"}
@@ -8055,7 +8275,7 @@ return {
     },
     {
       name = "ResumeMusicStream",
-      description = "Resume playing paused music",
+      description = [=[Resume playing paused music]=],
       returnType = "void",
       params = {
         {type = "Music", name = "music"}
@@ -8063,7 +8283,7 @@ return {
     },
     {
       name = "SeekMusicStream",
-      description = "Seek music to a position (in seconds)",
+      description = [=[Seek music to a position (in seconds)]=],
       returnType = "void",
       params = {
         {type = "Music", name = "music"},
@@ -8072,7 +8292,7 @@ return {
     },
     {
       name = "SetMusicVolume",
-      description = "Set volume for music (1.0 is max level)",
+      description = [=[Set volume for music (1.0 is max level)]=],
       returnType = "void",
       params = {
         {type = "Music", name = "music"},
@@ -8081,7 +8301,7 @@ return {
     },
     {
       name = "SetMusicPitch",
-      description = "Set pitch for a music (1.0 is base level)",
+      description = [=[Set pitch for a music (1.0 is base level)]=],
       returnType = "void",
       params = {
         {type = "Music", name = "music"},
@@ -8090,7 +8310,7 @@ return {
     },
     {
       name = "SetMusicPan",
-      description = "Set pan for a music (0.5 is center)",
+      description = [=[Set pan for a music (-1.0 left, 0.0 center, 1.0 right)]=],
       returnType = "void",
       params = {
         {type = "Music", name = "music"},
@@ -8099,7 +8319,7 @@ return {
     },
     {
       name = "GetMusicTimeLength",
-      description = "Get music time length (in seconds)",
+      description = [=[Get music time length (in seconds)]=],
       returnType = "float",
       params = {
         {type = "Music", name = "music"}
@@ -8107,7 +8327,7 @@ return {
     },
     {
       name = "GetMusicTimePlayed",
-      description = "Get current music time played (in seconds)",
+      description = [=[Get current music time played (in seconds)]=],
       returnType = "float",
       params = {
         {type = "Music", name = "music"}
@@ -8115,7 +8335,7 @@ return {
     },
     {
       name = "LoadAudioStream",
-      description = "Load audio stream (to stream raw audio pcm data)",
+      description = [=[Load audio stream (to stream raw audio pcm data)]=],
       returnType = "AudioStream",
       params = {
         {type = "unsigned int", name = "sampleRate"},
@@ -8125,7 +8345,7 @@ return {
     },
     {
       name = "IsAudioStreamValid",
-      description = "Checks if an audio stream is valid (buffers initialized)",
+      description = [=[Checks if an audio stream is valid (buffers initialized)]=],
       returnType = "bool",
       params = {
         {type = "AudioStream", name = "stream"}
@@ -8133,7 +8353,7 @@ return {
     },
     {
       name = "UnloadAudioStream",
-      description = "Unload audio stream and free memory",
+      description = [=[Unload audio stream and free memory]=],
       returnType = "void",
       params = {
         {type = "AudioStream", name = "stream"}
@@ -8141,7 +8361,7 @@ return {
     },
     {
       name = "UpdateAudioStream",
-      description = "Update audio stream buffers with data",
+      description = [=[Update audio stream buffers with data]=],
       returnType = "void",
       params = {
         {type = "AudioStream", name = "stream"},
@@ -8151,7 +8371,7 @@ return {
     },
     {
       name = "IsAudioStreamProcessed",
-      description = "Check if any audio stream buffers requires refill",
+      description = [=[Check if any audio stream buffers requires refill]=],
       returnType = "bool",
       params = {
         {type = "AudioStream", name = "stream"}
@@ -8159,7 +8379,7 @@ return {
     },
     {
       name = "PlayAudioStream",
-      description = "Play audio stream",
+      description = [=[Play audio stream]=],
       returnType = "void",
       params = {
         {type = "AudioStream", name = "stream"}
@@ -8167,7 +8387,7 @@ return {
     },
     {
       name = "PauseAudioStream",
-      description = "Pause audio stream",
+      description = [=[Pause audio stream]=],
       returnType = "void",
       params = {
         {type = "AudioStream", name = "stream"}
@@ -8175,7 +8395,7 @@ return {
     },
     {
       name = "ResumeAudioStream",
-      description = "Resume audio stream",
+      description = [=[Resume audio stream]=],
       returnType = "void",
       params = {
         {type = "AudioStream", name = "stream"}
@@ -8183,7 +8403,7 @@ return {
     },
     {
       name = "IsAudioStreamPlaying",
-      description = "Check if audio stream is playing",
+      description = [=[Check if audio stream is playing]=],
       returnType = "bool",
       params = {
         {type = "AudioStream", name = "stream"}
@@ -8191,7 +8411,7 @@ return {
     },
     {
       name = "StopAudioStream",
-      description = "Stop audio stream",
+      description = [=[Stop audio stream]=],
       returnType = "void",
       params = {
         {type = "AudioStream", name = "stream"}
@@ -8199,7 +8419,7 @@ return {
     },
     {
       name = "SetAudioStreamVolume",
-      description = "Set volume for audio stream (1.0 is max level)",
+      description = [=[Set volume for audio stream (1.0 is max level)]=],
       returnType = "void",
       params = {
         {type = "AudioStream", name = "stream"},
@@ -8208,7 +8428,7 @@ return {
     },
     {
       name = "SetAudioStreamPitch",
-      description = "Set pitch for audio stream (1.0 is base level)",
+      description = [=[Set pitch for audio stream (1.0 is base level)]=],
       returnType = "void",
       params = {
         {type = "AudioStream", name = "stream"},
@@ -8217,7 +8437,7 @@ return {
     },
     {
       name = "SetAudioStreamPan",
-      description = "Set pan for audio stream (0.5 is centered)",
+      description = [=[Set pan for audio stream (-1.0 to 1.0 range, 0.0 is centered)]=],
       returnType = "void",
       params = {
         {type = "AudioStream", name = "stream"},
@@ -8226,7 +8446,7 @@ return {
     },
     {
       name = "SetAudioStreamBufferSizeDefault",
-      description = "Default size for new audio streams",
+      description = [=[Default size for new audio streams]=],
       returnType = "void",
       params = {
         {type = "int", name = "size"}
@@ -8234,7 +8454,7 @@ return {
     },
     {
       name = "SetAudioStreamCallback",
-      description = "Audio thread callback to request new data",
+      description = [=[Audio thread callback to request new data]=],
       returnType = "void",
       params = {
         {type = "AudioStream", name = "stream"},
@@ -8243,7 +8463,7 @@ return {
     },
     {
       name = "AttachAudioStreamProcessor",
-      description = "Attach audio stream processor to stream, receives the samples as 'float'",
+      description = [=[Attach audio stream processor to stream, receives frames x 2 samples as 'float' (stereo)]=],
       returnType = "void",
       params = {
         {type = "AudioStream", name = "stream"},
@@ -8252,7 +8472,7 @@ return {
     },
     {
       name = "DetachAudioStreamProcessor",
-      description = "Detach audio stream processor from stream",
+      description = [=[Detach audio stream processor from stream]=],
       returnType = "void",
       params = {
         {type = "AudioStream", name = "stream"},
@@ -8261,7 +8481,7 @@ return {
     },
     {
       name = "AttachAudioMixedProcessor",
-      description = "Attach audio stream processor to the entire audio pipeline, receives the samples as 'float'",
+      description = [=[Attach audio stream processor to the entire audio pipeline, receives frames x 2 samples as 'float' (stereo)]=],
       returnType = "void",
       params = {
         {type = "AudioCallback", name = "processor"}
@@ -8269,7 +8489,7 @@ return {
     },
     {
       name = "DetachAudioMixedProcessor",
-      description = "Detach audio stream processor from the entire audio pipeline",
+      description = [=[Detach audio stream processor from the entire audio pipeline]=],
       returnType = "void",
       params = {
         {type = "AudioCallback", name = "processor"}

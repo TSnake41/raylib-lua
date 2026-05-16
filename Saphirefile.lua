@@ -32,10 +32,10 @@ local cflags = os.getenv "CFLAGS" or "-O2 -s"
 local ldflags = os.getenv "LDFLAGS" or "-O2 -s -lm"
 local ldflags_r = os.getenv "LDFLAGS_R" or ""
 
-local modules = "raymath rlgl gestures physac raygui rcamera"
+local modules = "raymath rlgl gestures raygui rcamera"
 local graphics = os.getenv "GRAPHICS" or "GRAPHICS_API_OPENGL_43"
 
-cflags = cflags .. " -Iluajit/src -Iraygui/src -Iphysac/src -Iraylib/src".. " -D" .. graphics
+cflags = cflags .. " -Iluajit/src -Iraygui/src -Iraylib/src".. " -D" .. graphics
 
 local raylua_so_path = "raylua.so" -- assume unix-like by default
 local so_ldflags = ldflags
@@ -61,7 +61,7 @@ if saphire.targets.clean then
   }
 else
   libluajit = {
-    command = string.format("make -C luajit amalg CC=%s BUILDMODE=static MACOSX_DEPLOYMENT_TARGET=10.13", cc),
+    command = string.format("make -C luajit amalg CC=%s BUILDMODE=static HOST_MSYS=1 HOST_LUA=host/minilua.exe GIT_RELVER='[ -e ../.git ] && git show -s --format=%%ct >luajit_relver.txt 2>/dev/null || cat ../.relver >luajit_relver.txt 2>/dev/null || :' MACOSX_DEPLOYMENT_TARGET=10.13", cc),
     name = "LuaJIT"
   }
 end

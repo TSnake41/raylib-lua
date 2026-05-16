@@ -340,7 +340,7 @@ return {
   structs = {
     {
       name = "Vector2",
-      description = "Vector2 type",
+      description = [=[Vector2 type]=],
       fields = {
         {
           type = "float",
@@ -356,7 +356,7 @@ return {
     },
     {
       name = "Vector3",
-      description = "Vector3 type                 // -- ConvertHSVtoRGB(), ConvertRGBtoHSV()",
+      description = [=[Vector3 type                 // -- ConvertHSVtoRGB(), ConvertRGBtoHSV()]=],
       fields = {
         {
           type = "float",
@@ -377,7 +377,7 @@ return {
     },
     {
       name = "Color",
-      description = "Color type, RGBA (32bit)",
+      description = [=[Color type, RGBA (32bit)]=],
       fields = {
         {
           type = "unsigned char",
@@ -403,7 +403,7 @@ return {
     },
     {
       name = "Rectangle",
-      description = "Rectangle type",
+      description = [=[Rectangle type]=],
       fields = {
         {
           type = "float",
@@ -429,7 +429,7 @@ return {
     },
     {
       name = "Texture2D",
-      description = "It should be redesigned to be provided by user",
+      description = [=[It should be redesigned to be provided by user]=],
       fields = {
         {
           type = "unsigned int",
@@ -460,7 +460,7 @@ return {
     },
     {
       name = "Image",
-      description = "Image, pixel data stored in CPU memory (RAM)",
+      description = [=[Image, pixel data stored in CPU memory (RAM)]=],
       fields = {
         {
           type = "void *",
@@ -491,7 +491,7 @@ return {
     },
     {
       name = "GlyphInfo",
-      description = "GlyphInfo, font characters glyphs info",
+      description = [=[GlyphInfo, font characters glyphs info]=],
       fields = {
         {
           type = "int",
@@ -522,7 +522,7 @@ return {
     },
     {
       name = "Font",
-      description = "It should be redesigned to be provided by user",
+      description = [=[It should be redesigned to be provided by user]=],
       fields = {
         {
           type = "int",
@@ -558,7 +558,7 @@ return {
     },
     {
       name = "GuiStyleProp",
-      description = "NOTE: Used when exporting style as code for convenience",
+      description = [=[NOTE: Used when exporting style as code for convenience]=],
       fields = {
         {
           type = "unsigned short",
@@ -579,7 +579,7 @@ return {
     },
     {
       name = "GuiTextStyle",
-      description = "NOTE: Text style is defined by control",
+      description = [=[NOTE: Text style is defined by control]=],
       fields = {
         {
           type = "unsigned int",
@@ -619,7 +619,7 @@ return {
   enums = {
     {
       name = "GuiState",
-      description = "Gui control state",
+      description = [=[Gui control state]=],
       values = {
         {
           name = "STATE_NORMAL",
@@ -645,7 +645,7 @@ return {
     },
     {
       name = "GuiTextAlignment",
-      description = "Gui control text alignment",
+      description = [=[Gui control text alignment]=],
       values = {
         {
           name = "TEXT_ALIGN_LEFT",
@@ -666,7 +666,7 @@ return {
     },
     {
       name = "GuiTextAlignmentVertical",
-      description = "Gui control text alignment vertical",
+      description = [=[Gui control text alignment vertical]=],
       values = {
         {
           name = "TEXT_ALIGN_TOP",
@@ -687,7 +687,7 @@ return {
     },
     {
       name = "GuiTextWrapMode",
-      description = "Gui control text wrap mode",
+      description = [=[Gui control text wrap mode]=],
       values = {
         {
           name = "TEXT_WRAP_NONE",
@@ -708,7 +708,7 @@ return {
     },
     {
       name = "GuiControl",
-      description = "Gui controls",
+      description = [=[Gui controls]=],
       values = {
         {
           name = "DEFAULT",
@@ -794,7 +794,7 @@ return {
     },
     {
       name = "GuiControlProperty",
-      description = "Gui base properties for every control",
+      description = [=[Gui base properties for every control]=],
       values = {
         {
           name = "BORDER_COLOR_NORMAL",
@@ -875,7 +875,7 @@ return {
     },
     {
       name = "GuiDefaultProperty",
-      description = "DEFAULT extended properties",
+      description = [=[DEFAULT extended properties]=],
       values = {
         {
           name = "TEXT_SIZE",
@@ -916,7 +916,7 @@ return {
     },
     {
       name = "GuiToggleProperty",
-      description = "Toggle/ToggleGroup",
+      description = [=[Toggle/ToggleGroup]=],
       values = {
         {
           name = "GROUP_PADDING",
@@ -927,7 +927,7 @@ return {
     },
     {
       name = "GuiSliderProperty",
-      description = "Slider/SliderBar",
+      description = [=[Slider/SliderBar]=],
       values = {
         {
           name = "SLIDER_WIDTH",
@@ -943,7 +943,7 @@ return {
     },
     {
       name = "GuiProgressBarProperty",
-      description = "ProgressBar",
+      description = [=[ProgressBar]=],
       values = {
         {
           name = "PROGRESS_PADDING",
@@ -954,7 +954,7 @@ return {
     },
     {
       name = "GuiScrollBarProperty",
-      description = "ScrollBar",
+      description = [=[ScrollBar]=],
       values = {
         {
           name = "ARROWS_SIZE",
@@ -990,7 +990,7 @@ return {
     },
     {
       name = "GuiCheckBoxProperty",
-      description = "CheckBox",
+      description = [=[CheckBox]=],
       values = {
         {
           name = "CHECK_PADDING",
@@ -1001,7 +1001,7 @@ return {
     },
     {
       name = "GuiComboBoxProperty",
-      description = "ComboBox",
+      description = [=[ComboBox]=],
       values = {
         {
           name = "COMBO_BUTTON_WIDTH",
@@ -1017,7 +1017,7 @@ return {
     },
     {
       name = "GuiDropdownBoxProperty",
-      description = "DropdownBox",
+      description = [=[DropdownBox]=],
       values = {
         {
           name = "ARROW_PADDING",
@@ -1033,7 +1033,7 @@ return {
     },
     {
       name = "GuiTextBoxProperty",
-      description = "TextBox/TextBoxMulti/ValueBox/Spinner",
+      description = [=[TextBox/TextBoxMulti/ValueBox/Spinner]=],
       values = {
         {
           name = "TEXT_READONLY",
@@ -1044,7 +1044,7 @@ return {
     },
     {
       name = "GuiSpinnerProperty",
-      description = "Spinner",
+      description = [=[Spinner]=],
       values = {
         {
           name = "SPIN_BUTTON_WIDTH",
@@ -1060,7 +1060,7 @@ return {
     },
     {
       name = "GuiListViewProperty",
-      description = "ListView",
+      description = [=[ListView]=],
       values = {
         {
           name = "LIST_ITEMS_HEIGHT",
@@ -1086,7 +1086,7 @@ return {
     },
     {
       name = "GuiColorPickerProperty",
-      description = "ColorPicker",
+      description = [=[ColorPicker]=],
       values = {
         {
           name = "COLOR_SELECTOR_SIZE",
@@ -1117,7 +1117,7 @@ return {
     },
     {
       name = "GuiIconName",
-      description = "",
+      description = [=[]=],
       values = {
         {
           name = "ICON_NONE",
@@ -2407,32 +2407,32 @@ return {
   functions = {
     {
       name = "GuiEnable",
-      description = "Enable gui controls (global state)",
+      description = [=[Enable gui controls (global state)]=],
       returnType = "void"
     },
     {
       name = "GuiDisable",
-      description = "Disable gui controls (global state)",
+      description = [=[Disable gui controls (global state)]=],
       returnType = "void"
     },
     {
       name = "GuiLock",
-      description = "Lock gui controls (global state)",
+      description = [=[Lock gui controls (global state)]=],
       returnType = "void"
     },
     {
       name = "GuiUnlock",
-      description = "Unlock gui controls (global state)",
+      description = [=[Unlock gui controls (global state)]=],
       returnType = "void"
     },
     {
       name = "GuiIsLocked",
-      description = "Check if gui is locked (global state)",
+      description = [=[Check if gui is locked (global state)]=],
       returnType = "bool"
     },
     {
       name = "GuiSetAlpha",
-      description = "Set gui controls alpha (global state), alpha goes from 0.0f to 1.0f",
+      description = [=[Set gui controls alpha (global state), alpha goes from 0.0f to 1.0f]=],
       returnType = "void",
       params = {
         {type = "float", name = "alpha"}
@@ -2440,7 +2440,7 @@ return {
     },
     {
       name = "GuiSetState",
-      description = "Set gui state (global state)",
+      description = [=[Set gui state (global state)]=],
       returnType = "void",
       params = {
         {type = "int", name = "state"}
@@ -2448,12 +2448,12 @@ return {
     },
     {
       name = "GuiGetState",
-      description = "Get gui state (global state)",
+      description = [=[Get gui state (global state)]=],
       returnType = "int"
     },
     {
       name = "GuiSetFont",
-      description = "Set gui custom font (global state)",
+      description = [=[Set gui custom font (global state)]=],
       returnType = "void",
       params = {
         {type = "Font", name = "font"}
@@ -2461,12 +2461,12 @@ return {
     },
     {
       name = "GuiGetFont",
-      description = "Get gui custom font (global state)",
+      description = [=[Get gui custom font (global state)]=],
       returnType = "Font"
     },
     {
       name = "GuiSetStyle",
-      description = "Set one style property",
+      description = [=[Set one style property]=],
       returnType = "void",
       params = {
         {type = "int", name = "control"},
@@ -2476,7 +2476,7 @@ return {
     },
     {
       name = "GuiGetStyle",
-      description = "Get one style property",
+      description = [=[Get one style property]=],
       returnType = "int",
       params = {
         {type = "int", name = "control"},
@@ -2485,7 +2485,7 @@ return {
     },
     {
       name = "GuiLoadStyle",
-      description = "Load style file over global style variable (.rgs)",
+      description = [=[Load style file over global style variable (.rgs)]=],
       returnType = "void",
       params = {
         {type = "const char *", name = "fileName"}
@@ -2493,22 +2493,22 @@ return {
     },
     {
       name = "GuiLoadStyleDefault",
-      description = "Load style default over global style",
+      description = [=[Load style default over global style]=],
       returnType = "void"
     },
     {
       name = "GuiEnableTooltip",
-      description = "Enable gui tooltips (global state)",
+      description = [=[Enable gui tooltips (global state)]=],
       returnType = "void"
     },
     {
       name = "GuiDisableTooltip",
-      description = "Disable gui tooltips (global state)",
+      description = [=[Disable gui tooltips (global state)]=],
       returnType = "void"
     },
     {
       name = "GuiSetTooltip",
-      description = "Set tooltip string",
+      description = [=[Set tooltip string]=],
       returnType = "void",
       params = {
         {type = "const char *", name = "tooltip"}
@@ -2516,7 +2516,7 @@ return {
     },
     {
       name = "GuiIconText",
-      description = "Get text with icon id prepended (if supported)",
+      description = [=[Get text with icon id prepended (if supported)]=],
       returnType = "const char *",
       params = {
         {type = "int", name = "iconId"},
@@ -2525,7 +2525,7 @@ return {
     },
     {
       name = "GuiSetIconScale",
-      description = "Set default icon drawing size",
+      description = [=[Set default icon drawing size]=],
       returnType = "void",
       params = {
         {type = "int", name = "scale"}
@@ -2533,12 +2533,12 @@ return {
     },
     {
       name = "GuiGetIcons",
-      description = "Get raygui icons data pointer",
+      description = [=[Get raygui icons data pointer]=],
       returnType = "unsigned int *"
     },
     {
       name = "GuiLoadIcons",
-      description = "Load raygui icons file (.rgi) into internal icons data",
+      description = [=[Load raygui icons file (.rgi) into internal icons data]=],
       returnType = "char **",
       params = {
         {type = "const char *", name = "fileName"},
@@ -2547,7 +2547,7 @@ return {
     },
     {
       name = "GuiDrawIcon",
-      description = "Draw icon using pixel size at specified position",
+      description = [=[Draw icon using pixel size at specified position]=],
       returnType = "void",
       params = {
         {type = "int", name = "iconId"},
@@ -2559,7 +2559,7 @@ return {
     },
     {
       name = "GuiWindowBox",
-      description = "Window Box control, shows a window that can be closed",
+      description = [=[Window Box control, shows a window that can be closed]=],
       returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
@@ -2568,7 +2568,7 @@ return {
     },
     {
       name = "GuiGroupBox",
-      description = "Group Box control with text name",
+      description = [=[Group Box control with text name]=],
       returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
@@ -2577,7 +2577,7 @@ return {
     },
     {
       name = "GuiLine",
-      description = "Line separator control, could contain text",
+      description = [=[Line separator control, could contain text]=],
       returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
@@ -2586,7 +2586,7 @@ return {
     },
     {
       name = "GuiPanel",
-      description = "Panel control, useful to group controls",
+      description = [=[Panel control, useful to group controls]=],
       returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
@@ -2595,7 +2595,7 @@ return {
     },
     {
       name = "GuiTabBar",
-      description = "Tab Bar control, returns TAB to be closed or -1",
+      description = [=[Tab Bar control, returns TAB to be closed or -1]=],
       returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
@@ -2606,7 +2606,7 @@ return {
     },
     {
       name = "GuiScrollPanel",
-      description = "Scroll Panel control",
+      description = [=[Scroll Panel control]=],
       returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
@@ -2618,7 +2618,7 @@ return {
     },
     {
       name = "GuiLabel",
-      description = "Label control, shows text",
+      description = [=[Label control, shows text]=],
       returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
@@ -2627,7 +2627,7 @@ return {
     },
     {
       name = "GuiButton",
-      description = "Button control, returns true when clicked",
+      description = [=[Button control, returns true when clicked]=],
       returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
@@ -2636,7 +2636,7 @@ return {
     },
     {
       name = "GuiLabelButton",
-      description = "Label button control, show true when clicked",
+      description = [=[Label button control, show true when clicked]=],
       returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
@@ -2645,7 +2645,7 @@ return {
     },
     {
       name = "GuiToggle",
-      description = "Toggle Button control, returns true when active",
+      description = [=[Toggle Button control, returns true when active]=],
       returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
@@ -2655,7 +2655,7 @@ return {
     },
     {
       name = "GuiToggleGroup",
-      description = "Toggle Group control, returns active toggle index",
+      description = [=[Toggle Group control, returns active toggle index]=],
       returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
@@ -2665,7 +2665,7 @@ return {
     },
     {
       name = "GuiToggleSlider",
-      description = "Toggle Slider control, returns true when clicked",
+      description = [=[Toggle Slider control, returns true when clicked]=],
       returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
@@ -2675,7 +2675,7 @@ return {
     },
     {
       name = "GuiCheckBox",
-      description = "Check Box control, returns true when active",
+      description = [=[Check Box control, returns true when active]=],
       returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
@@ -2685,7 +2685,7 @@ return {
     },
     {
       name = "GuiComboBox",
-      description = "Combo Box control, returns selected item index",
+      description = [=[Combo Box control, returns selected item index]=],
       returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
@@ -2695,7 +2695,7 @@ return {
     },
     {
       name = "GuiDropdownBox",
-      description = "Dropdown Box control, returns selected item",
+      description = [=[Dropdown Box control, returns selected item]=],
       returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
@@ -2706,7 +2706,7 @@ return {
     },
     {
       name = "GuiSpinner",
-      description = "Spinner control, returns selected value",
+      description = [=[Spinner control, returns selected value]=],
       returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
@@ -2719,7 +2719,7 @@ return {
     },
     {
       name = "GuiValueBox",
-      description = "Value Box control, updates input text with numbers",
+      description = [=[Value Box control, updates input text with numbers]=],
       returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
@@ -2732,7 +2732,7 @@ return {
     },
     {
       name = "GuiTextBox",
-      description = "Text Box control, updates input text",
+      description = [=[Text Box control, updates input text]=],
       returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
@@ -2743,7 +2743,7 @@ return {
     },
     {
       name = "GuiSlider",
-      description = "Slider control, returns selected value",
+      description = [=[Slider control, returns selected value]=],
       returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
@@ -2756,7 +2756,7 @@ return {
     },
     {
       name = "GuiSliderBar",
-      description = "Slider Bar control, returns selected value",
+      description = [=[Slider Bar control, returns selected value]=],
       returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
@@ -2769,7 +2769,7 @@ return {
     },
     {
       name = "GuiProgressBar",
-      description = "Progress Bar control, shows current progress value",
+      description = [=[Progress Bar control, shows current progress value]=],
       returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
@@ -2782,7 +2782,7 @@ return {
     },
     {
       name = "GuiStatusBar",
-      description = "Status Bar control, shows info text",
+      description = [=[Status Bar control, shows info text]=],
       returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
@@ -2791,7 +2791,7 @@ return {
     },
     {
       name = "GuiDummyRec",
-      description = "Dummy control for placeholders",
+      description = [=[Dummy control for placeholders]=],
       returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
@@ -2800,7 +2800,7 @@ return {
     },
     {
       name = "GuiGrid",
-      description = "Grid control, returns mouse cell position",
+      description = [=[Grid control, returns mouse cell position]=],
       returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
@@ -2812,7 +2812,7 @@ return {
     },
     {
       name = "GuiListView",
-      description = "List View control, returns selected list item index",
+      description = [=[List View control, returns selected list item index]=],
       returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
@@ -2823,7 +2823,7 @@ return {
     },
     {
       name = "GuiListViewEx",
-      description = "List View with extended parameters",
+      description = [=[List View with extended parameters]=],
       returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
@@ -2836,7 +2836,7 @@ return {
     },
     {
       name = "GuiMessageBox",
-      description = "Message Box control, displays a message",
+      description = [=[Message Box control, displays a message]=],
       returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
@@ -2847,7 +2847,7 @@ return {
     },
     {
       name = "GuiTextInputBox",
-      description = "Text Input Box control, ask for text, supports secret",
+      description = [=[Text Input Box control, ask for text, supports secret]=],
       returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
@@ -2861,7 +2861,7 @@ return {
     },
     {
       name = "GuiColorPicker",
-      description = "Color Picker control (multiple color controls)",
+      description = [=[Color Picker control (multiple color controls)]=],
       returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
@@ -2871,7 +2871,7 @@ return {
     },
     {
       name = "GuiColorPanel",
-      description = "Color Panel control",
+      description = [=[Color Panel control]=],
       returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
@@ -2881,7 +2881,7 @@ return {
     },
     {
       name = "GuiColorBarAlpha",
-      description = "Color Bar Alpha control",
+      description = [=[Color Bar Alpha control]=],
       returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
@@ -2891,7 +2891,7 @@ return {
     },
     {
       name = "GuiColorBarHue",
-      description = "Color Bar Hue control",
+      description = [=[Color Bar Hue control]=],
       returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
@@ -2901,7 +2901,7 @@ return {
     },
     {
       name = "GuiColorPickerHSV",
-      description = "Color Picker control that avoids conversion to RGB on each call (multiple color controls)",
+      description = [=[Color Picker control that avoids conversion to RGB on each call (multiple color controls)]=],
       returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},
@@ -2911,7 +2911,7 @@ return {
     },
     {
       name = "GuiColorPanelHSV",
-      description = "Color Panel control that returns HSV color value, used by GuiColorPickerHSV()",
+      description = [=[Color Panel control that returns HSV color value, used by GuiColorPickerHSV()]=],
       returnType = "int",
       params = {
         {type = "Rectangle", name = "bounds"},

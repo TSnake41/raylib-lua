@@ -17,7 +17,7 @@ if los.type() == "linux" then
 end
 
 local consts = {
-  RAYLIB_VERSION = "5.5.0",
+  RAYLIB_VERSION = "6.0.0",
   RAYLIB_API_VERSION = "550",
 }
 

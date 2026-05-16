@@ -31,10 +31,6 @@
 #define RAYGUIAPI static
 #include <raygui.h>
 
-#define PHYSAC_IMPLEMENTATION
-#define PHYSACDEF static
-#include <physac.h>
-
 #include "autogen/bind.c"
 #include "autogen/boot.c"
 
