@@ -20,6 +20,14 @@ CFLAGS += -D$(GRAPHICS) -D$(PLATFORM)
 USE_WAYLAND_DISPLAY ?= FALSE
 USE_EXTERNAL_GLFW ?= FALSE
 
+ifeq ($(USE_WAYLAND_DISPLAY),TRUE)
+	GLFW_LINUX_ENABLE_WAYLAND := TRUE
+	GLFW_LINUX_ENABLE_X11 := FALSE
+else
+	GLFW_LINUX_ENABLE_WAYLAND := FALSE
+	GLFW_LINUX_ENABLE_X11 := TRUE
+endif
+
 ifeq ($(OS),Windows_NT)
 	LDFLAGS += -lopengl32 -lgdi32 -lwinmm -static
 	LDFLAGS_R += -mwindows 
@@ -38,6 +46,9 @@ else
 	LDFLAGS += -ldl -lpthread
 	ifeq ($(PLATFORM),PLATFORM_DRM)
 		LDFLAGS += -ldrm -lGLESv2 -lEGL -lgbm
+	else ifeq ($(USE_WAYLAND_DISPLAY),TRUE)
+		CFLAGS += -D_GLFW_WAYLAND
+		LDFLAGS += $(shell pkg-config wayland-client wayland-cursor wayland-egl xkbcommon --libs)
 	else
 		CFLAGS += -D_GLFW_X11
 		LDFLAGS += -lX11
@@ -58,7 +69,8 @@ luajit:
 raylib:
 	$(MAKE) -C raylib/src \
 		CC=$(CC) AR=$(AR) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" \
-		USE_WAYLAND_DISPLAY="$(USE_WAYLAND_DISPLAY)" \
+		GLFW_LINUX_ENABLE_WAYLAND="$(GLFW_LINUX_ENABLE_WAYLAND)" \
+		GLFW_LINUX_ENABLE_X11="$(GLFW_LINUX_ENABLE_X11)" \
 		USE_EXTERNAL_GLFW="$(USE_EXTERNAL_GLFW)" \
 		PLATFORM="$(PLATFORM)" GRAPHICS="$(GRAPHICS)"
 
